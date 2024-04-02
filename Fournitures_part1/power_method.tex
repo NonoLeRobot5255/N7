@@ -1,0 +1,18 @@
+\begin{algorithm}[H]
+\begin{algorithmic}
+\caption{\label{alg:power} Vector power method}
+\STATE Input: Matrix \(A \in \mathbb{R}^{n\times n}\)
+\STATE Output: $(\lambda_1,v_1)$ eigenpair associated to the largest (in module)
+eigenvalue.
+
+\STATE $v\in\mathbb{R}^n $ given
+\STATE \(\beta=\transp{v}\cdot A\cdot v\)
+\REPEAT
+\STATE\(y=A\cdot v\)
+\STATE\(v=y/\left\|y\right\|\)
+\STATE\(\beta_{old} = \beta\)
+\STATE\(\beta=\transp{v}\cdot A\cdot v\)
+\UNTIL  \(\left|\beta-\beta_{old}\right|/\left|\beta_{old}\right|<\varepsilon\)  
+\STATE \(\lambda_1=\beta\) and \(v_1=v\)
+\end{algorithmic}
+\end{algorithm}

@@ -1,0 +1,32 @@
+\begin{algorithm}[H]
+    \begin{algorithmic}
+    \caption{\label{alg:rrp} Raleigh-Ritz projection}
+      \STATE Input: Matrix $A \in \mathbb{R}^{n \times n}$ and an orthonormal set of vectors $V$.
+      \STATE Output: The approximate eigenvectors $V_{out}$ and the corresponding
+      eigenvalues $\Lambda_{out}$.
+      \STATE Compute the Rayleigh quotient $H=\transp{V} \cdot A \cdot V$.
+      \STATE Compute the spectral decomposition $X \cdot \Lambda_{out} \cdot \transp{X} = H$,
+      where the eigenvalues of $H$ ($diag(\Lambda_{out})$) are arranged in descending order of magnitude.
+      \STATE Compute $V_{out}=V \cdot X$. 
+    \end{algorithmic}
+    \end{algorithm}
+    
+    The algorithm of the subspace\_iter\_v1 is then:
+    
+    \begin{algorithm}[H]
+    \begin{algorithmic}
+    \caption{\label{alg:sub2} Subspace iteration method v1 with Raleigh-Ritz projection}
+    \STATE Input: Symmetric matrix \(A \in \mathbb{R}^{n \times n}\),  tolerance $\varepsilon $, $MaxIter$ (max nb of iterations) and $PercentTrace$ the target percentage of the trace of $A$
+    \STATE Output: $n_{ev}$ dominant  eigenvectors $V_{out}$ and the corresponding eigenvalues $\Lambda_{out}$.
+    \STATE
+    \STATE Generate an initial set of $m$ orthonormal vectors $V \in
+      \mathbb{R}^{n\times m}$; $k = 0$; $PercentReached=0$
+    \REPEAT
+    \STATE $k = k+1$
+    \STATE Compute $Y$ such that \( Y = A \cdot V \) 
+    \STATE $V \longleftarrow$ orthonormalisation of the columns of $Y$
+    \STATE \emph{Rayleigh-Ritz projection} applied on matrix $A$ and orthonormal vectors $V$ 
+    \STATE \emph{Convergence analysis step}: save eigenpairs that have converged and update $PercentReached$
+    \UNTIL  ( $PercentReached>PercentTrace$ or  $n_{ev} = m$ or $k > MaxIter$ )
+    \end{algorithmic}
+    \end{algorithm}
