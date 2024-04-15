@@ -1,3 +1,6 @@
+#ifndef LISTE_NOEUD_H
+#define LISTE_NOEUD_H
+
 #include "graphe.h"
 #include <stdbool.h>
 
@@ -143,5 +146,7 @@ void changer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t prec
  * @param noeud noeud à supprimer de liste
  */
 void supprimer_noeud_liste( liste_noeud_t* liste, noeud_id_t noeud);
+
+#endif /* LISTE_NOEUD_H */
 
 
