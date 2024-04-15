@@ -1,24 +1,25 @@
-#define _GNU_SOURCE
 #include "liste_noeud.h"
 #include <stdlib.h>
 #include <math.h>
 
-liste_noeud_t creer_liste(){
+liste_noeud_t* creer_liste(){
     liste_noeud_t* liste = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
-    liste->n = NO_ID;
-    liste->dist = INFINITY;
-    liste->prec = NO_ID;
     liste->suiv = NULL;
     return liste;
 }
 
-void detruire_liste(liste_noeud_t liste_ptr){
-    liste_ptr = NULL;
+void detruire_liste(liste_noeud_t* liste_ptr){
+    while (liste_ptr->suiv != NULL)
+    {
+        liste_noeud_t* temp = liste_ptr;
+        liste_ptr = liste_ptr->suiv;
+        free(temp);
+    }
     free(liste_ptr);
 }
 
-bool est_vide_liste(const liste_noeud_t liste_ptr){
-    return liste_ptr.suiv == NULL;
+bool est_vide_liste(const liste_noeud_t* liste_ptr){
+    return liste_ptr->suiv == NULL;
 }
 
 bool contient_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud){
@@ -26,7 +27,7 @@ bool contient_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud){
         return false;
     }
     else{
-        if (liste-> n == noeud){
+        if (liste->n == noeud){
             return true;
         }
         else{
@@ -40,7 +41,7 @@ bool contient_arrete_liste(const liste_noeud_t* liste, noeud_id_t source, noeud_
         return false;
     }
     else{
-        if (liste-> n == source){
+        if (liste->n == source){
             if (liste->suiv->n == destination ){
                 return true;
             }
@@ -54,19 +55,19 @@ bool contient_arrete_liste(const liste_noeud_t* liste, noeud_id_t source, noeud_
     }
 }
 
-float distance_noeud_liste(const liste_noeud_t liste, noeud_id_t noeud) {
+float distance_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud) {
     while (liste->suiv != NULL)
     {
         if (liste->n == noeud)
         {
-            return liste.dist;
+            return liste->dist;
         }
         liste = liste->suiv;
     }
     return INFINITY;
-    
 }
-noeud_id_t precedent_noeud_liste(const liste_noeud_t liste, noeud_id_t noeud){
+
+noeud_id_t precedent_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud){
     while (liste->suiv != NULL)
     {
         if (liste->suiv->n == noeud)
@@ -78,7 +79,7 @@ noeud_id_t precedent_noeud_liste(const liste_noeud_t liste, noeud_id_t noeud){
     return NO_ID;
 }
 
-noeud_id_t min_noeud_liste(const liste_noeud_t liste){
+noeud_id_t min_noeud_liste(const liste_noeud_t* liste){
     if (liste->suiv == NULL){
         return NO_ID;
     }
@@ -96,7 +97,8 @@ noeud_id_t min_noeud_liste(const liste_noeud_t liste){
         return min;
     }
 }
-void inserer_noeud_liste(liste_noeud_t liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
+
+void inserer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
     liste_noeud_t* new = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
     new->n = noeud;
     new->prec = precedent;
@@ -105,7 +107,7 @@ void inserer_noeud_liste(liste_noeud_t liste, noeud_id_t noeud, noeud_id_t prece
     liste->suiv = new;
 }
 
-void changer_noeud_liste(liste_noeud_t liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
+void changer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
     while (liste->suiv != NULL)
     {
         if (liste->n == noeud)
@@ -118,7 +120,7 @@ void changer_noeud_liste(liste_noeud_t liste, noeud_id_t noeud, noeud_id_t prece
     inserer_noeud_liste(liste,noeud,precedent,distance);
 }
 
-void supprimer_noeud_liste( liste_noeud_t liste, noeud_id_t noeud){
+void supprimer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud){
     while (liste->suiv != NULL)
     {
         if (liste->suiv->n == noeud)
