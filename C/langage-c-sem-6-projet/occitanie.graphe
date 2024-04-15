@@ -1,0 +1,53 @@
+Noeuds:
+- Toulouse: (143.2094901,4359.6037953)
+- Montauban: (136.4081417,4402.2262753)
+- Gaillac: (188.6317631,4391.6636393)
+- Albi: (214.7453419,4392.5846212)
+- Castres: (223.8251917,4361.5625896)
+- Narbonne: (302.0200005,4316.5034031)
+- Beziers: (323.0859725,4334.7466978)
+- Montpellier: (386.9264054,4361.335437)
+- Perpignan: (289.8977872,4269.6441301)
+- Auch: (57.4851022,4365.3262773)
+- Castelnaudary: (196.0655389,4332.3098827)
+- Carcassonne: (234.3422135,4320.9415595)
+- Foix: (161.0242138,4296.532903)
+- St-Gaudens: (72.6675112,4311.9697355)
+- Tarbes: (6.6150886,4323.4659038)
+- Ax-les-Thermes: (181.8050343,4268.6666996)
+- Rodez: (256.6866502,4435.8691956)
+- Agen: (62.5730523,4420.2826475)
+- Nimes: (434.7591011,4384.4657847)
+- Revel: (199.6737712,4346.5443792)
+
+Liens:
+- Toulouse -- Montauban
+- Toulouse -- Gaillac
+- Toulouse -- Castelnaudary
+- Toulouse -- Foix
+- Toulouse -- St-Gaudens
+- Toulouse -- Auch
+- Toulouse -- Castres
+- Toulouse -- Revel
+- Montauban -- Agen
+- Montauban -- Gaillac
+- Montauban -- Auch
+- Gaillac -- Albi
+- Gaillac -- Castres
+- Castelnaudary -- Carcassonne
+- Castelnaudary -- Revel
+- St-Gaudens -- Tarbes
+- Auch -- Tarbes
+- Auch -- Agen
+- Castres -- Carcassonne
+- Castres -- Revel
+- Albi -- Rodez
+- Albi -- Castres
+- Foix -- Ax-les-Thermes
+- Foix -- Carcassonne
+- Carcassonne -- Narbonne
+- Carcassonne -- Beziers
+- Narbonne -- Beziers
+- Beziers -- Montpellier
+- Narbonne -- Perpignan
+- Montpellier -- Nimes
