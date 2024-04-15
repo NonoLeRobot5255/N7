@@ -5,7 +5,11 @@
 
 liste_noeud_t creer_liste(){
     liste_noeud_t* liste = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
-    liste_noeud_t* suiv = NULL;
+    liste->n = NO_ID;
+    liste->dist = INFINITY;
+    liste->prec = NO_ID;
+    liste->suiv = NULL;
+    return liste;
 }
 
 void detruire_liste(liste_noeud_t liste_ptr){
