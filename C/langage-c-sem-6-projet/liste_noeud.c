@@ -4,18 +4,22 @@
 
 liste_noeud_t* creer_liste(){
     liste_noeud_t* liste = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
-    liste->suiv = NULL;
+    if(liste != NULL){
+        liste->suiv = NULL;
+    } 
     return liste;
 }
 
 void detruire_liste(liste_noeud_t* liste_ptr){
-    while (liste_ptr->suiv != NULL)
+    while (liste_ptr!= NULL && liste_ptr->suiv != NULL)
     {
         liste_noeud_t* temp = liste_ptr;
         liste_ptr = liste_ptr->suiv;
         free(temp);
     }
-    free(liste_ptr);
+    if (liste_ptr != NULL){ 
+        free(liste_ptr);
+    } 
 }
 
 bool est_vide_liste(const liste_noeud_t* liste_ptr){
@@ -58,12 +62,18 @@ bool contient_arrete_liste(const liste_noeud_t* liste, noeud_id_t source, noeud_
 float distance_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud) {
     while (liste->suiv != NULL)
     {
+        
         if (liste->n == noeud)
         {
             return liste->dist;
         }
         liste = liste->suiv;
     }
+    if (liste->n == noeud)
+        {
+            return liste->dist;
+        }
+        liste = liste->suiv;
     return INFINITY;
 }
 
