@@ -62,3 +62,65 @@ float distance_noeud_liste(const liste_noeud_t liste, noeud_id_t noeud) {
     return INFINITY;
     
 }
+noeud_id_t precedent_noeud_liste(const liste_noeud_t liste, noeud_id_t noeud){
+    while (liste->suiv != NULL)
+    {
+        if (liste->suiv->n == noeud)
+        {
+            return liste->n;
+        }
+        liste = liste->suiv;
+    }
+    return NO_ID;
+}
+
+noeud_id_t min_noeud_liste(const liste_noeud_t liste){
+    if (liste->suiv == NULL){
+        return NO_ID;
+    }
+    else{
+        noeud_id_t min = liste->n;
+        float min_dist = liste->dist;
+        while (liste->suiv != NULL)
+        {
+            if (liste->dist < min_dist){
+                min = liste->n;
+                min_dist = liste->dist;
+            }
+            liste = liste->suiv;
+        }
+        return min;
+    }
+}
+void inserer_noeud_liste(liste_noeud_t liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
+    liste_noeud_t* new = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
+    new->n = noeud;
+    new->prec = precedent;
+    new->dist = distance;
+    new->suiv = liste->suiv;
+    liste->suiv = new;
+}
+
+void changer_noeud_liste(liste_noeud_t liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
+    while (liste->suiv != NULL)
+    {
+        if (liste->n == noeud)
+        {
+            liste->prec = precedent;
+            liste->dist = distance;
+        }
+        liste = liste->suiv;
+    }
+    inserer_noeud_liste(liste,noeud,precedent,distance);
+}
+
+void supprimer_noeud_liste( liste_noeud_t liste, noeud_id_t noeud){
+    while (liste->suiv != NULL)
+    {
+        if (liste->suiv->n == noeud)
+        {
+            liste->suiv = liste->suiv->suiv;
+        }
+        liste = liste->suiv;
+    }
+}
