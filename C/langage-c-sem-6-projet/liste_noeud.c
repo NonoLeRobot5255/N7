@@ -12,14 +12,15 @@ liste_noeud_t* creer_liste(){
     }
 }
 
-void detruire_liste(liste_noeud_t* liste_ptr){
-    if(liste_ptr != NULL){
-        liste_noeud_t* courant = liste_ptr;
-        while(courant != NULL){
+void detruire_liste(liste_noeud_t** liste_ptr) {
+    if (*liste_ptr != NULL) {
+        liste_noeud_t* courant = *liste_ptr;
+        while (courant != NULL) {
             liste_noeud_t* suivant = courant->suiv;
             free(courant);
             courant = suivant;
         }
+        *liste_ptr = NULL; // On met le pointeur à NULL pour éviter les problèmes de double free
     }
 }
 
