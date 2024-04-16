@@ -85,8 +85,8 @@ noeud_id_t min_noeud_liste(const liste_noeud_t* liste){
     return min;
 }
 
-void inserer_noeud_liste(liste_noeud_t** liste, noeud_id_t noeud, noeud_id_t precedent, float distance) {
-    liste_noeud_t* courant = *liste;
+void inserer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t precedent, float distance) {
+    liste_noeud_t* courant = liste;
 
     // Recherche du nœud précédent
     while (courant != NULL && courant->n != precedent) {
@@ -123,13 +123,13 @@ void changer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t prec
     inserer_noeud_liste(&liste, noeud, precedent, distance);
 }
 
-void supprimer_noeud_liste(liste_noeud_t** liste, noeud_id_t noeud){
-    liste_noeud_t* courant = *liste;
+void supprimer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud){
+    liste_noeud_t* courant = liste;
     liste_noeud_t* precedent = NULL;
 
     // Si le nœud à supprimer est en tête de liste
     if (courant != NULL && courant->n == noeud) {
-        *liste = courant->suiv;
+        liste = courant->suiv;
         free(courant);
         return;
     }
