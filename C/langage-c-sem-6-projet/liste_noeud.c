@@ -3,12 +3,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-liste_noeud_t creer_liste(){
+liste_noeud_t* creer_liste(){
     liste_noeud_t* liste = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
-    if(liste == NULL){
-        return NULL;
-    }
-    else{
+    if (liste != NULL){
         liste->suiv = NULL;
         return liste;
     }
@@ -16,13 +13,12 @@ liste_noeud_t creer_liste(){
 
 void detruire_liste(liste_noeud_t* liste_ptr){
     if(liste_ptr != NULL){
-        liste_noeud_t* courant = *liste_ptr;
+        liste_noeud_t* courant = liste_ptr;
         while(courant != NULL){
             liste_noeud_t* suivant = courant->suiv;
             free(courant);
             courant = suivant;
         }
-        *liste_ptr = NULL;
     }
 }
 
@@ -89,7 +85,7 @@ noeud_id_t min_noeud_liste(const liste_noeud_t* liste){
 }
 
 void inserer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
-    liste_noeud_t* courant = *liste;
+    liste_noeud_t* courant = liste;
     while(courant->suiv != NULL){
         courant = courant->suiv;
     }
@@ -115,7 +111,7 @@ void changer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t prec
 }
 
 void supprimer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud){
-    liste_noeud_t* courant = *liste;
+    liste_noeud_t* courant = liste;
     while(courant->suiv != NULL){
         if(courant->suiv->n == noeud){
             liste_noeud_t* suivant = courant->suiv->suiv;

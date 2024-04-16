@@ -17,7 +17,7 @@ struct liste_noeud_t{
  * Post-conditions : `r = creer_liste()` => `r != NULL`, `est_vide_liste(r)`
  * @return liste nouvellement créée (de type liste_noeud_t)
  */
-liste_noeud_t creer_liste();
+liste_noeud_t* creer_liste();
 
 /**
  * detruire_liste : détruit la liste passée en paramètre
