@@ -33,6 +33,7 @@
 #include "dijkstra.h"
 
 #define PRECISION   1e-4
+#define TIMEOUT     50 _Millisec
 
 /**
  * check_chemin - Fonction type ASSERT custom pour vérifier qu'un chemin se compose bien des 
@@ -86,6 +87,7 @@ int main() {
 
     BEGIN_SECTION("dijkstra/petits-graphes")
         BEGIN_TESTI("dijkstra-1noeud")
+            SET_TIMEOUT(TIMEOUT);
             /*
                -> n1
              */
@@ -103,6 +105,7 @@ int main() {
         END_TEST
 
         BEGIN_TESTI("dijkstra-2noeuds")
+            SET_TIMEOUT(TIMEOUT);
             /*
                        2
                -> n1 ----> n2
@@ -124,6 +127,7 @@ int main() {
         END_TEST
 
         BEGIN_TESTI("dijkstra-3noeuds")
+            SET_TIMEOUT(TIMEOUT);
             /*
                            n3
                             ^
@@ -151,6 +155,7 @@ int main() {
         END_TEST
 
         BEGIN_TESTI("dijkstra-3noeuds-connexe")
+            SET_TIMEOUT(TIMEOUT);
             /*
                        n3
                       / ^
@@ -180,6 +185,7 @@ int main() {
         END_TEST
 
         BEGIN_TESTI("dijkstra-4noeuds")
+            SET_TIMEOUT(TIMEOUT);
             /*
                            2
                        n3 --> n4
@@ -207,6 +213,39 @@ int main() {
 
             ASSERT_EQ_F(dist, 7.f, PRECISION);
             CALL_ASSERT_FUN(check_chemin, graphe, chemin, n1, n3, n4, NO_ID);
+
+            liberer_graphe(&graphe, NULL);
+            detruire_liste(&chemin);
+        END_TEST
+
+        BEGIN_TESTI("dijkstra-cycle")
+            SET_TIMEOUT(TIMEOUT);
+            /*
+                  n3 ----> n4
+                  ^|        |
+                  ||        |
+                  |v        v
+               -> n1 <---- n2
+             */
+            struct graphe_t* graphe = creer_graphe(4);
+            point_t p1 = { .x = 0.0, .y = 0.0 };
+            point_t p2 = { .x = 2.0, .y = 0.0 };
+            point_t p3 = { .x = 0.0, .y = 2.0 };
+            point_t p4 = { .x = 2.0, .y = 2.0 };
+            noeud_id_t n1 = creer_noeud(graphe, p1, "n1");
+            noeud_id_t n2 = creer_noeud(graphe, p2, "n2");
+            noeud_id_t n3 = creer_noeud(graphe, p3, "n3");
+            noeud_id_t n4 = creer_noeud(graphe, p4, "n4");
+            ajouter_arrete(graphe, n1, n3);
+            ajouter_arrete(graphe, n3, n1);
+            ajouter_arrete(graphe, n3, n4);
+            ajouter_arrete(graphe, n4, n2);
+            ajouter_arrete(graphe, n2, n1);
+            liste_noeud_t* chemin;
+            float dist = dijkstra(graphe, n1, n2, &chemin);
+
+            ASSERT_EQ_F(dist, 6.f, PRECISION);
+            CALL_ASSERT_FUN(check_chemin, graphe, chemin, n1, n3, n4, n2, NO_ID);
 
             liberer_graphe(&graphe, NULL);
             detruire_liste(&chemin);
@@ -267,16 +306,19 @@ int main() {
         }
 
         BEGIN_TESTI("haut-gauche--bas-droite")
+            SET_TIMEOUT(TIMEOUT);
             float dist = dijkstra(graphe, noeuds[0], noeuds[colonnes * lignes - 1], NULL);
             ASSERT_EQ_F(dist, (float)(lignes + colonnes - 2), PRECISION);
         END_TEST
 
         BEGIN_TESTI("haut-gauche--haut-droite")
+            SET_TIMEOUT(TIMEOUT);
             float dist = dijkstra(graphe, noeuds[0], noeuds[colonnes - 1], NULL);
             ASSERT_EQ_F(dist, (float)(colonnes - 1), PRECISION);
         END_TEST
 
         BEGIN_TESTI("haut-guahce--bas-gauche")
+            SET_TIMEOUT(TIMEOUT);
             float dist = dijkstra(graphe, noeuds[0], noeuds[colonnes * (lignes - 1)], NULL);
             ASSERT_EQ_F(dist, (float)(lignes - 1), PRECISION);
         END_TEST

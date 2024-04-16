@@ -1,18 +1,15 @@
-#ifndef LISTE_NOEUD_H
-#define LISTE_NOEUD_H
-
 #include "graphe.h"
 #include <stdbool.h>
 
-typedef struct liste_noeud_t liste_noeud_t;
 // TODO : type liste_noeud_t
-struct liste_noeud_t {
+typedef struct liste_noeud_t liste_noeud_t;
+// TODO : typedef
+struct liste_noeud_t{
     noeud_id_t n;
     float dist;
     noeud_id_t prec;
     struct liste_noeud_t* suiv;
 };
-
 
 /**
  * creer_liste : crée une liste de noeuds, initialement vide
@@ -20,7 +17,7 @@ struct liste_noeud_t {
  * Post-conditions : `r = creer_liste()` => `r != NULL`, `est_vide_liste(r)`
  * @return liste nouvellement créée (de type liste_noeud_t)
  */
-liste_noeud_t* creer_liste();
+liste_noeud_t creer_liste();
 
 /**
  * detruire_liste : détruit la liste passée en paramètre
@@ -40,7 +37,7 @@ void detruire_liste(liste_noeud_t* liste_ptr);
  * @param liste [in] liste à tester
  * @return vrai ssi la liste ne contient aucun élément
  */
-bool est_vide_liste(const liste_noeud_t* liste_ptr);
+bool est_vide_liste(const liste_noeud_t* liste);
 
 /**
  * contient_noeud_liste : test si le noeud donné appartient à la liste donnée.
@@ -91,7 +88,7 @@ float distance_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud);
  * @param noeud noeud dont on veut le précédent
  * @return précédent associé au noeud dans la liste (ou `NO_ID` si noeud n'est pas dans liste)
  */
-noeud_id_t precedent_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud);
+liste_noeud_t* precedent_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud);
 
 /**
  * min_noeud_liste : trouve le (un) noeud de la liste dont la distance associée est la plus petite,
@@ -145,8 +142,6 @@ void changer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t prec
  * @param liste [in,out] liste à modifier
  * @param noeud noeud à supprimer de liste
  */
-void supprimer_noeud_liste( liste_noeud_t* liste, noeud_id_t noeud);
-
-#endif /* LISTE_NOEUD_H */
+void supprimer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud);
 
 

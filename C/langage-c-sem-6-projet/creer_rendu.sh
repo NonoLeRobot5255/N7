@@ -79,13 +79,13 @@ demander_infos() {
 
     echo "Constitution du fichier d'identification"
     echo "Horodatage : $(date)" > ${fichident}
-    echo "Groupe : $td" > ${fichident}
-    echo "NOM 1 : $nom1" > ${fichident}
-    echo "Prénom 1 : $prenom1" > ${fichident}
+    echo "Groupe : $td" >> ${fichident}
+    echo "NOM 1 : $nom1" >> ${fichident}
+    echo "Prénom 1 : $prenom1" >> ${fichident}
 
     if [[ $nom2 != "" ]]; then
-        echo "NOM 2 : $nom2" > ${fichident}
-        echo "Prénom 2 : $prenom2" > ${fichident}
+        echo "NOM 2 : $nom2" >> ${fichident}
+        echo "Prénom 2 : $prenom2" >> ${fichident}
     fi
 
     return 0
@@ -107,16 +107,6 @@ for f in ${fichiers[@]}; do
     check_existance $err $f
     err=$?
 done
-
-if [ $err -eq 0 ]; then
-    num=($(sed -E '/^Nom\s*[[:digit:]]\s*:\s*([[:alpha:]].*)$/!d' < "${fichident}" | wc -l))
-    hdt=($(sed -E '/^Horodatage/!d' < "${fichident}" | wc -l))
-
-    if [ $num -lt 1 || $hdt -ne 1 ]; then
-        echo "Erreur : le fichier d'identification n'est pas conforme"
-        err=2
-    fi
-fi
 
 if [ $err -ne 0 ]; then
     echo "Interruption du script"

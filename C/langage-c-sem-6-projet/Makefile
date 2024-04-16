@@ -108,7 +108,7 @@ main.do: main.c
 	$(CC) $(CFLAGS_D) -c $< -o $@
 
 rendu: test_struct liste_noeud.h liste_noeud.c dijkstra.h dijkstra.c
-	./creer_rendu
+	./creer_rendu.sh
 
 doc:
 	doxygen

@@ -1,0 +1,15 @@
+PROJECT_NAME=dijkstra
+PROJECT_NUMBER=1.0
+PROJECT_BRIEF=Algorithme de Dijkstra pour le plus court chemin dans un graphe
+
+OUTPUT_DIRECTORY=doc
+OUTPUT_LANGUAGE=French
+
+OPTIMIZE_OUTPUT_FOR_C=YES
+MARKDOWN_SUPPORT=YES
+
+EXTRA_PACKAGES=amsmath amssymb
+
+EXCLUDE_PATTERNS=tests.h tests.c liste_noeud.h liste_noeud.c dijkstra.h dijkstra.c test*
+EXCLUDE_SYMBOLS=_GNU_SOURCE
+

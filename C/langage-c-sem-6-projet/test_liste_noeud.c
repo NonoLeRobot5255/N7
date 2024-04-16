@@ -34,8 +34,8 @@ int main() {
     INITIALIZE_TESTS();
     SET_ANALYSIS("test_liste_noeud.csv");
 
-    BEGIN_SECTION("liste_noeud-creation/destruction")
-        BEGIN_TESTI("creation/destruction");
+    BEGIN_SECTION("liste_noeud/creation-destruction")
+        BEGIN_TESTI("creation/destruction")
             liste_noeud_t* t = creer_liste();
             detruire_liste(&t);
             ASSERT(t == NULL);
@@ -53,7 +53,7 @@ int main() {
         REPORT_ANALYSIS;
     END_SECTION()
 
-    BEGIN_SECTION("liste_noeud-inserer")
+    BEGIN_SECTION("liste_noeud/inserer")
         BEGIN_TESTI("inserer-1")
             liste_noeud_t* t = creer_liste();
             inserer_noeud_liste(t, 1, 5, 1.0);
@@ -80,7 +80,7 @@ int main() {
         REPORT_ANALYSIS;
     END_SECTION()
 
-    BEGIN_SECTION("liste_noeud-access")
+    BEGIN_SECTION("liste_noeud/access")
         liste_noeud_t* t = creer_liste();
         inserer_noeud_liste(t, 1, 10, 1.0);
         inserer_noeud_liste(t, 2, 11, 2.0);
