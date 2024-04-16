@@ -68,7 +68,7 @@ noeud_id_t precedent_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud){
         }
         courant = courant->suiv;
     }
-    return NULL;
+    return NO_ID;
 }
 
 noeud_id_t min_noeud_liste(const liste_noeud_t* liste){
