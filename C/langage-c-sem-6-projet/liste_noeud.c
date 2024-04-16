@@ -120,7 +120,7 @@ void changer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t prec
         }
         liste = liste->suiv;
     }
-    inserer_noeud_liste(&liste, noeud, precedent, distance);
+    inserer_noeud_liste(liste, noeud, precedent, distance);
 }
 
 void supprimer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud){
