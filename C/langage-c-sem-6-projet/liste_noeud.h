@@ -27,7 +27,7 @@ liste_noeud_t* creer_liste();
  *
  * @param liste_ptr pointeur sur la liste à détruire
  */
-void detruire_liste(liste_noeud_t* liste_ptr);
+void detruire_liste(liste_noeud_t** liste_ptr);
 
 /**
  * est_vide_liste : test si la liste passée en paramètre est vide
