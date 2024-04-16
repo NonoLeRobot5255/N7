@@ -4,22 +4,22 @@
 
 liste_noeud_t* creer_liste(){
     liste_noeud_t* liste = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
-    if(liste != NULL){
-        liste->suiv = NULL;
-    } 
+    liste->n = NO_ID;
+    liste->prec = NO_ID;
+    liste->dist = INFINITY;
+    liste->suiv = NULL;
     return liste;
 }
 
 void detruire_liste(liste_noeud_t* liste_ptr){
-    while (liste_ptr!= NULL && liste_ptr->suiv != NULL)
-    {
-        liste_noeud_t* temp = liste_ptr;
-        liste_ptr = liste_ptr->suiv;
-        free(temp);
+    liste_noeud_t* courant = liste_ptr;
+    liste_noeud_t* suivant = NULL;
+
+    while (courant != NULL) {
+        suivant = courant->suiv;
+        free(courant);
+        courant = suivant;
     }
-    if (liste_ptr != NULL){ 
-        free(liste_ptr);
-    } 
 }
 
 bool est_vide_liste(const liste_noeud_t* liste_ptr){
