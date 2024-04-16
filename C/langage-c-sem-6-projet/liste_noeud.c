@@ -60,20 +60,12 @@ bool contient_arrete_liste(const liste_noeud_t* liste, noeud_id_t source, noeud_
 }
 
 float distance_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud) {
-    while (liste->suiv != NULL)
-    {
-        
-        if (liste->n == noeud)
-        {
+    while (liste != NULL) {
+        if (liste->n == noeud) {
             return liste->dist;
         }
         liste = liste->suiv;
     }
-    if (liste->n == noeud)
-        {
-            return liste->dist;
-        }
-        liste = liste->suiv;
     return INFINITY;
 }
 
@@ -108,13 +100,29 @@ noeud_id_t min_noeud_liste(const liste_noeud_t* liste){
     }
 }
 
-void inserer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
-    liste_noeud_t* new = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
-    new->n = noeud;
-    new->prec = precedent;
-    new->dist = distance;
-    new->suiv = liste->suiv;
-    liste->suiv = new;
+void inserer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t precedent, float distance) {
+    liste_noeud_t* courant = liste;
+
+    // Recherche du nœud précédent
+    while (courant != NULL && courant->n != precedent) {
+        courant = courant->suiv;
+    }
+
+    // Si le nœud précédent est trouvé, insérer le nouveau nœud
+    if (courant != NULL) {
+        liste_noeud_t* nouveau_noeud = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
+        nouveau_noeud->n = noeud;
+        nouveau_noeud->prec = precedent;
+        nouveau_noeud->dist = distance;
+
+        // Mettre à jour les liaisons
+        nouveau_noeud->suiv = courant->suiv;
+        courant->suiv = nouveau_noeud;
+    } else {
+        // Gérer le cas où le nœud précédent n'est pas trouvé
+        // Peut-être imprimer un message d'erreur ou gérer différemment selon votre besoin
+       return NO_ID;
+    }
 }
 
 void changer_noeud_liste(liste_noeud_t* liste, noeud_id_t noeud, noeud_id_t precedent, float distance){
