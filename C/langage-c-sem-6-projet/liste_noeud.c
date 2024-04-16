@@ -60,7 +60,7 @@ float distance_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud){
     return INFINITY;
 }
 
-liste_noeud_t* precedent_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud){
+noeud_id_t precedent_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud){
     liste_noeud_t* courant = liste->suiv;
     while(courant != NULL){
         if(courant->n == noeud){

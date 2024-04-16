@@ -88,7 +88,7 @@ float distance_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud);
  * @param noeud noeud dont on veut le précédent
  * @return précédent associé au noeud dans la liste (ou `NO_ID` si noeud n'est pas dans liste)
  */
-liste_noeud_t* precedent_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud);
+noeud_id_t precedent_noeud_liste(const liste_noeud_t* liste, noeud_id_t noeud);
 
 /**
  * min_noeud_liste : trouve le (un) noeud de la liste dont la distance associée est la plus petite,
