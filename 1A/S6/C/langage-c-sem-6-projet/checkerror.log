@@ -1,0 +1,22 @@
+Vérification de la syntaxe pour liste_noeud.h :
+gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c liste_noeud.h
+Vérification de la syntaxe pour liste_noeud.c :
+gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c liste_noeud.c
+Vérification de la syntaxe pour dijkstra.h :
+gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c dijkstra.h
+Vérification de la syntaxe pour dijkstra.c :
+gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c dijkstra.c
+dijkstra.c: In function 'dijkstra':
+dijkstra.c:25:28: error: unused parameter 'graphe' [-Werror=unused-parameter]
+   25 |     const struct graphe_t* graphe,
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+dijkstra.c:26:16: error: unused parameter 'source' [-Werror=unused-parameter]
+   26 |     noeud_id_t source, noeud_id_t destination,
+      |     ~~~~~~~~~~~^~~~~~
+dijkstra.c:26:35: error: unused parameter 'destination' [-Werror=unused-parameter]
+   26 |     noeud_id_t source, noeud_id_t destination,
+      |                        ~~~~~~~~~~~^~~~~~~~~~~
+dijkstra.c:27:21: error: unused parameter 'chemin' [-Werror=unused-parameter]
+   27 |     liste_noeud_t** chemin) {
+      |     ~~~~~~~~~~~~~~~~^~~~~~
+cc1: all warnings being treated as errors
