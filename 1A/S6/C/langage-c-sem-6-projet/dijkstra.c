@@ -40,8 +40,8 @@ float dijkstra(
             inserer_noeud_liste(Visite, nc , precedent_noeud_liste(aVisite, nc), distance_noeud_liste(aVisite, nc));
             supprimer_noeud_liste(aVisite, nc);
             noeud_id_t* voisins;
-            noeuds_voisins(graphe, nc, voisins)
-            for (int i=0;i<nombre_voisins(graphe, nc);i++){
+            noeuds_voisins(graphe, nc, voisins);
+            for (size_t i=0;i<nombre_voisins(graphe, nc);i++){
                 if (!contient_noeud_liste(Visite, voisins[i])){
                     float disttot = distance_noeud_liste(Visite, nc) + noeud_distance(graphe,nc, voisins[i]);
                     float distact = distance_noeud_liste(aVisite, voisins[i]);
@@ -58,6 +58,9 @@ float dijkstra(
             }
         }
         float dist = distance_noeud_liste(Visite, destination);
+        // Construire le chemin
+        *chemin = creer_liste(); // Initialiser le chemin
+        construire_chemin_vers(*chemin, Visite, destination);
         return dist;
 }
 
