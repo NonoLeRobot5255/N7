@@ -50,6 +50,8 @@ float dijkstra(
                 }
             }
         }
+        float dist = distance_noeud_liste(Visite, destination);
+        return dist;
 }
 
 
