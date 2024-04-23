@@ -6,7 +6,7 @@ n=1;
 M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 150;
+nb_bits = 100;
 S = randi([0 1],nb_bits,1);
 
 
@@ -130,7 +130,7 @@ figure('name', 'Modulateur 3')
     DSP3 = pwelch(y, [],[],Fe,'twosided');
     axe_frequences = linspace(-Fe/2, Fe/2, length(DSP3));
     nexttile
-    semilogy(axe_frequences,fftshift(DSP))
+    semilogy(axe_frequences,fftshift(DSP3))
     xlabel('Fréquence (Hz)');
     ylabel('DSP');
     title('tracé de la DSP par rapport a la fréquence');
