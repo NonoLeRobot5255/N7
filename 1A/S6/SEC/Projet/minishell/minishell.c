@@ -12,10 +12,35 @@ int nbcmd = 0;
 void traitement(int numsign){
     int status;
     int pid = waitpid(-1, &status, WNOHANG);
-    if (pid > 0){
+    if (WIFEXITED(status)){
+        printf("\nprocessus %d terminé manuellement\n", pid);
+    }
+    else if (WIFSIGNALED(status)){
+        printf("ce processus a été tué: %d\n", pid);
+    }
+    else if (WIFSTOPPED(status)){
+        printf("ce processus a été stoppé: %d\n", pid);
+    }
+    else if (WIFCONTINUED(status)){
+        printf("ce processus a été continué: %d\n", pid);
+    }
+    else{
         printf("%d done\n", pid);
     }
     nbcmd--;  
+}
+void traitementc (int numsign){
+    int status;
+    int pid = waitpid(-1, &status, WNOHANG);
+    printf("\nprocessus %d terminé manuellement\n", pid);
+    nbcmd--;
+}
+void traitementz (int numsign){
+    int status;
+    int pid = waitpid(-1, &status, WNOHANG);
+    printf("\nprocessus %d stoppé manuellement\n", pid);
+    nbcmd--;
+
 }
     
     
@@ -26,6 +51,19 @@ int main(void) {
     sigemptyset(&action.sa_mask);
     action.sa_flags = SA_RESTART;
     sigaction(SIGCHLD,&action,NULL);
+
+    struct sigaction actionc;
+    actionc.sa_handler = traitementc;
+    sigemptyset(&actionc.sa_mask);
+    actionc.sa_flags = SA_RESTART;
+    sigaction(SIGINT,&actionc,NULL);
+
+    struct sigaction actionz;
+    actionz.sa_handler = traitementz;
+    sigemptyset(&actionz.sa_mask);
+    actionz.sa_flags = SA_RESTART;
+    sigaction(SIGTSTP,&actionz,NULL);
+
 
     bool fini= false;
 
@@ -52,7 +90,7 @@ int main(void) {
                 while ((cmd= commande->seq[indexseq])) {
                     if (cmd[0]) {
                         if (strcmp(cmd[0], "exit") == 0) {
-                            fini= true;
+                            fini = true;
                             printf("Au revoir ...\n");
                         }
                         else {
@@ -72,16 +110,16 @@ int main(void) {
                                 execvp(cmd[0],cmd);
                             }
                             else {
-                                
+                                sigaction(SIGINT, &actionc, NULL);
+                                sigaction(SIGTSTP, &actionz, NULL);
+                                sigaction(SIGCHLD, &action, NULL); 
                                 if (commande->backgrounded != NULL){ // si la commande est en background
                                     nbcmd++;
-                                    printf("[%d] %d\n",nbcmd, retour);
-                                    signal(SIGCHLD, traitement);   
-                                    WEXITSTATUS(retour);
-                                                                                               
+                                    printf("[%d] %d\n",nbcmd, retour);                                                              
                                 }
                                 else{
                                     nbcmd++;
+                                    printf("[%d] %d\n",nbcmd, retour);
                                     waitpid(retour, NULL, 0);                                    
                                 }
                             }
