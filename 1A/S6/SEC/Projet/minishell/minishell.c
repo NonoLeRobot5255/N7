@@ -6,14 +6,23 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+
+
+int nbcmd = 0;
 void traitement(int numsign){
-    printf("Le processus fils %d vient de se terminer\n", getpid());
+    int status;
+    int pid = waitpid(-1, &status, WNOHANG);
+    if (pid > 0){
+        printf("%d done\n", pid);
+    }
+    nbcmd--;  
 }
     
     
 int main(void) {
+    
     struct sigaction action;
-    action.sa_handler = traitement;
+    action.sa_handler = waitpid;
     sigemptyset(&action.sa_mask);
     action.sa_flags = SA_RESTART;
     sigaction(SIGCHLD,&action,NULL);
@@ -37,11 +46,7 @@ int main(void) {
         
             } else {
 
-                /* Pour le moment le programme ne fait qu'afficher les commandes 
-                   tapees et les affiche à l'écran. 
-                   Cette partie est à modifier pour considérer l'exécution de ces
-                   commandes 
-                */
+                
                 int indexseq= 0;
                 char **cmd;
                 while ((cmd= commande->seq[indexseq])) {
@@ -67,17 +72,17 @@ int main(void) {
                                 execvp(cmd[0],cmd);
                             }
                             else {
-                                if (commande->backgrounded != NULL){
+                                
+                                if (commande->backgrounded != NULL){ // si la commande est en background
+                                    nbcmd++;
+                                    printf("[%d] %d\n",nbcmd, retour);
+                                    signal(SIGCHLD, traitement);   
+                                    WEXITSTATUS(retour);
+                                                                                               
                                 }
                                 else{
-                                    int status;
-                                    int fils_fin = waitpid(-1, &status, WUNTRACED);
-                                    if (WIFEXITED(status)){
-                                        printf("%d arrété\n", fils_fin);
-                                    }
-                                    else if(WIFSIGNALED(status)){
-                                        printf("%d tué\n", fils_fin);
-                                    }
+                                    nbcmd++;
+                                    waitpid(retour, NULL, 0);                                    
                                 }
                             }
                             
