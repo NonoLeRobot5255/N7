@@ -87,7 +87,7 @@ figure('name', 'Modulateur 2')
     ylabel("Signal filtré")
     title('Tracé du signal temporel filtré')
     
-    % Tracer la DSP par rapport à l'axe des fréquences
+    % Tracer la DSP par rapport à l'axe des fréquences 
     DSP2 = pwelch(y, [],[],Fe,'twosided');
     axe_frequences = linspace(-Fe/2, Fe/2, length(DSP2));
     nexttile

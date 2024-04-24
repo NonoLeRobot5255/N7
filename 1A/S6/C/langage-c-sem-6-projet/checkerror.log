@@ -6,17 +6,72 @@ Vérification de la syntaxe pour dijkstra.h :
 gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c dijkstra.h
 Vérification de la syntaxe pour dijkstra.c :
 gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c dijkstra.c
-dijkstra.c: In function 'dijkstra':
-dijkstra.c:25:28: error: unused parameter 'graphe' [-Werror=unused-parameter]
-   25 |     const struct graphe_t* graphe,
-      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-dijkstra.c:26:16: error: unused parameter 'source' [-Werror=unused-parameter]
-   26 |     noeud_id_t source, noeud_id_t destination,
-      |     ~~~~~~~~~~~^~~~~~
-dijkstra.c:26:35: error: unused parameter 'destination' [-Werror=unused-parameter]
-   26 |     noeud_id_t source, noeud_id_t destination,
-      |                        ~~~~~~~~~~~^~~~~~~~~~~
-dijkstra.c:27:21: error: unused parameter 'chemin' [-Werror=unused-parameter]
-   27 |     liste_noeud_t** chemin) {
-      |     ~~~~~~~~~~~~~~~~^~~~~~
+
+[le header liste_noeud.h est correctement gardé]
+==code
+
+==endcode
+In file included from <stdin>:2:
+__tmp_liste_noeud.h:7:8: error: redefinition of 'struct liste_noeud_t'
+    7 | struct liste_noeud_t{
+      |        ^~~~~~~~~~~~~
+In file included from <stdin>:1:
+__tmp_liste_noeud.h:7:8: note: originally defined here
+    7 | struct liste_noeud_t{
+      |        ^~~~~~~~~~~~~
+In file included from <stdin>:2:
+__tmp_liste_noeud.h:21:18: error: redefinition of 'x'
+   21 | static const int x = 1;
+      |                  ^
+In file included from <stdin>:1:
+__tmp_liste_noeud.h:21:18: note: previous definition of 'x' was here
+   21 | static const int x = 1;
+      |                  ^
+
+[Définition de liste_noeud_t]
+==code
+liste_noeud_t* t; (void) t;
+==endcode
+
+[liste_noeud_t abstrait]
+==code
+liste_noeud_t t; (void) t;
+==endcode
+
+[est_vide_lsite const-correcte]
+==code
+const liste_noeud_t* t = creer_liste(); est_vide_liste(t);
+==endcode
+
+[contient_noeud_liste const-correcte]
+==code
+const liste_noeud_t* t = creer_liste(); contient_noeud_liste(t, (noeud_id_t) 0);
+==endcode
+
+[contient_arrete_liste const-correcte]
+==code
+const liste_noeud_t* t = creer_liste(); contient_arrete_liste(t, (noeud_id_t) 0, (noeud_id_t) 0);
+==endcode
+
+[distance_noeud_liste const-correcte]
+==code
+const liste_noeud_t* t = creer_liste(); distance_noeud_liste(t, (noeud_id_t)0);
+==endcode
+
+[precedent_noeud_liste const-correcte]
+==code
+const liste_noeud_t* t = creer_liste(); precedent_noeud_liste(t, (noeud_id_t) 0);
+==endcode
+
+[min_noeud_liste const-correcte]
+==code
+const liste_noeud_t* t = creer_liste(); min_noeud_liste(t);
+==endcode
+
+[construire_chemin statique]
+==code
+construire_chemin_vers(NULL, NULL, 0);
+==endcode
+<stdin>: In function 'test':
+<stdin>:4:1: error: implicit declaration of function 'construire_chemin_vers' [-Werror=implicit-function-declaration]
 cc1: all warnings being treated as errors
