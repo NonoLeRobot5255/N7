@@ -21,7 +21,7 @@
     %  flag = 1  : on converge en ayant atteint la taille maximale de l'espace
     %  flag = -3 : on n'a pas convergé en maxit itérations
 
-function [ V, D, n_ev, it, itv, flag ] = subspace_iter_v2( A, m, percentage, p, eps, maxit )
+function [ V, D, n_ev, it, itv, flag ] = subspace_iter_v3( A, m, percentage, p, eps, maxit )
 
     % calcul de la norme de A (pour le critère de convergence d'un vecteur (gamma))
     normA = norm(A, 'fro');
@@ -50,16 +50,20 @@ function [ V, D, n_ev, it, itv, flag ] = subspace_iter_v2( A, m, percentage, p, 
     Vr = randn(n, m);
     Vr = mgs(Vr);
 
+    Vc = [];
+    Vnc=Vr;
+    Ap = (A^p);
     % rappel : conv = (eigsum >= trace) | (nb_c == m)
     while (~conv && k < maxit)
         k = k+1;
         %% Y <- A*V
-        Y = (A^p)*Vr;
+        Y = [Vc,Ap*Vnc];
         %% orthogonalisation
         Vr = mgs(Y);
+        Vnc=Vr(:,nb_c+1,end);
         
         %% Projection de Rayleigh-Ritz
-        [Wr, Vr] = rayleigh_ritz_projection(A, Vr);
+        [Wr, Vnc] = rayleigh_ritz_projection(A, Vnc);
         
         %% Quels vecteurs ont convergé à cette itération
         analyse_cvg_finie = 0;
@@ -77,7 +81,7 @@ function [ V, D, n_ev, it, itv, flag ] = subspace_iter_v2( A, m, percentage, p, 
                 % est-ce que le vecteur i a convergé
                 
                 % calcul de la norme du résidu
-                aux = A*Vr(:,i) - Wr(i)*Vr(:,i);
+                aux = A*Vnc(:,i) - Wr(i)*Vnc(:,i);
                 res = sqrt(aux'*aux);
                 
                 if(res >= eps*normA)
@@ -114,6 +118,8 @@ function [ V, D, n_ev, it, itv, flag ] = subspace_iter_v2( A, m, percentage, p, 
         
         % on a convergé dans l'un de ces deux cas
         conv = (nb_c == m) | (eigsum >= vtrace);
+        Vnc = Vr(:,nb_c+1:end);
+        Vc = Vr(:,1:nb_c);
         
     end
     

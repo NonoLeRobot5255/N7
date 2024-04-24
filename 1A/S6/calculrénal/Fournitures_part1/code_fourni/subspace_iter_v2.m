@@ -49,13 +49,13 @@ function [ V, D, n_ev, it, itv, flag ] = subspace_iter_v2( A, m, percentage, p, 
     % on génère un ensemble initial de m vecteurs orthogonaux
     Vr = randn(n, m);
     Vr = mgs(Vr);
-
+    Ap = A^p;
     % rappel : conv = (eigsum >= trace) | (nb_c == m)
     while (~conv && k < maxit)
         
         k = k+1;
         %% Y <- A*V
-        Y = (A^p)*Vr;
+        Y = Ap*Vr;
         %% orthogonalisation
         Vr = mgs(Y);
         
