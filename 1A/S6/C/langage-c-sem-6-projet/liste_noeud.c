@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdbool.h>
 
-liste_noeud_t* creer_liste(){
+liste_noeud_t creer_liste(){
     liste_noeud_t* liste = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
     if (liste != NULL){
         liste->suiv = NULL;

@@ -2,7 +2,11 @@
 #include <stdbool.h>
 
 // TODO : type liste_noeud_t
+<<<<<<< HEAD
 typedef struct liste_noeud_t liste_noeud_t*;
+=======
+typedef struct liste_noeud_t* liste_noeud_t;
+>>>>>>> 6254f4c (push)
 // TODO : typedef
 struct liste_noeud_t*{
     noeud_id_t n;
