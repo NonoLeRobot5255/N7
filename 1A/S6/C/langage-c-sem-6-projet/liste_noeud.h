@@ -2,19 +2,10 @@
 #include <stdbool.h>
 
 // TODO : type liste_noeud_t
-<<<<<<< HEAD
-typedef struct liste_noeud_t liste_noeud_t*;
-=======
-typedef struct liste_noeud_t* liste_noeud_t;
->>>>>>> 6254f4c (push)
-// TODO : typedef
-struct liste_noeud_t*{
-    noeud_id_t n;
-    float dist;
-    noeud_id_t prec;
-    struct liste_noeud_t* suiv;
-};
+typedef struct liste_noeud_t liste_noeud_t;
 
+
+struct liste_noeud_t;
 /**
  * creer_liste : crée une liste de noeuds, initialement vide
  *

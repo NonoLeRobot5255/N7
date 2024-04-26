@@ -12,20 +12,12 @@ gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c dijkstra.c
 
 ==endcode
 In file included from <stdin>:2:
-__tmp_liste_noeud.h:7:8: error: redefinition of 'struct liste_noeud_t'
-    7 | struct liste_noeud_t{
-      |        ^~~~~~~~~~~~~
-In file included from <stdin>:1:
-__tmp_liste_noeud.h:7:8: note: originally defined here
-    7 | struct liste_noeud_t{
-      |        ^~~~~~~~~~~~~
-In file included from <stdin>:2:
-__tmp_liste_noeud.h:21:18: error: redefinition of 'x'
-   21 | static const int x = 1;
+__tmp_liste_noeud.h:16:18: error: redefinition of 'x'
+   16 | static const int x = 1;
       |                  ^
 In file included from <stdin>:1:
-__tmp_liste_noeud.h:21:18: note: previous definition of 'x' was here
-   21 | static const int x = 1;
+__tmp_liste_noeud.h:16:18: note: previous definition of 'x' was here
+   16 | static const int x = 1;
       |                  ^
 
 [Définition de liste_noeud_t]
@@ -36,6 +28,65 @@ liste_noeud_t* t; (void) t;
 [liste_noeud_t abstrait]
 ==code
 liste_noeud_t t; (void) t;
+==endcode
+<stdin>: In function 'test':
+<stdin>:4:15: error: storage size of 't' isn't known
+<stdin>:4:15: error: unused variable 't' [-Werror=unused-variable]
+cc1: all warnings being treated as errors
+
+[creer_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); (void) t;
+==endcode
+
+[detruire_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); detruire_liste(&t);
+==endcode
+
+[est_vide_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); bool a = est_vide_liste(t); (void) a;
+==endcode
+
+[contient_noeud_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); bool a = contient_noeud_liste(t, (noeud_id_t) 0); (void) a;
+==endcode
+
+[contient_arrete_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); bool a = contient_arrete_liste(t, (noeud_id_t) 0, (noeud_id_t) 0); (void) a;
+==endcode
+
+[distance_noeud_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); float f = distance_noeud_liste(t, (noeud_id_t)0); (void) f;
+==endcode
+
+[precedent_noeud_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); noeud_id_t n = precedent_noeud_liste(t, (noeud_id_t) 0); (void) n;
+==endcode
+
+[min_noeud_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); noeud_id_t n = min_noeud_liste(t); (void) n;
+==endcode
+
+[inserer_noeud_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); inserer_noeud_liste(t, (noeud_id_t) 0, (noeud_id_t) 0, (float) 0.f);
+==endcode
+
+[changer_noeud_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); changer_noeud_liste(t, (noeud_id_t) 0, (noeud_id_t) 0, (float) 0.f);
+==endcode
+
+[supprimer_noeud_liste correcte]
+==code
+liste_noeud_t* t = creer_liste(); supprimer_noeud_liste(t, (noeud_id_t) 0);
 ==endcode
 
 [est_vide_lsite const-correcte]

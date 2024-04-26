@@ -4,12 +4,20 @@
 #include <math.h>
 #include <stdbool.h>
 
-liste_noeud_t creer_liste(){
+struct liste_noeud_t{
+    noeud_id_t n;
+    float dist;
+    noeud_id_t prec;
+    struct liste_noeud_t* suiv;
+};
+
+liste_noeud_t* creer_liste(){
     liste_noeud_t* liste = (liste_noeud_t*)malloc(sizeof(liste_noeud_t));
     if (liste != NULL){
         liste->suiv = NULL;
         return liste;
     }
+    return NULL;
 }
 
 void detruire_liste(liste_noeud_t** liste_ptr) {
