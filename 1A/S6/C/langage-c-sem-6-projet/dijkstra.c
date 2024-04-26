@@ -42,7 +42,7 @@ float dijkstra(
             size_t nb_voisins = nombre_voisins(graphe, nc);
             noeud_id_t voisins[nb_voisins];
             noeuds_voisins(graphe, nc, voisins);
-            for (size_t i=0;i<nb_voisins ;i++){
+            for (size_t i=0;i<nb_voisins-1 ;i++){
                 if (!contient_noeud_liste(Visite, voisins[i])){
                     float disttot = distance_noeud_liste(Visite, nc) + noeud_distance(graphe,nc, voisins[i]);
                     float distact = distance_noeud_liste(aVisite, voisins[i]);
