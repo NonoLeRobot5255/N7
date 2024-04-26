@@ -39,9 +39,10 @@ float dijkstra(
             noeud_id_t nc = min_noeud_liste(aVisite);
             inserer_noeud_liste(Visite, nc , precedent_noeud_liste(aVisite, nc), distance_noeud_liste(aVisite, nc));
             supprimer_noeud_liste(aVisite, nc);
-            noeud_id_t* voisins;
+            size_t nb_voisins = nombre_voisins(graphe, nc);
+            noeud_id_t* voisins[nb_voisins];
             noeuds_voisins(graphe, nc, voisins);
-            for (size_t i=0;i<nombre_voisins(graphe, nc);i++){
+            for (size_t i=0;i<nb_voisins ;i++){
                 if (!contient_noeud_liste(Visite, voisins[i])){
                     float disttot = distance_noeud_liste(Visite, nc) + noeud_distance(graphe,nc, voisins[i]);
                     float distact = distance_noeud_liste(aVisite, voisins[i]);
