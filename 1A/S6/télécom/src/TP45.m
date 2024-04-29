@@ -9,7 +9,7 @@ n=1;
 M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 512;
+nb_bits = 1024;
 S = randi([0 1],nb_bits,1);
 
 SNR = 8;

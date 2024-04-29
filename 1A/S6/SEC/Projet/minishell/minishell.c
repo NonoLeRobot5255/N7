@@ -27,19 +27,19 @@ void traitement(int numsign){
     else{
         printf("%d done\n", pid);
     }
-    nbcmd--;  
 }
 void traitementc (int numsign){
     int status;
     int pid = waitpid(-1, &status, WNOHANG);
     printf("\nprocessus %d terminé manuellement\n", pid);
-    nbcmd--;
+    
 }
 void traitementz (int numsign){
     int status;
     int pid = waitpid(-1, &status, WNOHANG);
     printf("\nprocessus %d stoppé manuellement\n", pid);
-    nbcmd--;
+    
+    
 
 }
     
