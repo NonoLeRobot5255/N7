@@ -9,7 +9,7 @@ n=1;
 M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 20;
+nb_bits = 512;
 S = randi([0 1],nb_bits,1);
 
 SNR = 8;
@@ -47,7 +47,7 @@ figure('name', 'Modulateur ')
 %bruit 
 Px = mean(abs(y).^2);
 sigma2 = (Px * Ns)/(2*log2(M)*SNR);
-bruit = sqrt(sigma2) * randn(1, length(y))
+bruit = sqrt(sigma2) * randn(1, length(y));
 y = y+bruit;
 
 % filtre récéption
@@ -163,6 +163,7 @@ TEB = mean(S' ~= xr)
 %% modulateur 3 :
 % Mapping
 n=2;
+M=2^2;
 Ns = Fe * 2*Ts; % Nombre d'échantillons par bits
 
 S2 = reshape(S',2,nb_bits/2);
@@ -196,6 +197,12 @@ figure('name', 'Modulateur 2 ')
     ylabel("Signal filtré")
     title('Tracé du signal temporel filtré')
 
+%bruit 
+Px = mean(abs(y).^2);
+sigma2 = (Px * Ns)/(2*log2(M)*SNR);
+bruit = sqrt(sigma2) * randn(1, length(y));
+y = y+bruit;
+
 % filtre récéption
 hr = ones(1,Ns);
 y = filter(hr,1,y);
@@ -204,11 +211,7 @@ y = filter(hr,1,y);
     xlabel("temps (s)")
     ylabel("Signal filtré")
     title('Tracé du signal temporel filtré à la récéption')
-%bruit 
-Px = mean(abs(y).^2);
-sigma2 = (Px * Ns)/(2*log2(M)*SNR);
-bruit = sqrt(sigma2) * randn(1, length(y));
-y = y+bruit;
+
 % réponse globale impulsion
 g = conv(h1,hr);
 t_g = linspace(0,2*Ns,length(g));
