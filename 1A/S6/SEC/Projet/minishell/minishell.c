@@ -5,15 +5,16 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 
-int pid_fg;
+int pid_fg=0;
 int nbcmd = 0;
 void traitement(int numsign){
     int status;
     int pid = waitpid(-1, &status, WNOHANG);
     if (WIFEXITED(status)){
-        printf("\nprocessus %d terminé manuellement\n", pid);
+        printf("\nprocessus %d terminé\n", pid);
         pid_fg = 0;
     }
     else if (WIFSIGNALED(status)){
@@ -28,16 +29,25 @@ void traitement(int numsign){
     }
 }
 void traitementc (int numsign){
-    printf ("\nprocessus %d tué\n", pid_fg);
-    kill(pid_fg, SIGKILL);
-    pid_fg = 0;
+    if (pid_fg == 0){
+        printf("\nAucun processus en cours\n");
+    }
+    else {
+        printf ("\nprocessus %d tué\n", pid_fg);
+        kill(pid_fg, SIGKILL);
+        pid_fg = 0;
+    }
     
 }
 void traitementz (int numsign){
-    printf("\nprocessus %d stoppé manuellement\n", pid_fg);
-    kill(pid_fg, SIGSTOP); 
-    pid_fg = 0;
-
+    if (pid_fg == 0){
+        printf("\nAucun processus en cours\n");
+    }
+    else {
+        printf("\nprocessus %d stoppé manuellement\n", pid_fg);
+        kill(pid_fg, SIGSTOP); 
+        pid_fg = 0;
+    }
 }
     
     
@@ -104,6 +114,16 @@ int main(void) {
                             }
                             else if (retour == 0) {
                                 setpgrp();
+                                if (commande->in != NULL){
+                                    int fd = open(commande->in, O_RDONLY);
+                                    dup2(fd, 0);
+                                    close(fd);
+                                }
+                                if (commande->out != NULL){
+                                    int fd = open(commande->out, O_WRONLY|O_CREAT|O_TRUNC, 0666);
+                                    dup2(fd, 1);
+                                    close(fd);
+                                }
                                 execvp(cmd[0],cmd);
                             }
                             else {
