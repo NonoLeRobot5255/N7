@@ -103,7 +103,7 @@ int main(void) {
 
                             }
                             else if (retour == 0) {
-
+                                setpgrp();
                                 execvp(cmd[0],cmd);
                             }
                             else {
@@ -116,8 +116,6 @@ int main(void) {
                                 }
                                 else{
                                     pid_fg = retour;
-                                    setpgrp();
-
                                      while (pid_fg != 0)
                                      {
                                         pause();
@@ -130,7 +128,7 @@ int main(void) {
                     }
                 }
             }
-        }
+        }  
     }
     return EXIT_SUCCESS;
 }
