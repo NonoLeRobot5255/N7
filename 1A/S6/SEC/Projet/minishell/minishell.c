@@ -7,39 +7,36 @@
 #include <sys/wait.h>
 
 
-
+int pid_fg;
 int nbcmd = 0;
 void traitement(int numsign){
     int status;
     int pid = waitpid(-1, &status, WNOHANG);
     if (WIFEXITED(status)){
         printf("\nprocessus %d terminé manuellement\n", pid);
+        pid_fg = 0;
     }
     else if (WIFSIGNALED(status)){
-        printf("ce processus a été tué: %d\n", pid);
     }
     else if (WIFSTOPPED(status)){
-        printf("ce processus a été stoppé: %d\n", pid);
     }
     else if (WIFCONTINUED(status)){
-        printf("ce processus a été continué: %d\n", pid);
     }
     else{
-        printf("%d done\n", pid);
+        pid_fg = 0;
+        printf("%d done\n", pid_fg);
     }
 }
 void traitementc (int numsign){
-    int status;
-    int pid = waitpid(-1, &status, WNOHANG);
-    printf("\nprocessus %d terminé manuellement\n", pid);
+    printf ("\nprocessus %d tué\n", pid_fg);
+    kill(pid_fg, SIGKILL);
+    pid_fg = 0;
     
 }
 void traitementz (int numsign){
-    int status;
-    int pid = waitpid(-1, &status, WNOHANG);
-    printf("\nprocessus %d stoppé manuellement\n", pid);
-    
-    
+    printf("\nprocessus %d stoppé manuellement\n", pid_fg);
+    kill(pid_fg, SIGSTOP); 
+    pid_fg = 0;
 
 }
     
@@ -47,7 +44,7 @@ void traitementz (int numsign){
 int main(void) {
     
     struct sigaction action;
-    action.sa_handler = waitpid;
+    action.sa_handler = traitement;
     sigemptyset(&action.sa_mask);
     action.sa_flags = SA_RESTART;
     sigaction(SIGCHLD,&action,NULL);
@@ -118,13 +115,15 @@ int main(void) {
                                     printf("[%d] %d\n",nbcmd, retour);                                                              
                                 }
                                 else{
-                                    nbcmd++;
-                                    printf("[%d] %d\n",nbcmd, retour);
-                                    waitpid(retour, NULL, 0);                                    
+                                    pid_fg = retour;
+                                    setpgrp();
+
+                                     while (pid_fg != 0)
+                                     {
+                                        pause();
+                                     }                                 
                                 }
                             }
-                            
-                            
                         }
 
                         indexseq++;
