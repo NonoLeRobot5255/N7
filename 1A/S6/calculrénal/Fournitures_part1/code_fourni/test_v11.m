@@ -4,7 +4,6 @@ format long;
 %%%%%%%%%%%%
 % PARAMÈTRES
 %%%%%%%%%%%%
-
 % taille de la matrice symétrique
 n = 200;
 
@@ -14,7 +13,7 @@ n = 200;
 %                                  uniformément répartie, cond = 1e10
 % imat == 3 valeurs propres D(i) = cond**(-(i-1)/(n-1)) avec cond = 1e5
 % imat == 4 valeurs propres D(i) = 1 - ((i-1)/(n-1))*(1 - 1/cond) avec cond = 1e2
-imat = 1;
+imat = 4;
 
 % on génère la matrice (1) ou on lit dans un fichier (0)
 % si vous avez déjà généré la matrice d'une certaine taille et d'un type donné
