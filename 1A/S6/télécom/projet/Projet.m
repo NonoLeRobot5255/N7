@@ -10,23 +10,25 @@ M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
 fp = 2000;
-nb_bits = 30;
+nb_bits = 1000;
 S = randi([0 1],1,nb_bits);
-
-
+SNR = 6;
+L= 8;
 
 %% modulateur :
 % Mapping
 
 Ns = Fe * Ts; % Nombre d'échantillons! par bits
 dk = 1-2*S(1:2:nb_bits) +1i * (1-2*S(2:2:nb_bits));
-At = [kron(dk, [1, zeros(1, Ns-1)]) zeros(1,4*Ns+1)];
+At = [kron(dk, [1, zeros(1, Ns-1)])];
 
 % Filtre
- % Echelle temporelle
-h1 = rcosdesign(0.35,4,Ns); % Reponse impulsionnelle du filtre
+% Echelle temporelle
+h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
 y = filter(h1, 1, At);
-T1 = ([0:length(y)-1] * Te)';
+T1 = ([0:length(y)-1] * Te);
+
+%filtre de réception
 z= filter(h1,1,y);
 
 
@@ -47,4 +49,51 @@ stem(length(h1):Ns:length(z),imag(z(length(h1):Ns:length(z))),'dg','LineWidth',3
 
 
 %porteuse
-y = real(y) .*cos(2*pi*fp*T1) -imag(y) .*sin(2*pi*fp*T1);
+p = real(y) .*cos(2*pi*fp*T1) - imag(y) .*sin(2*pi*fp*T1);
+
+% Tracer la DSP par rapport à l'axe des fréquences
+figure('Name','DSP')
+DSP1 = pwelch(p, [],[],Fe,'twosided');
+axe_frequences = linspace(-Fe/2, Fe/2, length(DSP1));
+nexttile
+semilogy(axe_frequences,fftshift(DSP1))
+xlabel('Fréquence (Hz)');
+ylabel('DSP');
+title('tracé de la DSP par rapport a la fréquence');
+
+%bruit
+Px = mean(abs(p).^2);
+sigma2 = ((Px * Ns)/(2*log2(M)*SNR));
+
+
+%filtre de récéption
+hr = fliplr(h1);
+z= filter(hr,1,y);
+
+%réponse global
+r = conv(h1,hr);
+figure('Name','réponse impulsionelle globale')
+plot (r)
+
+%instant optimal
+N0=4;
+
+%diagramme de l'oeil
+eyediagram(z,2*Ns,2*Ns)
+
+%echantillonage
+xe = z((L*Ns)+1*Ns:Ns:length(z));
+xr = [];
+for c=1:size(xe,2)
+    if (real(xe(c))>0 && imag(xe(c))>0)
+        xr=[xr 1 1];
+    elseif (real(xe(c))<=0 && imag(xe(c))>0)
+        xr =[xr 0 1];
+    elseif (real(xe(c))<=0 && imag(xe(c))<=0)
+        xr =[xr 0 0];
+    else 
+        xr =[xr 1 0];
+    end
+end
+ 
+TEB = mean(S ~= xr)
