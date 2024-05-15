@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 
 int pid_fg=0;
@@ -52,6 +53,18 @@ void traitementz (int numsign){
     
     
 int main(void) {
+    char buffer[100]; 
+    
+    int tubeE[2];
+    int tubeL[2];
+    if (pipe(tubeE) == -1){
+        printf("Erreur lors de la création du tube\n");
+        return 1;
+    }
+    if (pipe(tubeL) == -1){
+        printf("Erreur lors de la création du tube\n");
+        return 1;
+    }
     
     struct sigaction action;
     action.sa_handler = traitement;
@@ -72,7 +85,7 @@ int main(void) {
     sigaction(SIGTSTP,&actionz,NULL);
 
 
-    bool fini= false;
+    bool fini = false;
 
     while (!fini) {
         printf("> ");
@@ -101,6 +114,16 @@ int main(void) {
                             printf("Au revoir ...\n");
                         }
                         else {
+                            if(commande->seq[indexseq-1] && commande->seq[indexseq-1][0]){
+                                close(tubeL[1]);
+                                dup2(tubeL[0], 0);
+                                close(tubeL[0]);                      
+                            }
+                            if(commande->seq[indexseq+1] && commande->seq[indexseq+1][0]){
+                                close(tubeE[0]); 
+                                dup2(tubeE[1], 1);
+                                close(tubeE[1]);                       
+                            }
                             printf("commande : ");
                             int indexcmd= 0;
                             while (cmd[indexcmd]) {
@@ -143,7 +166,7 @@ int main(void) {
                                 }
                             }
                         }
-
+                        
                         indexseq++;
                     }
                 }
