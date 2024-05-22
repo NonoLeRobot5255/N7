@@ -114,16 +114,7 @@ int main(void) {
                             printf("Au revoir ...\n");
                         }
                         else {
-                            if(commande->seq[indexseq-1] && commande->seq[indexseq-1][0]){
-                                close(tubeL[1]);
-                                dup2(tubeL[0], 0);
-                                close(tubeL[0]);                      
-                            }
-                            if(commande->seq[indexseq+1] && commande->seq[indexseq+1][0]){
-                                close(tubeE[0]); 
-                                dup2(tubeE[1], 1);
-                                close(tubeE[1]);                       
-                            }
+                            
                             printf("commande : ");
                             int indexcmd= 0;
                             while (cmd[indexcmd]) {

@@ -10,7 +10,7 @@ M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
 fp = 2000;
-nb_bits = 16;
+nb_bits = 48;
 S = randi([0 1],1,nb_bits);
 SNR = 6;
 L= 8;
@@ -18,14 +18,14 @@ L= 8;
 %% modulateur :
 % Mapping
 
-Ns = Fe * Ts; % Nombre d'échantillons! par bits
+Ns = Fe * Ts; % Nombre d'échantillons par bits
 dk = 1-2*S(1:2:nb_bits) +1i * (1-2*S(2:2:nb_bits));
-At = [kron(dk, [1, zeros(1, Ns-1)])];
+At = [kron(dk, [1, zeros(1, Ns-1+L*Ns)])];
 
 % Filtre
 % Echelle temporelle
 h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
-y = filter(h1, 1, [At zeros(1,2*L)]);
+y = filter(h1, 1, At);
 T1 = ([0:length(y)-1] * Te);
 
 %filtre de réception
@@ -68,7 +68,7 @@ sigma2 = ((Px * Ns)/(2*log2(M)*SNR));
 
 %filtre de récéption
 hr = fliplr(h1);
-z= filter(hr,1,[y zeros(1,L)]);
+z= filter(hr,1,y);
 
 %réponse global
 r = conv(h1,hr);
@@ -76,21 +76,21 @@ figure('Name','réponse impulsionelle globale')
 plot (r)
 
 %instant optimal
-N0=4;
+
 
 %diagramme de l'oeil
 eyediagram(z,2*Ns,2*Ns)
 
 %echantillonage
-xe = z(L+1:Ns:end);
+xe = z(length(h1):Ns:length(h1)+Ns*length(dk));
 xr = [];
 for c=1:size(xe,2)-1
     if (real(xe(c))>0 && imag(xe(c))>0)
-        xr=[xr 1 1];
+        xr=[xr 0 0];
     elseif (real(xe(c))<=0 && imag(xe(c))>0)
         xr =[xr 0 1];
     elseif (real(xe(c))<=0 && imag(xe(c))<=0)
-        xr =[xr 0 0];
+        xr =[xr 1 1];
     else 
         xr =[xr 1 0];
     end
