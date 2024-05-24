@@ -1,0 +1,12 @@
+Copier.c
+Copier.o
+Makefile
+minishell
+minishell.c
+minishell.o
+readcmd.c
+readcmd.h
+readcmd.o
+source.txt
+test_readcmd.c
+test.txt

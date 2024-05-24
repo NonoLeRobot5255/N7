@@ -11,27 +11,29 @@
 
 int pid_fg=0;
 int nbcmd = 0;
-void traitement(int numsign){
-    nbcmd--;
+void traitement(int numsign) {
     int status;
-    int pid = waitpid(-1, &status, WNOHANG);
-    if (WIFEXITED(status)){
-        printf("\nprocessus %d terminé\n", pid);
-        pid_fg = 0;
-    }
-    else if (WIFSIGNALED(status)){
-    }
-    else if (WIFSTOPPED(status)){
-    }
-    else if (WIFCONTINUED(status)){
-    }
-    else{
-        pid_fg = 0;
-        printf("%d done\n", pid_fg);
+    int pid;
+    
+    while ((pid = waitpid(-1, &status, WNOHANG)) > 0) { // on récupère le pid du processus qui s'est terminé
+        nbcmd--;
+        if (WIFEXITED(status)) {
+            printf("\nprocessus %d terminé normalement\n", pid);
+        } else if (WIFSIGNALED(status)) {
+            
+        } else if (WIFSTOPPED(status)) {
+            
+        }
+
+        if (pid == pid_fg) {
+            pid_fg = 0;
+        }
     }
 }
 void traitementc (int numsign){
     if (pid_fg == 0){
+        printf("\nAucun processus en avant plan\n");
+        
     }
     else {
         printf ("\nprocessus %d tué\n", pid_fg);
@@ -43,9 +45,10 @@ void traitementc (int numsign){
 void traitementz (int numsign){
     if (pid_fg == 0){
         printf("\nAucun processus en cours\n");
+        
     }
     else {
-        printf("\nprocessus %d stoppé manuellement\n", pid_fg);
+        printf("\nprocessus %d mis en pause\n", pid_fg);
         kill(pid_fg, SIGSTOP); 
         pid_fg = 0;
     }
@@ -175,6 +178,8 @@ int main(void) {
                                 close(tubeL[1]);
                                 // on execute la commande
                                 execvp(cmd[0],cmd);
+                                // si on arrive ici, c'est qu'il y a eu une erreur on termine le processus
+                                exit(EXIT_FAILURE);
                             }
                             else { // on est dans le père
                                 sigaction(SIGINT, &actionc, NULL);
@@ -189,7 +194,9 @@ int main(void) {
                                     pid_fg = retour;
                                      while (pid_fg != 0)
                                      {
+                                        // on attend la fin du processus et on ne récupère la main que si le processus est terminé
                                         pause();
+                                                                       
                                      }                                 
                                 }
                             }
