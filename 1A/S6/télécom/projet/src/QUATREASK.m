@@ -21,7 +21,13 @@ hr = fliplr(h1);
 
 %% Modulateur
 S = randi([0 1],1,nb_bits);
-x = pammod(S,4,0,'gray');
+S2 = reshape(S',2,nb_bits/2);
+S2E = [1, nb_bits/2];
+Choix = [0 1; 3 2];
+for j=1:size(S2,2)
+    S2E(j) = Choix(S2(1,j)+1,S2(2,j)+1);
+end
+x = pammod(S2E,4,0,'gray');
 At = [kron(x, [1, zeros(1, Ns-1)]) zeros(1,length(h1))];
 
 
@@ -47,7 +53,20 @@ T1 = ([0:length(y)-1] * Te);
     %tracé de la constellation
     
     
-    xr = pamdemod(xe,4,0,'gray');
+    xr_temp = pamdemod(xe,4,0,'gray');
+    xr = [];
+    for j=1:length(S)/2
+    if xr_temp(j)== 0
+        xr = [xr 0 0];
+    elseif xr_temp(j)== 1
+        xr = [xr 0 1];
+    elseif xr_temp(j)== 2
+        xr = [xr 1 1];
+    else
+        xr = [xr 1 0];
+    end
+    
+end
     
     TEB  = mean(S ~= xr)
-
+    

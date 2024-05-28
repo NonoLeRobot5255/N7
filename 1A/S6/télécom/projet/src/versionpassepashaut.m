@@ -14,7 +14,7 @@ Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = [0:6];
 EbN0=10.^(EbN0dB./10);
-L= 6;
+L= 12;
 h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
 hr = fliplr(h1);
 
@@ -46,7 +46,7 @@ for k=1:length(EbN0)
 
     
     %echantillonage et démapping 
-    xe = z(length(h1)+1:Ns:length(z));
+    xe = z(length(h1)+1:Ns:length(z)-1);
 
     %tracé de la constellation
     figure('Name','constellation')
