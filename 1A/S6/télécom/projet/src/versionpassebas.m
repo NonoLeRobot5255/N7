@@ -15,7 +15,7 @@ Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = 100;
 EbN0=10.^(EbN0dB./10);
-L= 4;
+L= 8;
 h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
 hr = fliplr(h1);
 
