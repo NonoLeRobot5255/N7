@@ -15,7 +15,7 @@ Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = 100;
 EbN0=10.^(EbN0dB./10);
-L= 8;
+L= 4;
 h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
 hr = fliplr(h1);
 
@@ -64,3 +64,26 @@ xr(1:2:nb_bits)=real(xe)<0;
 xr(2:2:nb_bits)=imag(xe)<0;
 
 TEB = mean(S ~= xr)
+
+%partie réel 
+figure('Name','partie réel')
+plot(real(z),'LineWidth',3)
+hold on
+stem(1:Ns:Ns*nb_bits/2,real(dk),'rp','LineWidth',3)
+stem(length(h1):Ns:length(z),z(length(h1):Ns:length(z)),'dg','LineWidth',3)
+xlabel('Temps (échantillons)')
+ylabel('Amplitude')
+title('Partie Réelle du Signal après Filtrage')
+legend('Signal Filtré','Symboles Transmis','Symboles Reçus','Location','best')
+
+
+%partie imaginaire 
+figure('Name','partie imaginaire')
+plot(imag(z),'LineWidth',3)
+hold on
+stem(1:Ns:Ns*nb_bits/2,imag(dk),'rp','LineWidth',3)
+stem(length(h1):Ns:length(z),imag(z(length(h1):Ns:length(z))),'dg','LineWidth',3)
+xlabel('Temps (échantillons)')
+ylabel('Amplitude')
+title('Partie Imagi du Signal après Filtrage')
+legend('Signal Filtré','Symboles Transmis','Symboles Reçus','Location','best')

@@ -10,7 +10,7 @@ M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
 fp = 2000;
-nb_bits = 10000 ;
+nb_bits = 10000;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = [0:6];
@@ -51,8 +51,6 @@ for k=1:length(EbN0)
     %filtre de récéption
     z= filter(hr,1,demodule);
     
-    eyediagram(z(length(hr):end),2*Ns,2*Ns)
-    
     %echantillonage et démapping 
     xe = z(length(h1)+1:Ns:length(z));
     
@@ -62,9 +60,45 @@ for k=1:length(EbN0)
     TEB (k) = mean(S ~= xr);
 end
 
+%partie réel 
+figure('Name','partie réel')
+plot(real(z),'LineWidth',3)
+hold on
+stem(1:Ns:Ns*nb_bits/2,real(dk),'rp','LineWidth',3)
+stem(length(h1):Ns:length(z),z(length(h1):Ns:length(z)),'dg','LineWidth',3)
+xlabel('Temps (échantillons)')
+ylabel('Amplitude')
+title('Partie Réelle du Signal après Filtrage')
+legend('Signal Filtré','Symboles Transmis','Symboles Reçus','Location','best')
+
+
+%partie imaginaire 
+figure('Name','partie imaginaire')
+plot(imag(z),'LineWidth',3)
+hold on
+stem(1:Ns:Ns*nb_bits/2,imag(dk),'rp','LineWidth',3)
+stem(length(h1):Ns:length(z),imag(z(length(h1):Ns:length(z))),'dg','LineWidth',3)
+xlabel('Temps (échantillons)')
+ylabel('Amplitude')
+title('Partie Imagi du Signal après Filtrage')
+legend('Signal Filtré','Symboles Transmis','Symboles Reçus','Location','best')
+
+% Tracer la DSP par rapport à l'axe des fréquences
+figure('Name','DSP')
+DSP1 = pwelch(p, [],[],Fe,'twosided');
+axe_frequences = linspace(-Fe/2, Fe/2, length(DSP1));
+nexttile
+semilogy(axe_frequences,fftshift(DSP1))
+xlabel('Fréquence (Hz)');
+ylabel('DSP');
+title('tracé de la DSP par rapport a la fréquence');
+
 figure
 %TEB théorique
 semilogy(EbN0dB,qfunc(sqrt(2*EbN0)),'g')
 hold on
 %TEB simulé
 semilogy(EbN0dB,TEB,'pr')
+xlabel('EB/N0')
+ylabel('TEB')
+legend('TEB théorique','TEB simulé')

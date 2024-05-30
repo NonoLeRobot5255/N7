@@ -10,9 +10,9 @@ M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
 fp = 2000;
-nb_bits = 48;
+nb_bits = 16;
 S = randi([0 1],1,nb_bits);
-SNR = 6;
+SNR = 200;
 L= 8;
 
 %% modulateur :
@@ -38,7 +38,10 @@ plot(real(z),'LineWidth',3)
 hold on
 stem(1:Ns:Ns*nb_bits/2,real(dk),'rp','LineWidth',3)
 stem(length(h1):Ns:length(z),z(length(h1):Ns:length(z)),'dg','LineWidth',3)
-
+xlabel('Temps (échantillons)')
+ylabel('Amplitude')
+title('Partie Réelle du Signal après Filtrage')
+legend('Signal Filtré','Symboles Transmis','Symboles Reçus','Location','best')
 
 %partie imaginaire 
 figure('Name','partie imaginaire')
