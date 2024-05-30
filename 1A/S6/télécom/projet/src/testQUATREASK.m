@@ -5,7 +5,7 @@ Fe = 6000;
 Te = 1/Fe;
 Rb = 3000;
 Tb = 1/Rb;
-n=1;
+n=2;
 M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
@@ -16,10 +16,10 @@ Ns = Fe * 2*Ts; % Nombre d'échantillons par bits
 h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
 hr = fliplr(h1);
 
-SNRdb = [0:6];
-SNR= 10.^(SNRdb./10);
-TEB = zeros(1,length(SNR));
-for i=1:size(SNR,2)
+EbN0dB = [0:6];
+EbN0= 10.^(EbN0dB./10);
+TEB = zeros(1,length(EbN0));
+for i=1:size(EbN0,2)
 
 %% modulateur 3 :
 % Mapping
@@ -43,7 +43,7 @@ y = filter(h1, 1, At);
 
 %bruit 
 Px = mean(abs(y).^2);
-sigma2 = (Px * Ns)/(2*log2(M)*SNR(i));
+sigma2 = (Px * Ns)/(2*log2(M)*EbN0(i));
 bruit = sqrt(sigma2) * randn(1, length(y));
 y = y+bruit;
 
@@ -85,9 +85,9 @@ end
 TEB(i) = mean(S' ~= xr);
 end
 
-TEB_th = (3/2)*qfunc(sqrt((12/15)*SNR))/2;
+TEB_th = (3/2)*qfunc(sqrt((12/15)*EbN0))/2;
 
 figure('name','TEB th')
-semilogy(SNRdb,TEB_th,'g')
+semilogy(EbN0dB,TEB_th,'g')
 hold on
-semilogy(SNRdb,TEB(1,:),'pr')
+semilogy(EbN0dB,TEB(1,:),'pr')
