@@ -9,7 +9,7 @@ n=3;
 M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 9000 ;
+nb_bits = 90000 ;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = [0:6];
@@ -60,6 +60,9 @@ for k=1:length(EbN0)
     nexttile
     plot(real(xe),imag(xe),'linestyle','none','marker','o')
     grid on
+    xlabel('partie réél')
+    ylabel('partie imaginaire')
+    title(['Eb/N0 = ' num2str(EbN0dB(k)) ])
     
     
     xr_temp = pskdemod(xe,8,pi/8,'gray');
@@ -93,3 +96,6 @@ semilogy(EbN0dB,qfunc(sqrt(6*EbN0)*sin(pi/8)),'g')
 hold on
 %TEB simulé
 semilogy(EbN0dB,TEB,'pr')
+xlabel('Eb/N0')
+ylabel('TEB')
+legend('TEB théorique', 'TEB simulé')
