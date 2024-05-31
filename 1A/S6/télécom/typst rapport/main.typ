@@ -153,7 +153,8 @@ On voit ici que les signaux ont une amplitude plus faible que sur la porteuse, c
     ],
   )<spectrecomparé>
 
-  Nous voyons que le QSPK est beaucoup plus performante, nous voyons que les densité spectrale de puissance est plus centrée autour de 0, et que l'éfficacité en puissance est meilleure. Aussi, nous voyon que l'éfficacité spéctrale est semblable pour les deux modulations.
+  Nous voyons que le QSPK est beaucoup plus performante, nous voyons que les densité spectrale de puissance est plus centrée autour de 0, et que l'éfficacité en puissance est meilleure. Aussi, nous voyon que l'éfficacité spéctrale est semblable pour les deux modulations. En effet, pour l'éfficacité spéctrale, nous avons la formule $eta = R_b/B$ sachant que $R_B$ est fixe, et que B est le même aussi, nous avons donc la même éfficacité spéctrale.
+  Pour l'éfficacité en puissance, nous voyons que pour un même $E_b/N_0$, le TEB est meilleur pour QPSK, ce qui fait que l'éfficacité en puissance est meilleure pour QPSK.
 
   = IV : Comparaison du modulateur DVS-S avec un des modulateurs proposés par le DVB-S2
 
@@ -168,7 +169,7 @@ On voit ici que les signaux ont une amplitude plus faible que sur la porteuse, c
     ],
   )<constellation3>
 
-Nous voyons que pour un $E_b/N_0$ élevé, les répartitions du nombre d'occurences nous montre bien les différentes valeurs de la constellation. Alors que pour un $E_b/N_0$ faible, les points sont plus aléatoires, et donc le nombre d'occurences de nos valeurs sont beaucoups plus difficiles à distinguer. Le bruit étant Gaussien, nous voyons que pour le TEB à 0, nous suivons plus une loi normale de notr répartition.
+Nous voyons que pour un $E_b/N_0$ élevé, les répartitions du nombre d'occurences nous montre bien les différentes valeurs de la constellation. Alors que pour un $E_b/N_0$ faible, les points sont plus aléatoires, et donc le nombre d'occurences de nos valeurs sont beaucoups plus difficiles à distinguer.
 
   === Comparaison du TEB simulé avec le TEB théorique
 
@@ -193,7 +194,7 @@ Nous voyons que pour un $E_b/N_0$ élevé, les répartitions du nombre d'occuren
   )<TEBDVBS2bis>
 
 Nous garderons notre courbe avec une petite erreure en gardant en tête que notre cpurbe est décalée de $2/3$.
-  == Comparaison de l'efficacité spectrale et en puissance
+  === Comparaison de l'efficacité spectrale et en puissance
 
   #figure(
     image("Tracé4.3.png", width: 80%),
@@ -214,4 +215,6 @@ Nous garderons notre courbe avec une petite erreure en gardant en tête que notr
 
 === avantages et inconvénients des deux modulations
 
-Nous voyons que 8-PSK a une meilleure éfficacité spéctrale, 
+Nous constatons que le 8-PSK a une meilleure efficacité spectrale : pour une même bande passante, il transmet plus efficacement que le QPSK. Cependant, le QPSK a une meilleure efficacité en puissance : pour un même $E_b/N_0$​, le TEB est meilleur pour le QPSK. Nous pouvons donc dire que le QPSK est plus performant que le 8-PSK en termes de rapport signal sur bruit.
+
+Nous pourrions donc choisir le 8-PSK, qui est un bon compromis si l'on est prêt à tolérer un peu plus de bruit dans les transmissions afin de les rendre plus efficaces en termes de bande passante.
