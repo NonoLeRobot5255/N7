@@ -11,7 +11,7 @@
 
 = Introduction
 
-Ce document est le rapport du projet de télécommunication de première année de l'ENSEEIHT. Nous avions pour objectif construire et comparer différents mappings tel que QSPK,ASK, passes-bas ???
+Ce document est le rapport du projet de télécommunication de première année de l'ENSEEIHT. Nous avions pour objectif construire et comparer différents modulateurs numériques. Nous avons donc construit un modulateur DVB-S, DVB-S2. Nous allons donc dans ce rapport, vous présenter les différentes étapes de construction de ces modulateurs, et les comparer entre eux. Nous avons utiliser dans ce rapport un nombre de bits de 90000, un span de 8 pour le cosinus surélevé, et pour les TEB théorique les formules du cours de télécommunication.
 
 = I : Implantation d’une transmission avec transposition de fréquence
 
@@ -161,3 +161,57 @@ On voit ici que les signaux ont une amplitude plus faible que sur la porteuse, c
 
   === Tracé des constellation  pour différentes valeurs de $E_b$/$N_0$
   
+  #figure(
+    image("Tracé4.1.png", width: 80%),
+    caption: [
+      Constellation pour différents $E_b/N_0$
+    ],
+  )<constellation3>
+
+Nous voyons que pour un $E_b/N_0$ élevé, les répartitions du nombre d'occurences nous montre bien les différentes valeurs de la constellation. Alors que pour un $E_b/N_0$ faible, les points sont plus aléatoires, et donc le nombre d'occurences de nos valeurs sont beaucoups plus difficiles à distinguer. Le bruit étant Gaussien, nous voyons que pour le TEB à 0, nous suivons plus une loi normale de notr répartition.
+
+  === Comparaison du TEB simulé avec le TEB théorique
+
+  #figure(
+    image("Tracé4.2.png", width: 80%),
+    caption: [
+      Comparaison du TEB simulé avec le TEB théorique
+    ],
+  )<TEBDVBS2>
+
+  Nous voyons que la courbe du TEB simulé ne suit pas la courbe du TEB théorique, nous n'avons pas réussi à identifier l'origine du problème. Nous avons quand même réussi à obtenir deux courbes correspdantes en modifiant la valeur du TEB téhorique d'un facteur $3/2$.
+
+  Nous avons pour équation du TEB théorique : $2/3Q(sqrt(6"E"_b/"N"_0))$
+
+  Voici la nouvelle courbe en utilisant un facteur $3/2$ :
+
+  #figure(
+    image("Tracé4.5.png", width: 80%),
+    caption: [
+      Comparaison du TEB simulé avec le TEB théorique
+    ],
+  )<TEBDVBS2bis>
+
+Nous garderons notre courbe avec une petite erreure en gardant en tête que notre cpurbe est décalée de $2/3$.
+  == Comparaison de l'efficacité spectrale et en puissance
+
+  #figure(
+    image("Tracé4.3.png", width: 80%),
+    caption: [
+      Comparaison de l'efficacité spectrale et en puissance
+    ],
+  )<efficacitecomparé2>
+
+  #figure(
+    image("Tracé4.4.png", width: 80%),
+    caption: [
+      Comparaison de l'efficacité spectrale et en puissance
+    ],
+  )<spectrecomparé2>
+
+  Nous voyons que l'éfficacité spéctrale est meilleur pour 8-PSK car nous vons la formule $eta = R_b/B$ sachant que $R_B$ est fixe, seule la bande B peut différencier, hors dans 8PSK, nous avons un ordre de 8, alors que dans QPSK, nous avons un ordre de 4. Nous voyons aussi que l'éfficacité en puissance est meilleur pour QPSK, car nous avons plus de bits par symbole, et donc un meilleur TEB pour un même $E_b/N_0$.
+
+
+=== avantages et inconvénients des deux modulations
+
+Nous voyons que 8-PSK a une meilleure éfficacité spéctrale, 
