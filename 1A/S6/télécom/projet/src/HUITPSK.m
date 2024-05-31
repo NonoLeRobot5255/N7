@@ -18,7 +18,7 @@ L= 8;
 h1 = rcosdesign(0.2,L,Ns); % Reponse impulsionnelle du filtre
 hr = fliplr(h1);
 
-
+figure('Name','constellation')
 for k=1:length(EbN0)
 
     %% modulateur :
@@ -57,7 +57,7 @@ for k=1:length(EbN0)
     xe = z(length(h1):Ns:length(z)-1);
 
     %tracé de la constellation
-    figure('Name','constellation')
+    nexttile
     plot(real(xe),imag(xe),'linestyle','none','marker','o')
     grid on
     

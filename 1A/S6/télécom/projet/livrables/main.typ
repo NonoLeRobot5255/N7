@@ -120,7 +120,7 @@ On voit ici que les signaux ont une amplitude plus faible que sur la porteuse, c
     ],
   )<constellation2>
 
-  Nous voyons que pour un $E_b$/$N_0$ élevé, les répartitions du nombre d'occurences nous montre bien les différentes valeurs de la constellation. Alors que pour un $E_b$/$N_0$ faible, les points sont plus aléatoires, et donc le nombre d'occurences de nos valeurs sont beaucoups plus difficiles à distinguer.
+  Nous voyons que pour un $E_b$/$N_0$ élevé, les répartitions du nombre d'occurences nous montre bien les différentes valeurs de la constellation. Alors que pour un $E_b$/$N_0$ faible, les points sont plus aléatoires, et donc le nombre d'occurences de nos valeurs sont beaucoups plus difficiles à distinguer. Le bruit étant Gaussien, nous voyons que pour le TEB à 0, nous suivons plus une loi normale de notr répartition.
 
   === Comparaison du TEB simulé avec le TEB théorique
 
@@ -134,3 +134,30 @@ On voit ici que les signaux ont une amplitude plus faible que sur la porteuse, c
   Nous voyons que le TEB simulé est proche du TEB théorique, ce qui est une bonne nouvelle, celà signifie que notre chaine de transmission est bien implantée.
 
   Nous avons pour équation du TEB théorique : $3/4Q(sqrt(12/15"E"_b/"N"_0))$
+
+  == Comparaison du modulateur QPSK du DVB-S avec le modulateur 4-ASK
+
+  === Comparaison de l'efficacité spectrale et en puissance
+
+  #figure(
+    image("Tracé3.3.png", width: 80%),
+    caption: [
+      Comparaison de l'efficacité spectrale et en puissance
+    ],
+  )<efficacitecomparé>
+
+  #figure(
+    image("Tracé3.4.png", width: 80%),
+    caption: [
+      Comparaison de l'efficacité spectrale et en puissance
+    ],
+  )<spectrecomparé>
+
+  Nous voyons que le QSPK est beaucoup plus performante, nous voyons que les densité spectrale de puissance est plus centrée autour de 0, et que l'éfficacité en puissance est meilleure. Aussi, nous voyon que l'éfficacité spéctrale est semblable pour les deux modulations.
+
+  = IV : Comparaison du modulateur DVS-S avec un des modulateurs proposés par le DVB-S2
+
+  == Implantation de la modulation DVB-S2
+
+  === Tracé des constellation  pour différentes valeurs de $E_b$/$N_0$
+  

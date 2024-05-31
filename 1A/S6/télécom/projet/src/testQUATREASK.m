@@ -12,7 +12,7 @@ Rs = Rb/log2(M);
 nb_bits = 50000;
 S = randi([0 1],nb_bits,1);
 L= 6;
-Ns = Fe * 2*Ts; % Nombre d'échantillons par bits
+Ns = Fe * Ts; % Nombre d'échantillons par bits
 h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
 hr = fliplr(h1);
 
@@ -88,6 +88,14 @@ for i=1:size(EbN0,2)
     
     TEB(i) = mean(S' ~= xr);
 end
+
+figure('Name','DSP')
+DSP1 = pwelch(y, [],[],Fe,'twosided');
+axe_frequences = linspace(-Fe/2, Fe/2, length(DSP1));
+semilogy(axe_frequences,fftshift(DSP1))
+xlabel('Fréquence (Hz)');
+ylabel('DSP');
+title('tracé de la DSP par rapport a la fréquence');
 
 TEB_th = (3/2)*qfunc(sqrt((12/15)*EbN0))/2;
 

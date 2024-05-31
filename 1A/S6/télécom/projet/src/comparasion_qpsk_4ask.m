@@ -11,7 +11,7 @@ n=2;
 M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 9000 ;
+nb_bits = 90000 ;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = [0:6];
@@ -56,7 +56,7 @@ for k=1:length(EbN0)
     TEB (k) = mean(S ~= xr);
 end
 figure
-semilogy(EbN0dB,TEB,'bp');
+semilogy(EbN0dB,TEB);
 hold on
 
 %4-ASK
@@ -72,7 +72,7 @@ Rs = Rb/log2(M);
 nb_bits = 10000;
 S = randi([0 1],nb_bits,1);
 L= 6;
-Ns = Fe * 2*Ts; % Nombre d'échantillons par bits
+Ns = Fe *Ts; % Nombre d'échantillons par bits
 h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
 hr = fliplr(h1);
 
@@ -137,8 +137,10 @@ end
 
 
 %TEB simulé
-semilogy(EbN0dB,TEB,'rp')
+semilogy(EbN0dB,TEB)
 legend('QPSK','4-ASK')
+xlabel('Eb/N0')
+ylabel('TEB')
 
 figure('Name','DSP')
 DSP1 = pwelch(y, [],[],Fe,'twosided');
