@@ -15,8 +15,8 @@ Ns = Fe * Ts; % Nombre d'échantillons par bits
 EbN0dB = [0:6];
 EbN0=10.^(EbN0dB./10);
 L= 8;
-h1 = rcosdesign(0.2,L,Ns); % Reponse impulsionnelle du filtre
-hr = fliplr(h1);
+h1 = rcosdesign(0.2,L,Ns); % filtre de mise en forme
+hr = fliplr(h1); % filtre de réception
 
 figure('Name','constellation')
 for k=1:length(EbN0)
@@ -35,18 +35,19 @@ for k=1:length(EbN0)
 
     At = [kron(dk, [1, zeros(1, Ns-1)]) zeros(1,length(h1))];
     
-    % Filtre
+    % Filtrage
     % Echelle temporelle
     
     y = filter(h1, 1, At);
+    
     T1 = ([0:length(y)-1] * Te);
    
     %bruit
     Px = mean(abs(y).^2);
     sigma2 = ((Px*Ns)/(2*log2(M)*EbN0(k)));
     
-    recu=y+sqrt(sigma2)*randn(1,length(y));
-    recu = recu  + 1i *sqrt(sigma2)*randn(1,length(y));
+    y_et_bruit_reel = y + sqrt(sigma2)*randn(1,length(y)); % bruit réel
+    recu = y_et_bruit_reel + 1i *sqrt(sigma2)*randn(1,length(y)); % bruit imaginaire
     
     
     %filtre de récéption

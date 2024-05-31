@@ -56,7 +56,7 @@ for k=1:length(EbN0)
     TEB (k) = mean(S ~= xr);
 end
 figure
-% TEB QPSK
+%TEB simulé QPSK
 semilogy(EbN0dB,TEB);
 hold on
 
@@ -104,7 +104,8 @@ y2 = filter(h1, 1, At);
 
 %bruit 
 Px = mean(abs(y2).^2);
-sigma2 = (Px * Ns)/(2*log2(M)*EbN0(i));
+sigma2 = (Px * Ns)/(2*log% Reponse impulsionnelle du filtre
+hr = fliplr(h1);2(M)*EbN0(i));
 bruit = sqrt(sigma2) * randn(1, length(y2));
 recu = y2+bruit;
 
@@ -138,7 +139,7 @@ TEB(i) = mean(S' ~= xr);
 end
 
 
-% TEB 4-ASK
+%TEB simulé 4-ASK
 semilogy(EbN0dB,TEB)
 legend('QPSK','4-ASK')
 xlabel('Eb/N0')

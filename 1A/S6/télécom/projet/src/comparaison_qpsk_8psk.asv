@@ -55,7 +55,6 @@ for k=1:length(EbN0)
     TEB (k) = mean(S ~= xr);
 end
 figure
-% TEB QPSK
 semilogy(EbN0dB,TEB,'bp');
 hold on
 
@@ -105,8 +104,8 @@ for k=1:length(EbN0)
     Px = mean(abs(y2).^2);
     sigma2 = ((Px*Ns)/(2*log2(M)*EbN0(k)));
     
-    y_et_bruit_reel = y2 + sqrt(sigma2)*randn(1,length(y2)); % bruit réel
-    recu = y_et_bruit_reel + 1i *sqrt(sigma2)*randn(1,length(y2)); % bruit imaginaire
+    recu=y2+sqrt(sigma2)*randn(1,length(y2));
+    recu = recu  + 1i *sqrt(sigma2)*randn(1,length(y2));
     
     
     %filtre de récéption
@@ -141,12 +140,11 @@ for k=1:length(EbN0)
     TEB (k) = mean(S ~= xr);
 end
 
-% TEB 8-PSK
+%TEB simulé
 semilogy(EbN0dB,TEB,'rp')
 legend('QPSK','8-PSK')
 
 figure('Name','DSP')
-%DSP QPSK
 DSP1 = pwelch(y, [],[],Fe,'twosided');
 axe_frequences = linspace(-Fe/2, Fe/2, length(DSP1));
 semilogy(axe_frequences,fftshift(DSP1))
@@ -154,7 +152,6 @@ xlabel('Fréquence (Hz)');
 ylabel('DSP');
 title('tracé de la DSP par rapport a la fréquence');
 hold on
-%DSP 8-PSK
 DSP2 = pwelch(y2, [],[],Fe,'twosided');
 axe_frequences = linspace(-Fe/2, Fe/2, length(DSP2));
 semilogy(axe_frequences,fftshift(DSP2))

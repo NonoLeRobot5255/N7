@@ -16,8 +16,8 @@ Ns = Fe * Ts; % Nombre d'échantillons par bits
 EbN0dB = [0:6];
 EbN0=10.^(EbN0dB./10);
 L= 8;
-h1 = rcosdesign(0.35,L,Ns); % Reponse impulsionnelle du filtre
-hr = fliplr(h1);
+h1 = rcosdesign(0.35,L,Ns); % filtre de mise en forme
+hr = fliplr(h1); % filtre de réception
 
 
 for k=1:length(EbN0)
@@ -28,7 +28,7 @@ for k=1:length(EbN0)
     dk = 1-2*S(1:2:nb_bits) +1i * (1-2*S(2:2:nb_bits));
     At = [kron(dk, [1, zeros(1, Ns-1)]) zeros(1,length(h1))];
     
-    % Filtre
+    % Filtrage
     % Echelle temporelle
     
     y = filter(h1, 1, At);
