@@ -1,0 +1,24 @@
+(* BE : Session 1 2019 *)
+(* Implémentation de la fonction somme des premiers entiers par un algorithme ascendant *)
+
+module Somme
+
+  use int.Int
+  use int.ComputerDivision
+  use ref.Refint
+
+  let somme (n: int) : int
+    requires { n>=0 }
+    ensures  { 2*result=(n*(n+1)) }
+  =
+    let i = ref 0 in
+    let r = ref 0 in
+    while  (!i < n) do
+      invariant { 2*(!r) = (!i*(!i+1)) && i<=n }
+      variant   { n-(!i) }
+      i := (!i) + 1;
+      r :=  (!r) + (!i)
+    done;
+    !r
+
+end

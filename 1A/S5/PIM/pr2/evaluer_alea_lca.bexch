@@ -1,0 +1,21 @@
+[GENERATED OBJECT FILE]
+b__evaluer_alea_lca.o
+[PROJECT FILES]
+C:\Users\nolan\Documents\N7\PIM\PR02\pr02.gpr
+20231115110736 083d5ce6a6731b79791dcd35858f926a
+[BOUND OBJECT FILES]
+C:\Users\nolan\Documents\N7\PIM\PR02\alea.o
+C:\Users\nolan\Documents\N7\PIM\PR02\sda_exceptions.o
+C:\Users\nolan\Documents\N7\PIM\PR02\evaluer_alea_lca.o
+[GENERATED SOURCE FILES]
+b__evaluer_alea_lca.ads
+b__evaluer_alea_lca.adb
+b__evaluer_alea_lca.ali
+[RESULTING OPTIONS]
+-LC:\Users\nolan\Documents\N7\PIM\PR02\
+-LC:\Users\nolan\Documents\N7\PIM\PR02\
+-LC:/users/nolan/documents/n7/ada/gnat/lib/gcc/x86_64-w64-mingw32/10.3.1/adalib/
+-static
+-static-libgcc
+C:/users/nolan/documents/n7/ada/gnat/lib/gcc/x86_64-w64-mingw32/10.3.1/adalib/libgnat.a
+-Wl,--stack=0x2000000

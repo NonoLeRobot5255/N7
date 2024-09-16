@@ -1,0 +1,3 @@
+evaluer_alea_lca.adb:4:06: warning: no entities of "SDA_Exceptions" are referenced [-gnatwu]
+evaluer_alea_lca.adb:4:28: warning: use clause for package "SDA_Exceptions" has no effect [-gnatwu]
+evaluer_alea_lca.adb:72:17: warning: use clause for package "Mon_Alea" has no effect [-gnatwu]

@@ -1,0 +1,250 @@
+#!/bin/bash
+# Petit script bash qui test la conformance des fichiers rendus
+#
+# /!\ NE PAS MODIFIER /!\
+
+logfile="checkerror.log"
+err=0
+
+check_fichier () {
+    if [ ! -f "$1" ]; then
+        echo "Je ne trouve pas le fichier $1 ! Vérifiez que vous êtes bien dans le bon répertoire..."
+        echo "Fichier $1 absent" >>$logfile
+        err=1
+        return 1
+    fi
+
+    echo "Vérification de la syntaxe pour $1 :" >>$logfile
+    echo "gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c $1" >>$logfile 
+    gcc -std=c99 -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c "$1" >>$logfile 2>&1
+
+    if [ $? -ne 0 ]; then
+        echo "Je n'arrive pas à compiler le fichier $1... Veuillez corriger les erreurs et recommencer"
+        err=1
+    fi
+}
+
+check_garde () {
+    include="$1"
+    anchor="$2"
+    tmpfile="__tmp_${include}"
+
+    if [ -f "${tmpfile}" ]; then
+        rm "${tmpfile}"
+    fi
+
+    # Ajoute une constante statique
+    sed "/$anchor/a\
+        static const int x = 1;" ${include} > ${tmpfile}
+ 
+    read -r -d '' RESULT <<END_DOC
+#include "${tmpfile}"
+#include "${tmpfile}"
+
+void test() {}
+END_DOC
+
+    echo "" >>$logfile
+    echo "[le header ${include} est correctement gardé]" >>$logfile
+    echo "==code" >>$logfile
+    echo "$code" >>$logfile
+    echo "==endcode" >>$logfile
+    echo "$RESULT" | gcc -c -fsyntax-only -x c - >>$logfile 2>&1
+
+    rm "${tmpfile}"
+
+    if [[ ($neg -eq 0 && $? -ne 0) || ($neg -eq 1 && $? -eq 0) ]]; then
+        echo "Erreur : le header ${include} n'est pas correctement gardé !"
+        err=1
+        return 1
+    fi
+
+    return 0
+}
+
+check () {
+    name=""
+    include=""
+    code=""
+    errmsg=""
+    neg=0
+
+    if [[ $1 == "-n" ]]; then
+        name="$2"
+        include="$3"
+        code="$4"
+        errmsg="$5"
+        neg=1
+    else
+        name="$1"
+        include="$2"
+        code="$3"
+        errmsg="$4"
+    fi
+
+    read -r -d '' RESULT <<END_DOC
+#include "${include}"
+
+void test() {
+${code}
+}
+END_DOC
+
+    echo "" >>$logfile
+    echo "[${name}]" >>$logfile
+    echo "==code" >>$logfile
+    echo "$code" >>$logfile
+    echo "==endcode" >>$logfile
+    echo "$RESULT" | gcc -c -Wall -Wextra -pedantic -Werror -fsyntax-only -x c - >>$logfile 2>&1
+
+    if [[ ($neg -eq 0 && $? -ne 0) || ($neg -eq 1 && $? -eq 0) ]]; then
+        echo "Erreur : ${errmsg}"
+        err=1
+        return 1
+    fi
+
+    return 0
+}
+
+if [ -f $logfile ]; then
+    rm $logfile
+fi
+
+check_fichier "liste_noeud.h"
+check_fichier "liste_noeud.c"
+check_fichier "dijkstra.h"
+check_fichier "dijkstra.c"
+
+if [ $err -ne 0 ]; then
+    echo "Les erreurs des fichiers testés empêchent de poursuivre le test..."
+    echo "Consultez le fichier ${logfile} pour voir les messages d'erreur obtenu"
+    exit -1
+fi
+
+gerr=0
+
+check_garde "liste_noeud.h" "creer_liste();"
+
+check \
+    "Définition de liste_noeud_t" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t; (void) t;" \
+    "Le type liste_noeud_t n'est pas accessible ou n'a pas ce nom (peut être avez-vous oublier de typedef ?)" \
+&& check -n \
+    "liste_noeud_t abstrait" \
+    "liste_noeud.h" \
+    "liste_noeud_t t; (void) t;" \
+    "Le type liste_noeud_t devrait être abstrait" \
+&& check \
+    "creer_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); (void) t;" \
+    "La fonction creer_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "detruire_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); detruire_liste(&t);" \
+    "La fonction detruire_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "est_vide_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); bool a = est_vide_liste(t); (void) a;" \
+    "La fonction est_vide_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "contient_noeud_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); bool a = contient_noeud_liste(t, (noeud_id_t) 0); (void) a;" \
+    "La fonction contient_noeud_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "contient_arrete_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); bool a = contient_arrete_liste(t, (noeud_id_t) 0, (noeud_id_t) 0); (void) a;" \
+    "La fonction contient_arrete_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "distance_noeud_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); float f = distance_noeud_liste(t, (noeud_id_t)0); (void) f;" \
+    "La fonction distance_noeud_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "precedent_noeud_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); noeud_id_t n = precedent_noeud_liste(t, (noeud_id_t) 0); (void) n;" \
+    "La fonction precedent_noeud_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "min_noeud_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); noeud_id_t n = min_noeud_liste(t); (void) n;" \
+    "La fonction min_noeud_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "inserer_noeud_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); inserer_noeud_liste(t, (noeud_id_t) 0, (noeud_id_t) 0, (float) 0.f);" \
+    "La fonction inserer_noeud_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "changer_noeud_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); changer_noeud_liste(t, (noeud_id_t) 0, (noeud_id_t) 0, (float) 0.f);" \
+    "La fonction changer_noeud_liste n'existe pas ou n'a pas la bonne signature" \
+&& check \
+    "supprimer_noeud_liste correcte" \
+    "liste_noeud.h" \
+    "liste_noeud_t* t = creer_liste(); supprimer_noeud_liste(t, (noeud_id_t) 0);" \
+    "La fonction supprimer_noeud_liste n'existe pas ou n'a pas la bonne signature"
+
+check \
+    "est_vide_lsite const-correcte" \
+    "liste_noeud.h" \
+    "const liste_noeud_t* t = creer_liste(); est_vide_liste(t);" \
+    "La fonction est_vide_liste devrait indiquer qu'elle ne modifie pas la liste" \
+&& check \
+    "contient_noeud_liste const-correcte" \
+    "liste_noeud.h" \
+    "const liste_noeud_t* t = creer_liste(); contient_noeud_liste(t, (noeud_id_t) 0);" \
+    "La fonction contient_noeud_liste devrait indiquer qu'elle ne modifie pas la liste" \
+&& check \
+    "contient_arrete_liste const-correcte" \
+    "liste_noeud.h" \
+    "const liste_noeud_t* t = creer_liste(); contient_arrete_liste(t, (noeud_id_t) 0, (noeud_id_t) 0);" \
+    "La fonction contient_arrete_liste devrait indiquer qu'elle ne modifie pas la liste" \
+&& check \
+    "distance_noeud_liste const-correcte" \
+    "liste_noeud.h" \
+    "const liste_noeud_t* t = creer_liste(); distance_noeud_liste(t, (noeud_id_t)0);" \
+    "La fonction distance_noeud_liste devrait indiquer qu'elle ne modifie pas la liste" \
+&& check \
+    "precedent_noeud_liste const-correcte" \
+    "liste_noeud.h" \
+    "const liste_noeud_t* t = creer_liste(); precedent_noeud_liste(t, (noeud_id_t) 0);" \
+    "La fonction precedent_noeud_liste devrait indiquer qu'elle ne modifie pas la liste" \
+&& check \
+    "min_noeud_liste const-correcte" \
+    "liste_noeud.h" \
+    "const liste_noeud_t* t = creer_liste(); min_noeud_liste(t);" \
+    "La fonction min_noeud_liste devrait indiquer qu'elle ne modifie pas la liste" 
+
+if [ $err -ne 0 ]; then
+    echo "Le fichier liste_noeud.h n'est pas conforme"
+    gerr=1
+fi
+
+err=0
+
+check -n \
+    "construire_chemin statique" \
+    "dijkstra.h" \
+    "construire_chemin_vers(NULL, NULL, 0);" \
+    "La fonction construire_chemin ne devrait pas être accessible en dehors du module"
+
+if [ $err -ne 0 ]; then
+    echo "Le fichier dijkstra.h n'est pas conforme"
+    gerr=1
+fi
+
+if [ $gerr -eq 0 ]; then
+    echo "Check ok."
+else
+    exit -2
+fi
+
+
+

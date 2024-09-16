@@ -1,0 +1,44 @@
+Require Import Naturelle.
+Section Session1_2019_Logique_Exercice_2.
+
+Variable A B : Prop.
+
+Theorem Exercice_2_Naturelle : (~A) \/ B -> (~A) \/ (A /\ B).
+Proof.
+I_imp H1.
+
+
+E_ou (A) (~A).
+TE.
+I_imp H2.
+I_ou_d.
+I_et.
+Hyp H2.
+E_ou (~A) B.
+Hyp H1.
+I_imp H3.
+E_antiT.
+E_non (A).
+Hyp H2.
+Hyp H3.
+I_imp H3.
+Hyp H3.
+I_imp H2.
+I_ou_g.
+Hyp H2.
+Qed.
+
+Theorem Exercice_2_Coq : (~A) \/ B -> (~A) \/ (A /\ B).
+Proof.
+intros.
+destruct H as [HA|HB].
+left.
+exact HA.
+right.
+
+
+
+Qed.
+
+End Session1_2019_Logique_Exercice_2.
+

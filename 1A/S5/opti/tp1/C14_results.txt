@@ -1,0 +1,31 @@
+Algorithme de Gauss-Newton
+--------------------------
+residu_C14(beta0, Donnees)
+       4.9877
+       4.4516
+       3.8127
+       3.3918
+       3.1968
+       2.8347
+       2.6741
+
+J_residu_C14(beta0, Donnees)
+     -0.95123       4756.1
+     -0.90484       9048.4
+     -0.81873        16375
+     -0.74082        22225
+     -0.67032        26813
+     -0.60653        30327
+     -0.53259        33553
+
+--------------------------------------------------------------------------------------------
+     nb_iter         A0        lambda    ||f'(beta)||     f(beta)    ||delta||     exitflag 
+--------------------------------------------------------------------------------------------
+            0           10       0.0001   4.6322e+05        48.07
+
+{Error: <a href="matlab: opentoline('/home/nmn8258/Annee_1/opti/tp1/Algo_Gauss_Newton.m',55,14)">File: Algo_Gauss_Newton.m Line: 55 Column: 14</a>
+Invalid expression. Check for missing or extra characters.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('Modelisation_C14', '/home/nmn8258/Annee_1/opti/tp1/Modelisation_C14.m', 150)" style="font-weight:bold">Modelisation_C14</a> (<a href="matlab: opentoline('/home/nmn8258/Annee_1/opti/tp1/Modelisation_C14.m',150,0)">line 150</a>)
+	Algo_Gauss_Newton(@(beta) residu_C14(beta, Donnees), ...
+} 

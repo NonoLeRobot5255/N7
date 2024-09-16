@@ -1,0 +1,10 @@
+% fonction estim_param_MC (pour exercice_1.m)
+
+function parametres = estim_param_MC(d,x,y)
+A_j = zeros(size(x,1),d);
+for j=1:d
+    A_j(:,1) = vecteur_bernstein(d,x,k);
+end
+B_j = y-y(1).*(1-x)
+    
+end

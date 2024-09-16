@@ -1,0 +1,4 @@
+puissance.adb:51:34: warning: formal parameter "Nombre" is not referenced [-gnatwu]
+puissance.adb:51:53: warning: formal parameter "Exposant" is not referenced [-gnatwu]
+puissance.adb:82:34: warning: formal parameter "Nombre" is not referenced [-gnatwu]
+puissance.adb:82:53: warning: formal parameter "Exposant" is not referenced [-gnatwu]

@@ -1,0 +1,55 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%               TP2 de Traitement Numérique du Signal
+%                   SCIENCES DU NUMERIQUE 1A
+%                       Fevrier 2024 
+%                        Nolann MARTIN
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clear all
+close all
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%PARAMETRES GENERAUX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A=1;        %amplitude du cosinus
+f1=1000;    %fr�quence du cosinus en Hz
+f2 = 3000;
+T0=1/f1;       %p�riode du cosinus en secondes
+N=100;        %nombre d'�chantillons souhait�s pour le cosinus
+Fe=10000;     %fr�quence d'�chantillonnage en Hz
+Te = 1/Fe;    %p�riode d'�chantillonnage en secondes
+
+t = linspace(0,(N-1)*Te,N);
+
+
+x=A*(cos(2*pi*f1*t)+cos(2*pi*f2*t));
+
+figure
+plot(x);
+grid
+xlabel('Temps (s)')
+ylabel('signal')
+
+X = fft(x,1024);
+h1 = 2*(f1/Fe)*sinc(2*f1*[-5*Te:Te:5*Te]);
+h2 = 2*(f1/Fe)*sinc(2*f1*[-30*Te:Te:30*Te]);
+
+figure('name',['Tracé du module de la TFD d''un cosinus numérique de fréquence ' num2str(f1) 'Hz'])
+
+subplot(2,1,1)
+echelle_frequentielle=linspace(0,Fe,length(X));
+semilogy(echelle_frequentielle,X);
+grid
+title('Avec zerro padding')
+xlabel('Fréquence (Hz)')
+ylabel('|TFD|')
+
+
+y1 = filter(h1,1,x);
+y2 = filter(h2,1,x);
+
+Y1 = fft(y1,1024);
+Y2 = fft(y2,1024);
+
+
+

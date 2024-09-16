@@ -1,0 +1,2 @@
+#!/bin/sh
+ps -fu | grep -v grep | grep sleep| grep 1000 > .tempres

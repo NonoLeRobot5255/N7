@@ -1,0 +1,14 @@
+project Exo_2 is
+
+   for Languages use ("Ada");
+   for Source_Dirs use ("src_ada");
+   for Object_Dir use "obj";
+
+   package Make is
+      for Makefile use "Makefile";
+   end Make;
+
+   for Main use ("exo_2.adb") & project'Main;
+
+end Exo_2;
+

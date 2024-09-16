@@ -1,0 +1,16 @@
+Voici quelques exemples de graphes (fichiers .net).
+
+sujet : 6 nœuds
+    l'exemple du sujet
+
+worm : 279 nœuds
+    le réseau des synapses d'un ver de terre (279 nœuds).
+    Voir https://www.quantware.ups-tlse.fr/QWLIB/wormgooglematrix/
+
+brainlinks : 10000 nœuds
+    le réseau des connections neuronales du cerveau humain.
+    Voir dataset 6 sur https://www.quantware.ups-tlse.fr/FETNADINE/datasets.htm
+
+linux26 : 285510 nœuds
+    le graphe des appels des sous-programmes du noyau Linux
+

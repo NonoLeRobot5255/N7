@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="5">
+<prover id="0" name="Alt-Ergo" version="2.0.0" timelimit="5" steplimit="0" memlimit="1000"/>
+<file proved="true">
+<path name=".."/>
+<path name="why3-exercice-4.mlw"/>
+<theory name="Somme">
+ <goal name="VC somme" expl="VC for somme">
+ <transf name="split_vc" >
+  <goal name="VC somme.0" expl="loop invariant init">
+  <proof prover="0"><result status="valid" time="0.00" steps="1"/></proof>
+  </goal>
+  <goal name="VC somme.1" expl="loop variant decrease">
+  <proof prover="0"><result status="unknown" time="0.05"/></proof>
+  </goal>
+  <goal name="VC somme.2" expl="loop invariant preservation">
+  <proof prover="0"><result status="valid" time="0.00" steps="4"/></proof>
+  </goal>
+  <goal name="VC somme.3" expl="postcondition">
+  <proof prover="0"><result status="valid" time="0.00" steps="2"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>

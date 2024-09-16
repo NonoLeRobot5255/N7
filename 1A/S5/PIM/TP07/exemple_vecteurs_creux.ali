@@ -1,0 +1,84 @@
+V "GNAT Lib v2021"
+M P W=b
+A -gnatA
+A -gnatwa
+A -gnata
+A -g
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_FLOATING_POINT
+RV NO_IO
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U exemple_vecteurs_creux%b  exemple_vecteurs_creux.adb  beec75e1 NE OO SU
+W ada%s			ada.ads			ada.ali
+W ada.float_text_io%s	a-flteio.ads		a-flteio.ali
+Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W vecteurs_creux%s	vecteurs_creux.adb	vecteurs_creux.ali
+
+D ada.ads		20210520051130 76789da1 ada%s
+D a-except.ads		20210520051127 946f3014 ada.exceptions%s
+D a-flteio.ads		20210520051127 e18a47a0 ada.float_text_io%s
+D a-ioexce.ads		20210520051127 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20210520051128 119b8fb3 ada.streams%s
+D a-string.ads		20210520051128 90ac6797 ada.strings%s
+D a-sttebu.ads		20210520051128 18209c64 ada.strings.text_buffers%s
+D a-stuten.ads		20210520051128 808c40ad ada.strings.utf_encoding%s
+D a-tags.ads		20210520051129 9eaa38c6 ada.tags%s
+D a-textio.ads		20210520051129 aef4d56d ada.text_io%s
+D a-tiflio.ads		20210520051129 fcca4daa ada.text_io.float_io%s
+D a-unccon.ads		20210520051129 0e9b276f ada.unchecked_conversion%s
+D exemple_vecteurs_creux.adb  20231108103541 1cd286e6 exemple_vecteurs_creux%b
+D interfac.ads		20210520051131 edec285f interfaces%s
+D i-cstrea.ads		20210520051131 e53d8b8e interfaces.c_streams%s
+D system.ads		20210520051134 a2da961d system%s
+D s-crtl.ads		20210520051131 0ebbdb71 system.crtl%s
+D s-exctab.ads		20210520051131 54135002 system.exception_table%s
+D s-ficobl.ads		20210520051131 078245e4 system.file_control_block%s
+D s-parame.ads		20210520051133 4752c4cb system.parameters%s
+D s-putima.ads		20210520051133 4e095881 system.put_images%s
+D s-secsta.ads		20210520051133 9b3ab94b system.secondary_stack%s
+D s-soflin.ads		20210520051133 a7318a92 system.soft_links%s
+D s-stache.ads		20210520051133 a37c21ec system.stack_checking%s
+D s-stalib.ads		20210520051133 472fbca8 system.standard_library%s
+D s-stoele.ads		20210520051133 2dc34a04 system.storage_elements%s
+D s-stoele.adb		20210520051133 ed88f8fb system.storage_elements%b
+D s-traent.ads		20210520051133 26a8d361 system.traceback_entries%s
+D s-unstyp.ads		20210520051133 2b077493 system.unsigned_types%s
+D s-wchcon.ads		20210520051134 1b7d22d2 system.wch_con%s
+D unchconv.ads		20210520051134 ca2f9e18 unchecked_conversion%s
+D vecteurs_creux.ads	20231108112119 ed4061ca vecteurs_creux%s
+G a e
+G c Z b b [exemple_vecteurs_creux standard 6 11 none]
+G r c none [exemple_vecteurs_creux standard 6 11 none] [initialiser vecteurs_creux 12 19 none]
+G r c none [exemple_vecteurs_creux standard 6 11 none] [modifier vecteurs_creux 35 19 none]
+G r c none [exemple_vecteurs_creux standard 6 11 none] [afficher vecteurs_creux 64 19 none]
+G r c none [exemple_vecteurs_creux standard 6 11 none] [est_nul vecteurs_creux 21 18 none]
+G r c none [exemple_vecteurs_creux standard 6 11 none] [detruire vecteurs_creux 17 19 none]
+X 1 ada.ads
+16K9*Ada 20e8 13|1r6 1r29 2r6 2r29
+X 3 a-flteio.ads
+20K13*Float_Text_IO[11|46] 13|2w10 2r33
+X 10 a-textio.ads
+58K13*Text_IO 725e16 13|1w10 1r33
+262U14*New_Line 13|15s5 18s9 22s5
+463U14*Put 13|17s9
+506U14*Put_Line 13|11s9 23s9
+X 13 exemple_vecteurs_creux.adb
+6U11*Exemple_Vecteurs_Creux 6b11 24l5 24t27
+8p9 V{32|8P14} 12m17 12r17 13m14 13r14 14r14 16r15 20m14 20r14 21r14
+9f9 Epsilon{float}
+X 32 vecteurs_creux.ads
+6K9*Vecteurs_Creux 13|3w6 3r29 32|93e19
+8P14*T_Vecteur_Creux 13|8r13
+12U19*Initialiser 13|12s5
+17U19*Detruire 13|20s5
+21V18*Est_Nul{boolean} 13|16s7
+35U19*Modifier 13|13s5
+64U19*Afficher 13|14s5 21s5
+

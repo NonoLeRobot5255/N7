@@ -1,0 +1,19 @@
+[GENERATED OBJECT FILE]
+b__specifier_et_tester.o
+[PROJECT FILES]
+/home/nmn8258/Annee_1/TP02/tp2.gpr
+20230927065206 d7e7ce9ac633a7ba4702e3b26c62a20a
+[BOUND OBJECT FILES]
+/home/nmn8258/Annee_1/TP02/specifier_et_tester.o
+[GENERATED SOURCE FILES]
+b__specifier_et_tester.ads
+b__specifier_et_tester.adb
+b__specifier_et_tester.ali
+[RESULTING OPTIONS]
+-L/home/nmn8258/Annee_1/TP02/
+-L/home/nmn8258/Annee_1/TP02/
+-L/mnt/n7fs/ens/tp_cregut/GNAT/2021/lib/gcc/x86_64-pc-linux-gnu/10.3.1/adalib/
+-static
+-static-libgcc
+/mnt/n7fs/ens/tp_cregut/GNAT/2021/lib/gcc/x86_64-pc-linux-gnu/10.3.1/adalib/libgnat.a
+-ldl

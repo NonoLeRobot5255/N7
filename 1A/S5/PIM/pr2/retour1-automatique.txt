@@ -1,0 +1,121 @@
+% Validation de pr2
+% 2023-11-21 10:07:42.455859
+
+
+################################################################################
+# Modification des fichiers fournis
+################################################################################
+
+
+================================================================================
+## Fichiers qui NE devaient PAS être modifiés
+================================================================================
+
+* Fichier alea.adb non modifié... ok
+* Fichier alea.ads non modifié... ok
+* Fichier exemple_alea.adb non modifié... ok
+* Fichier exemple_unbounded_string.adb non modifié... ok
+* Fichier sda_exceptions.ads non modifié... ok
+* Fichier test_lca.adb non modifié... ok
+
+================================================================================
+## Fichiers qui DEVAIENT être modifiés
+================================================================================
+
+* Fichier lca_sujet.adb modifié... ok
+* Fichier lca.ads modifié... ok
+* Fichier lca.adb modifié... ok
+
+
+################################################################################
+# Nettoyer
+################################################################################
+
+* Running gnatclean... ok
+
+
+################################################################################
+# Exercice 1
+################################################################################
+
+
+================================================================================
+## Modifications de lca.ads
+================================================================================
+
+* Comparaison de lca.ads et fournis/lca.ads... différents
+
+   |         type T_Cellule;                                                                   |          -- TODO : a completer
+   |                                                                                           <
+   |         type T_LCA is access T_Cellule;                                                   <
+   |                                                                                           <
+   |         type T_Cellule is record                                                          <
+   |          Cle : T_Cle;                                                                     <
+   |          Valeur : T_Valeur;                                                               <
+   |                 Suivant : T_LCA;                                                          <
+   |                 end record;                                                               <
+   |                                                                                           <
+
+
+================================================================================
+## Exécution de lca_sujet.adb
+================================================================================
+
+* Compilation de lca_sujet.adb... ok
+* ./lca_sujet... ok
+* valgrind ./lca_sujet... ERREUR
+
+  ! ==1440670== Memcheck, a memory error detector
+  ! ==1440670== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+  ! ==1440670== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+  ! ==1440670== Command: ./lca_sujet
+  ! ==1440670== 
+  ! ==1440670== 
+  ! ==1440670== HEAP SUMMARY:
+  ! ==1440670==     in use at exit: 160 bytes in 4 blocks
+  ! ==1440670==   total heap usage: 4 allocs, 0 frees, 160 bytes allocated
+  ! ==1440670== 
+  ! ==1440670== 160 (48 direct, 112 indirect) bytes in 1 blocks are definitely lost in loss record 4 of 4
+  ! ==1440670==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+  ! ==1440670==    by 0x4AE803E: __gnat_malloc (in /usr/lib/x86_64-linux-gnu/libgnat-10.so)
+  ! ==1440670==    by 0x4B1555C: system__pool_global__allocate (in /usr/lib/x86_64-linux-gnu/libgnat-10.so)
+  ! ==1440670==    by 0x4B251E6: system__storage_pools__subpools__allocate_any_controlled (in /usr/lib/x86_64-linux-gnu/libgnat-10.so)
+  ! ==1440670==    by 0x10C589: lca_sujet__lca1__enregistrer__P96b.10 (lca.adb:81)
+  ! ==1440670==    by 0x10C3B8: lca_sujet__lca1__enregistrer.6 (lca.adb:71)
+  ! ==1440670==    by 0x10BD8D: _ada_lca_sujet (lca_sujet.adb:16)
+  ! ==1440670==    by 0x10BAEC: main (b~lca_sujet.adb:288)
+  ! ==1440670== 
+  ! ==1440670== LEAK SUMMARY:
+  ! ==1440670==    definitely lost: 48 bytes in 1 blocks
+  ! ==1440670==    indirectly lost: 112 bytes in 3 blocks
+  ! ==1440670==      possibly lost: 0 bytes in 0 blocks
+  ! ==1440670==    still reachable: 0 bytes in 0 blocks
+  ! ==1440670==         suppressed: 0 bytes in 0 blocks
+  ! ==1440670== 
+  ! ==1440670== For lists of detected and suppressed errors, rerun with: -s
+  ! ==1440670== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+
+================================================================================
+## Exécution de test_lca.adb
+================================================================================
+
+* Compilation de test_lca.adb... ok
+
+  | test_lca.adb:274:17: warning: variable "Inutile" is assigned but never read
+  | test_lca.adb:297:35: warning: formal parameter "Cle" is not referenced
+
+* ./test_lca... ERREUR
+
+  ! raised CONSTRAINT_ERROR : lca.adb:121 access check failed
+
+* Exécution avec valgrind... NON LANCÉE (car erreur sans valgrind)... 
+
+
+################################################################################
+# Nettoyer
+################################################################################
+
+* Running gnatclean... ok
+
+<!-- vi: set ts=8: -->

@@ -1,0 +1,20 @@
+[GENERATED OBJECT FILE]
+b__exemple_vecteurs_creux.o
+[PROJECT FILES]
+/home/nmn8258/Annee_1/PIM/TP07/tp07.gpr
+20221012130020 d4017ac69f4a12de83b3fadba23755ea
+[BOUND OBJECT FILES]
+/home/nmn8258/Annee_1/PIM/TP07/vecteurs_creux.o
+/home/nmn8258/Annee_1/PIM/TP07/exemple_vecteurs_creux.o
+[GENERATED SOURCE FILES]
+b__exemple_vecteurs_creux.ads
+b__exemple_vecteurs_creux.adb
+b__exemple_vecteurs_creux.ali
+[RESULTING OPTIONS]
+-L/home/nmn8258/Annee_1/PIM/TP07/
+-L/home/nmn8258/Annee_1/PIM/TP07/
+-L/mnt/n7fs/ens/tp_cregut/GNAT/2021/lib/gcc/x86_64-pc-linux-gnu/10.3.1/adalib/
+-static
+-static-libgcc
+/mnt/n7fs/ens/tp_cregut/GNAT/2021/lib/gcc/x86_64-pc-linux-gnu/10.3.1/adalib/libgnat.a
+-ldl

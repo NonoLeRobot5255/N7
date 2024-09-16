@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE why3session PUBLIC "-//Why3//proof session v5//EN"
+"http://why3.lri.fr/why3session.dtd">
+<why3session shape_version="5">
+<prover id="0" name="Coq" version="8.11.0" timelimit="0" steplimit="0" memlimit="0"/>
+<prover id="1" name="Alt-Ergo" version="2.0.0" timelimit="5" steplimit="0" memlimit="1000"/>
+<file>
+<path name=".."/>
+<path name="why3_exercice_4.mlw"/>
+<theory name="FibonacciAscendant">
+ <goal name="VC fibonacci_ascendant" expl="VC for fibonacci_ascendant">
+ <transf name="split_vc" >
+  <goal name="VC fibonacci_ascendant.0" expl="loop invariant init">
+  <proof prover="0" edited="why3_exercice_4_FibonacciAscendant_VC_fibonacci_ascendant_1.v"><undone/></proof>
+  <proof prover="1"><result status="unknown" time="0.02"/></proof>
+  </goal>
+  <goal name="VC fibonacci_ascendant.1" expl="loop variant decrease" proved="true">
+  <proof prover="1"><result status="valid" time="0.00" steps="7"/></proof>
+  </goal>
+  <goal name="VC fibonacci_ascendant.2" expl="loop invariant preservation" proved="true">
+  <proof prover="1"><result status="valid" time="0.00" steps="7"/></proof>
+  </goal>
+  <goal name="VC fibonacci_ascendant.3" expl="postcondition">
+  <proof prover="1"><result status="unknown" time="0.01"/></proof>
+  </goal>
+ </transf>
+ </goal>
+</theory>
+</file>
+</why3session>

@@ -1,0 +1,3 @@
+exemple_vecteurs_creux.adb:2:09: warning: no entities of "Ada.Float_Text_IO" are referenced [-gnatwu]
+exemple_vecteurs_creux.adb:2:25: warning: use clause for package "Float_Text_IO" has no effect [-gnatwu]
+exemple_vecteurs_creux.adb:9:09: warning: constant "Epsilon" is not referenced [-gnatwu]

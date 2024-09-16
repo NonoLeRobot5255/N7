@@ -1,0 +1,2 @@
+test_lca.adb:274:09: warning: variable "Inutile" is assigned but never read [-gnatwm]
+test_lca.adb:297:27: warning: formal parameter "Cle" is not referenced [-gnatwu]

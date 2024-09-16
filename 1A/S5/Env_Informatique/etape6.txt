@@ -1,0 +1,8 @@
+find Projets_C/ -name "*.c" Projets_C/ -name "*.c" -print | wc -w
+135
+find Projets_C -type d -print | wc -w
+41
+find Projets_C/ -name "*.c" -print -exec grep printf {} \; |wc -w
+
+find Projets_C/ -name "*.c"-print  -exec sed"s/printf/afficher/g" {} \;
+

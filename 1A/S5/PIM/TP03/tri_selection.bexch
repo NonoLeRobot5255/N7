@@ -1,0 +1,19 @@
+[GENERATED OBJECT FILE]
+b__tri_selection.o
+[PROJECT FILES]
+/home/nmn8258/Annee_1/PIM/TP03/tp3.gpr
+20220929085026 c758abd66b080603f69f7cf499fc350f
+[BOUND OBJECT FILES]
+/home/nmn8258/Annee_1/PIM/TP03/tri_selection.o
+[GENERATED SOURCE FILES]
+b__tri_selection.ads
+b__tri_selection.adb
+b__tri_selection.ali
+[RESULTING OPTIONS]
+-L/home/nmn8258/Annee_1/PIM/TP03/
+-L/home/nmn8258/Annee_1/PIM/TP03/
+-L/mnt/n7fs/ens/tp_cregut/GNAT/2021/lib/gcc/x86_64-pc-linux-gnu/10.3.1/adalib/
+-static
+-static-libgcc
+/mnt/n7fs/ens/tp_cregut/GNAT/2021/lib/gcc/x86_64-pc-linux-gnu/10.3.1/adalib/libgnat.a
+-ldl

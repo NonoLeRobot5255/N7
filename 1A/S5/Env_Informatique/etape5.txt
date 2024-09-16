@@ -1,0 +1,8 @@
+ls Projets_C/ | wc -w
+7
+ls Projets_C/* | wc -w
+73
+ls Projets_C/*/* | wc -w
+168
+cat Projets_C/*/*/*.c | wc -l
+714

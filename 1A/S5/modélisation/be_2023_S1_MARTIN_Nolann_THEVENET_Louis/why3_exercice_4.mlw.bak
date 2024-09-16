@@ -1,0 +1,66 @@
+(* Spécification de la fonction de fibonacci *)
+
+theory Fibonacci
+
+   use int.Int
+
+   function fibonacci(n : int) : int
+
+   axiom fibonacci_zero : fibonacci(0) = 0
+
+   axiom fibonacci_un : fibonacci(1)=1
+
+   axiom fibonacci_suite : forall n:int. fibonacci(n+2)=fibonacci(n)+fibonacci(n+1)
+
+end
+
+(* Implémentation de la fonction factorielle par un algorithme ascendant *)
+
+module FibonacciAscendant
+
+  use int.Int
+  use ref.Refint
+  use Fibonacci
+
+  let fibonacci_ascendant (n: int) : int
+    requires { 0 <= n }
+    ensures  { (fibonacci n) = result }
+  =
+    let i = ref 0 in
+    let p = ref 0 in
+    let c = ref 0 in
+    let s = ref 1 in
+    while  (!i < n) do
+      invariant { (!c) = fibonacci(!i) /\ (!s) = fibonacci((!i)+1) /\ (!i)>=(n) }
+      variant   { n-(!i) }
+      p := (!c);
+      c := (!s);
+      s := (!c) + (!p);
+      i := (!i) + 1
+    done;
+    !c
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,37 @@
+/**
+ * @mainpage `dijkstra` &ndash; Algorithme du plus court chemin
+ *
+ * Cette documentation présente en détail les différents modules composant le projet `dijkstra`.
+ *
+ * **Il n'est absolument pas nécessaire de se plonger dans le détail du fonctionnement des modules pour
+ * aborder le projet.** C'est même _très peu recommandé_, car il y a beaucoup de choses très
+ * avancées.
+ * 
+ * La page qui vous intéresse le plus est vraisemblablement la page @ref graphe.h, qui documente le module
+ * graphe.
+ *
+ * <br>
+ *
+ * ## Informations de licence
+ *
+ * Les fichiers de ce projet sont distribués sous la licence GNU General Public License (GPL)
+ * version 3.0.
+ *
+ * Cette licence stipule que les sources fournies sont libres : elles peuvent
+ * êtres redistribuées (modifiées ou non), à condition qu'elles le soient *sous la même licence*,
+ * ou une version ultérieure de cette même licence (au choix).
+ *
+ * Ces sources sont distribuées avec l'espoir d'être utiles mais _sans aucune garantie_; et notamment,
+ * aucune garantie implicite pour des fins _commerciale_ ou pour une _quelconque utilisation spécifique_.
+ * 
+ * Chaque fichier est estampillé de ce même texte de licence (en anglais), et les détails de la licence
+ * peuvent être trouvés ici: https://www.gnu.org/licenses/
+ *
+ * <br>
+ *
+ * `dijkstra` - Copyright (c) 2024 Guillaume Dupont
+ *
+ * Contact: <guillaume.dupont@toulouse-inp.fr>
+ */
+
+

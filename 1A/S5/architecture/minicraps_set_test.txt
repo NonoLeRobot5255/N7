@@ -1,0 +1,54 @@
+// module minicraps(rst, clk, on, bregin[3..0], adin[7..0] : 
+//	abus[31..0], bbus[31..0], rambus[31..0], dbus[31..0], pc[31..0], ir[31..0], flags[3..0], etats[4..0])
+  
+// avec le prgramme :
+//    "00000000" : "0xC2123456"		// set 0x123456, %r2
+//    "00000001" : "0xC3FFFFFF"		// ser -1, %r3
+
+// Initialisations
+set rst 1
+set clk 0
+set rst 0
+set bregin[3..0] 0000
+set adin[7..0] 00000000
+
+// Vérification départ
+check etats[4..1] 1000
+check pc[31..0] 00000000000000000000000000000000
+
+// Instruction set 0x123456, %r2 : 3 cycles
+set on 1
+set clk 1
+set clk 0
+set clk 1
+set clk 0
+set clk 1
+set clk 0
+
+// Vérification des états et du PC
+check etats[4..1] 1000
+check pc[31..0] 00000000000000000000000000000001
+
+// Vérification du résultat
+set on 0
+set bregin[3..0] 0010
+check bbus[31..0] 00000000000100100011010001010110
+
+// Instruction ser -1, %r3 : 3 cycles
+set on 1
+set clk 1
+set clk 0
+set clk 1
+set clk 0
+set clk 1
+set clk 0
+
+// Vérification des états et du PC
+check etats[4..1] 1000
+check pc[31..0] 00000000000000000000000000000010
+
+// Vérification du résultat
+set on 0
+set bregin[3..0] 0011
+check bbus[31..0] 11111111111111111111111111111111
+
