@@ -11,7 +11,7 @@ n=2;
 M = 2^n;
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 9000 ;
+nb_bits = 90000 ;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = [0:6];
@@ -56,7 +56,7 @@ for k=1:length(EbN0)
 end
 figure
 % TEB QPSK
-semilogy(EbN0dB,TEB,'bp');
+semilogy(EbN0dB,TEB);
 hold on
 
 % 8-PSK
@@ -142,8 +142,10 @@ for k=1:length(EbN0)
 end
 
 % TEB 8-PSK
-semilogy(EbN0dB,TEB,'rp')
+semilogy(EbN0dB,TEB)
 legend('QPSK','8-PSK')
+xlabel('Eb/N0')
+ylabel('TEB')
 
 figure('Name','DSP')
 %DSP QPSK
