@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  router1:
+    image: frrouting/frr
+    container_name: router1
+    privileged: true
+    networks:
+      net1:
+        ipv4_address: 10.0.0.2
+
+  router2:
+    image: frrouting/frr
+    container_name: router2
+    privileged: true
+    networks:
+      net1:
+        ipv4_address: 10.0.0.3
+
+
+networks:
+  net1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/26
+  net2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.64/26
+
