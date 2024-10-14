@@ -36,7 +36,7 @@ For the Russia, it's important to keep the immigration open but to filter it to 
 
 + *Special Programs for Russian-Speaking Immigrants: * The Russia think that if we took natives Russian speakers, we will have easy communication and they will acomodate fast to their new lives 
 
-+ *renforce border securtiy:* If we pay attention to the border, we can be sure about what is entering in the country and we will now exactly what is happening and we can do a great job so to protect the country.
++ *renforce border securtiy:* If we pay attention to the border, we can be sure about what is entering in the country and we will know exactly what is happening and we can do a great job so to protect the country.
 
 #pagebreak()
 = Bibliography : 
