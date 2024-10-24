@@ -19,7 +19,7 @@
 #include <manux/kmalloc.h>  // NULL
 #include <manux/string.h>   // memcpy
 #include <manux/atomique.h> // exclusions mutuelles
-#include <stdbool.h>        // bool type
+#include <manux/stdbool.h>  // bool type
 
 MethodesFichier tubeMethodesFichier;
 
