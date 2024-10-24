@@ -19,7 +19,7 @@
 #include <manux/kmalloc.h>  // NULL
 #include <manux/string.h>   // memcpy
 #include <manux/atomique.h> // exclusions mutuelles
-#include <manux/stdbool.h>  // bool type
+#include <manux/stdlib.h>   // bool type
 
 MethodesFichier tubeMethodesFichier;
 
@@ -88,6 +88,10 @@ int tubeFermer(Fichier *f)
    return ESUCCES;
 }
 
+booleen tubePlein(Tube *t)
+{
+   return t->taille == MANUX_TUBE_CAPACITE && t->nbLecteurs == 0;
+}
 /**
  * @brief Écriture dans un fichier
  */
@@ -105,6 +109,10 @@ size_t tubeEcrire(Fichier *f, void *buffer, size_t nbOctets)
    }
 
    tube = f->iNoeud->prive;
+   while (tubePlein(tube))
+   {
+   }
+   printk("le tube est de taille %d\n", tube->taille);
    exclusionMutuelleEntrer(&(tube->verrou));
 
    // On fait une boucle, car il est possible que l'on doive écrire en
@@ -112,6 +120,7 @@ size_t tubeEcrire(Fichier *f, void *buffer, size_t nbOctets)
    // données.
    do
    {
+
       // On n'écrit ni plus que ce qui est demandé, ni plus que ce
       // qu'on peut
       n = MIN(nbOctets - nbOctetsEcrits, MANUX_TUBE_CAPACITE - tube->taille);
@@ -136,7 +145,7 @@ size_t tubeEcrire(Fichier *f, void *buffer, size_t nbOctets)
    return nbOctetsEcrits;
 }
 
-bool tubeVide(Tube *t)
+booleen tubeVide(Tube *t)
 {
    return t->taille == 0 && t->nbEcrivains == 0;
 }
@@ -158,6 +167,11 @@ size_t tubeLire(Fichier *f, void *buffer, size_t nbOctets)
    }
 
    tube = f->iNoeud->prive;
+   while (tubeVide(tube))
+   {
+   }
+
+   printk("le tube est de taille %d\n", tube->taille);
    exclusionMutuelleEntrer(&(tube->verrou));
 
    do

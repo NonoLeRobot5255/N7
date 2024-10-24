@@ -19,7 +19,7 @@
  * @brief Nombres de lecteurs et écrivains
  */
 #define NB_LECTEURS 2
-#define NB_ECRIVAINS 2
+#define NB_ECRIVAINS 1
 
 int fd[2]; // Le tube
 
@@ -53,7 +53,7 @@ void ecrivain()
 {
    int r, c = 0;
 
-   char *b = "Bonjour !"; /*le message dans le buffer qu'on passe dans le pipe*/
+   char *b = "Bonjour les jeunes ! "; /*le message dans le buffer qu'on passe dans le pipe*/
 
    printf("[%d] Je suis un ecrivain !\n", identifiantTache());
 
