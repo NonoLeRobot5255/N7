@@ -1,0 +1,23 @@
+% Insertion d'un lien vers les sources
+%
+% \fichier{chemin}{nom}{ext} (eg \fichier{lib}{console}{c})
+%
+\newcommand{\fichier}[3]{
+\href{../doxy/html/#2_8#3_source.html}{\lstinline!#1/#2.#3!}
+(\href{../doxy/html/#2_8#3.html}{\sc dox})
+}
+
+\renewcommand{\labelitemi}{X}
+
+% Pour le moment l'outil de traduction en md a du mal avec certains
+% formats
+
+\newcommand{\bios}{{\sc bios} {}}
+\newcommand{\gnu}{{\sc gnu}}
+\newcommand{\nasm}{{NASM} {}}
+\newcommand{\irq}{IRQ {}}
+\newcommand{\iso}{{\sc iso}}
+\newcommand{\manux}{{\em ManuX} {}}
+\newcommand{\pic}{PIC {}}
+\newcommand{\pc}{PC {}}
+\newcommand{\qemu}{{\em Qemu}}

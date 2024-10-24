@@ -1,0 +1,4 @@
+0x60     Données clavier                            ([3] p 380)
+0x64     Commande contrôleur clavier (A20, ...)     ([3] p 380)
+0x70     Active adresse mémoire CMOS pour 0x71      ([3] p 982)
+0x71     Données CMOS                               ([3] p 982)

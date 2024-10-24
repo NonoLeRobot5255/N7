@@ -1,0 +1,20 @@
+site_name: "ManuX"
+extra_css:
+    - css/pandoc.css
+nav:
+    - Home: index.md
+    - Sections :
+       - "Présentation générale" : presentation-part.md
+       - "Les outils" : outils-part.md
+       - "Chargement en mémoire et boot" : boot-part.md
+       - "Affichage" : affichage-part.md
+       - "Interruptions" : inter-part.md
+       - "La mémoire" : memoire-part.md
+       - "Les appels système" : appel-systeme-part.md
+       - "La gestion des fichiers" : systeme-fichiers-part.md
+       - "Les outils de synchronisation" : synchronisation-part.md
+       - "Le mode utilisateur" : userland-part.md
+       
+    - Le code :
+       - "Doxygen" : doxy/html/index.html
+       - "Sur github" : https://github.com/ChaputEmmanuel/ManuX

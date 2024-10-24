@@ -1,0 +1,180 @@
+\documentclass{book}
+\usepackage{epsf, a4, makeidx, Manu, hyperref}
+\usepackage{palatino}
+\usepackage{multicol}
+\usepackage{graphicx} 
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+
+\usepackage{listings}
+\lstloadlanguages{C}
+
+\input{lstasm}
+% Insertion d'un lien vers les sources
+%
+% \fichier{chemin}{nom}{ext} (eg \fichier{lib}{console}{c})
+%
+\newcommand{\fichier}[3]{
+\href{html/#2_8#3_source.html}{\lstinline!#1/#2.#3!}
+(\href{html/#2_8#3.html}{\sc dox})
+}
+
+%-------------------------------------------------------------------------------
+\title{Réalisation des prémices d'un noyau}
+\author{Chaput Emmanuel}
+
+\date{Version 0.00000001}
+
+\makeindex
+
+\begin{document}
+
+\lstset{language=C,%
+        basicstyle=\ttfamily,%
+        keywordstyle=\bfseries,%
+        ndkeywordstyle=\bfseries \underbar ,%
+        identifierstyle=\em,%
+        extendedchars}
+
+\maketitle
+\tableofcontents
+
+%===============================================================================
+%      Introduction
+%===============================================================================
+\chapter{Présentation générale}
+\input{presentation.tex}
+
+%===============================================================================
+%
+%===============================================================================
+\chapter{Les outils}
+\input{outils.tex}
+
+%===============================================================================
+%      Le démarrage
+%===============================================================================
+\chapter{Le boot}
+\input{boot.tex}
+
+%===============================================================================
+%      L'affichage
+%===============================================================================
+\chapter{L'affichage}
+\input{affichage.tex}
+
+%===============================================================================
+%      Gestion des interruptions
+%===============================================================================
+\chapter{Gestion des interruptions ({\tt interruptions.c interBasNiveau.nasm})}
+\input{interruptions.tex}
+
+\chapter{La communication avec le monde utilisateur}
+\input{appel-systeme.tex}
+
+%===============================================================================
+%
+%===============================================================================
+\section{Un premier {\tt init}}
+
+   Nous avons désormais tout ce qu'il nous faut pour mettre en place
+du ``code utilisateur'', c'est-à-dire un code qui ne fait pas partie
+du noyau, mais qui consitue une application utilisant les services du
+noyau au travers des appels système.
+
+   Attention, comme mentionné précédemment, les ``applications''
+s'exécutent pour le moment dans le même mode que le noyau.
+
+%===============================================================================
+%      La gestion des tâches
+%===============================================================================
+\chapter{Les tâches}
+\input{taches.tex}
+
+%===============================================================================
+%      La gestion de la mémoire
+%===============================================================================
+\chapter{La mémoire}
+\input{memoire.tex}
+
+%===============================================================================
+%
+%===============================================================================
+\section{La librairie du noyau}
+
+   Je vais décrire ici rapidement les outils fournis pour le noyau,
+c'est-à-dire tout ce qui est codé dans le répertoire {\tt lib}.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Le journal}
+
+   Le journal permet d'archiver les messages émis par les différents
+éléments du noyau grâce à la fonction \lstinline!printk()!
+\index{printk()}.
+
+   Le journal est défini dans le fichier {\tt include/journal.h} et implanté
+dans le fichier {\tt lib/journal.c}.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Le ramdisk}
+ 
+   Le but du ramdisk est uniquement de nous permettre de valider
+certains éléments du système, tels que le système de fichiers, sans
+avoir besoin d'éléments complexes qui seront bien plus longs à mettre
+en place et à tester, comme un pilote de disque dur ou de lecteur de
+disquettes.
+
+   Il permet de plus une certaine forme de communication avec le
+système d'exploitation de développement puisqu'une image disque peut
+être construite sur ce système avant d'être exploitée dans Manux-32.
+
+\input{synchronisation}
+
+%===============================================================================
+%      Interface système
+%===============================================================================
+%\section{Interface système}
+
+%   L'interface entre le système et les applications est réalisée par
+%le biais des appels système.
+
+%===============================================================================
+%      L'ordonnancement des tâches
+%===============================================================================
+\section{L'ordonnancement des tâches}
+
+   Le scheduler est l'entité chargée de la mise en \oe{}uvre de
+l'ordonnancement. Aussi étrange que cela puisse paraitre, il est
+implanté sous la forme d'un processus. En fait, chaque fois qu'il est
+nécessaire de changer de tâche active (lorsque le quantum de temps
+alloué à celle en cours est révolu, ou qu'elle se bloque sur une
+entrée/sortie), le système bascule vers la tâche scheduler, qui se
+charge alors d'élire la prochaine tâche et de l'activer.
+
+   Le corps du scheduler se résume alors à une boucle folle qui ne
+fait qu'appeler le sous-programme {\tt basculerTache()} chargé de
+l'élection de la prochaine tâche.
+
+   Naturellement, la tâche de l'ordonnanceur n'est pas stockée dans la
+liste des tâches actives du système.
+
+%===============================================================================
+%      Le système de fichiers
+%===============================================================================
+\section{Le système de fichiers}
+\input{systeme-fichiers.tex}
+
+%===============================================================================
+%
+%===============================================================================
+\appendix
+
+%-------------------------------------------------------------------------------
+
+\printindex
+\end{document}
+

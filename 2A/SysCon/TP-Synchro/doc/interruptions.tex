@@ -1,0 +1,529 @@
+%===============================================================================
+%      
+%===============================================================================
+\section{Introduction}
+
+   Les interruptions sont un outil fondamental dans la communication
+d'un système avec son environnement. Leur gestion, nécessaire, soulève
+quelques questions liées notemment au fil d'exécution.
+
+%===============================================================================
+%      
+%===============================================================================
+\section{Interruption, exception, code de traitement}
+
+   Une interruption peut être vue commme la manifestation d'un
+événement qui va perturber le fil d'exécution en cours sur un
+processeur. Nous pouvons les classifier en deux catégories
+
+\begin{itemize}
+   \item {\bf Les interruptions asynchrones} (que nous appellerons
+     simplement {\em interruptions}) sont le fait d'un élément
+     extérieur au fil d'exécution en cours (une touche du clavier a
+     été manipulée, une carte réseau a reçue une trame, \ldots). Nous
+     parlerons également d'{\sc irq} (ou {\em Interrupt ReQuest} pour
+     demande d'interruption).
+   \item {\bf Les interruptions synchrones} (que nous appellerons {\em
+     exceptions}) sont déclanchées par le processeur lui-même comme
+     conséquence de l'exécution (ou de la tentative d'exécution) d'une
+     instruction. 
+\end{description}
+
+   Une interruption, qu'elle soit synchrone ou non, aura pour
+conséquence l'exécution par le processeur d'un code, appelé
+{\em handler} d'interruption ou {\sc isr} (pour {\em Interrupt Service
+  Routine}). Ce code est en charge de traiter l'interruption.
+
+   Notons qu'il est également possible de générer volontairement une
+interruption dans le code en cours d'exécution grâce à
+l'instruction assembleur \lstinline!int n! (qui déclancher
+l'interruption de vecteur \lstinline!n!). Nous utiliserons cette
+option (ajouté au fait que le déclanchement d'une interruption à de
+sconséquences plus complexes que le ``simple'' déroutement de
+l'exécution) pour mettre en place le mécanisme des appels système.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Vecteurs d'interruption, table d'interruption}
+
+   Chaque interruption est associée à un {\em vecteur} qui va faire
+office d'identifiant. C'est {\em via} ce vecteur que le
+microprocesseur pourra déterminer où est le code du handler qu'il doit
+exécuter lorsqu'une interruption est déclanchée.
+
+   Concrètement, ce vecteur n'est pas directement l'adresse du
+handler, mais l'indice dans une table, d'un descripteur du code du
+handler. Il est ainsi possible d'avoir des descripteurs plus riches,
+qui ne sont pas réduits simplement à l'adresse du code.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{La table d'interruptions x86}
+
+   Sur l'architecture x86, cette table est appelée {\sc idt} (pour
+{\em Interrupt Descriptor Table}) ; elle contient au maximum 256
+descripteurs. Chacun de ces descripteurs est constitué de 8 octets qui
+décrivent l'adresse du handler, le niveau de privilège requis, le type
+d'interruption, etc \ldots
+
+   Cette table peut se situer n'importe où en mémoire, c'est au
+système d'exploitation de l'initialiser et d'informer le
+microprocesseur de l'adresse à laquelle elle se trouve et de sa
+taille. Le noyau utilise pour cela l'instruction {\tt lidt}.
+
+%350 flux initial centrale vers 400 voire 450
+%Actuellement 970 diplômés/an, c'est l'objectif pour 2030/31
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Les interruptions}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Les exceptions}
+
+   Les exceptions permettent donc de traiter un comportement erroné du
+code en cours d'exécution (une tentative de division par zéro, un
+accès à une zone mémoire protégée, \ldots).
+
+   Elles sont traitées par le système de la même façon que les
+interruptions déclanchées par du matériel. L'essentiel de ce qui est
+dit ici pour les interruptions l'est donc en particulier pour les
+exceptions.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Les exceptions x86}
+
+   Sur les processeurs Intel, les 32 premiers vecteurs sont attribués
+aux exceptions.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Les handlers d'interruption}
+
+   Quelle que soit la nature de l'interruption, lorsqu'elle se
+produit, un code spécifique (le ``handler'') est exécuté par le
+processeur. Ce code doit donc effectuer certaines tâches
+
+\begin{itemize}
+   \item Sauvegarder l'état du microprocesseur de sorte à pouvoir
+     ensuite reprendre l'activité qu'il menait.
+   \item Intéragir éventuellement avec le matériel responsable de
+     cette interruption pour le prévenir que le traitement est en
+     cours. 
+   \item Réaliser (ou reporter à un avenir proche) les opérations
+     nécessaires suite à l'interruption : recevoir une trame sur une
+     interface réseau par exemple.
+   \item Restaurer l'état du microprocesseur qui reprendra où il en
+     était avant l'interruption.
+\end{itemize}
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Le traitement différé}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Masquage}
+
+   Une interruption peut éventuellement être  {\em masquée}, ce qui
+signifie qu'elle ne sera pas délivrée au processeur, qui ne
+s'appercevra donc pas qu'un événement s'est produit. Mais le masquage
+d'une interruption n'empêche évidemment pas cet événement d'arriver !
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Traitement d'une interruption : partie haute et partie basse}
+
+    Le traitement d'une interruption est donc en partie réalisé dans
+un {\em handler}. Pour des raisons de simplicité, nous allons écrire
+ces handlers en assembleur mais nous y utiliserons dès que possible
+des fonctions C.
+
+   Il est fondamental de comprendre que lorsqu'une interruption est
+prise en compte par le processeur, le code qu'il était en train
+d'exécuté est {\em interrompu} (surprise ?) pour exécuter le {\em
+  handler}. Lorsque l'exécution de ce dernier s'achève, l'exécution du
+code interrompu reprend son cours. Il est donc crucial que le {\em
+  handler} ne réalise pas de modification du système qui rendrait
+cette exécution incohérente (par exemple en supprimant une ressource
+que ce code s'appétait à utiliser après s'être assuré de sa
+disponibilité).
+
+   Un autre élément fondamental est le fait que lorsqu'un handler
+s'exécute, les interruptions ont inhibées et ne peuvent donc plus être
+prises en compte\footnote{C'est un peu plus compliqué sur un système
+  multiprocesseur.}. 
+
+%===============================================================================
+%      
+%===============================================================================
+\section{Le {\em Programmable Interrupt Controller}}
+
+   Les interruptions peuvent arriver depuis plusieurs sources. Celles
+provenant de périphériques (clavier, cartes réseau, \ldots) sont
+éventuellement acheminées au travers de circuits spécialisés appelés
+{\sc pic}.
+
+   Le {\sc pic} est donc un circuit électronique permettant de gérer les
+{\sc irq} provenant de l'environnement afin de les délivrer au
+processeur (c'est en fait une fonction du {\em southbridge}).
+
+   Je ne m'étalerai pas ici sur les différents types de {\sc pic} ni
+sur leur fonctionnement. Ce qu'il est nécessaire de comprendre, c'est
+qu'il existe donc un circuit avec lequel le processeur va devoir
+dialoguer pour une partie de la gestion des interruptions.
+
+   Nous verrons plus loin que ManuX gère le 8259A qui est un {\sc pic}
+conçu par Intel.
+
+%...............................................................................
+%
+%...............................................................................
+\subsection{Le {\sc pic} Intel 8259A}
+
+   Sur un (vieux) {\sc pc}, le {\sc pic} est un circuit Intel 8259A. Ce
+circuit permet de gérer 8 types d'interruptions et on en utilise
+plusieurs en cascade pour les additionner. Nous supposerons ici qu'il
+y en a deux, le {\sc pic} 2 étant derrière le {\sc pic} 1 (en
+``cascade'') pour un total de 15 interruptions.
+
+   Ce circuit, donc on peut trouver la spécification
+\cite{intel-8259a-spec} se programme au travers de deux registres
+
+\begin{description}
+    \item[Le registre de commande] accessible par le port 0x20 pour le
+      circuit maître et 0xa0 pour le circuit esclave ;
+    \item[Le registre de données] accessible par le port 0x21 pour le
+      circuit maître et 0xa1 pour le circuit esclave.
+\end{description}
+
+   Une phase d'initialisation est nécessaire afin de configurer
+correctement ces circuits.
+   
+   
+%===============================================================================
+%      
+%===============================================================================
+\section{Définition des handlers}
+
+   Sur le 386, une table (l'{\sc idt} pour {\em Interrupt Descriptor Table})
+définit le comportement à adopter pour chacune des 256 interruptions
+et exceptionns. Cette table est enregistrée grâce à l'instruction
+\lstinline!lidt!.
+
+   Cette table contient des entrées de trois types différents
+
+\begin{description}
+   \item[Interrupt Gate]       
+   \item[Trap Gate Descriptor]       
+   \item[Task Gate Descriptor]       
+\end{description}
+
+%===============================================================================
+%      
+%===============================================================================
+\section{Gestion dans ManuX}
+
+   Observons ici comment tout cela est mis en place dans ManuX.
+
+   Nous ne pouvons pas faire l'impasse sur un peu d'assembleur, si
+bien que les fonctions ``bas niveau'' seront implantées dans les
+fichiers {\tt manux/i386/interBasNiveau.h} et
+\lstinline!i386/interBasNiveau.nasm!. Tout le reste sera en C dans {\tt
+  manux/interruptions.h} et {\tt i386/interruptions.c}.
+
+   Nous allons traiter séparément les trois types d'interruptions
+suivants~:
+
+\begin{itemize}
+   \item les exceptions seront gérées ensemble via une fonction
+     commune : \lstinline!gestionException()! ;
+   \item les \irq seront traitées par une fonction commune, liée au \pic
+     utilisé ;
+   \item les exceptions logicielles seront elles aussi regroupées dans
+     une seule fonction de traitement :
+     \lstinline!gestionInterruption()!. 
+\end{itemize}
+
+   Dans les trois cas, la stratégie sera la même :
+
+\begin{itemize}
+   \item Nous allons définir en assembleur une fonction de traitement
+     spécifique à chaque interruption. J'appellerai par la suite ces
+     fonctions des {\em handlers d'interrruption}. Un handler
+     d'interruption sera chargé d'invoquer une fonction d'aiguillage,
+     écrite en C.
+   \item Nous allons ensuite définir en C une fonction commune
+     d'aguillage pour chaque type (\lstinline!gestionException()! pour
+     les exceptions par exemple). Le rôle de cette fonction sera
+     d'invoquer la fonction C chargée du traitement de l'interruption
+     qui aura été déclenchée.
+   \item Nous construirons enfin un tableau indexé par le numéro
+     d'interruption et contenant un pointeur sur la fonction C de
+     chaque interruption que l'on souhaite traiter spécifiquement.
+\end{itemize}
+
+   La figure suivante illustre cette logique.
+
+\includegraphcs{images/interruptions.png}
+
+   Observons maintenant ces différents éléments. Nous allons commencer
+par écrire les handlers bas niveau en assembleur dans la prochaine
+section.
+
+   Nous observerons ensuite l'écriture en C  des fonctions de gestion
+des interruptions.
+
+%-------------------------------------------------------------------------------
+%      
+%-------------------------------------------------------------------------------
+\subsection{Définition ``bas niveau'' d'un handler}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Les exceptions}
+
+   Nous allons observer à titre d'exemple les fonctions de gestion des
+exceptions. Certaines exceptions empilent un code d'erreur de 32 bits
+et d'autres ne le font pas. Comme nous faisons le choix de passer par
+une fonction unique d'aiguillage, nous allons empiler une valeur nulle
+sur 32 bits pour les exceptions qui n'utilisent pas de code d'erreur.
+
+   Voici par exemple comment est écrit le gestionnaire bas niveau de
+l'exception 0 (``division par zéro'') qui n'empile pas de code
+d'erreur~:
+
+\begin{lstlisting}{language=nasm}
+golbal stubHandlerExceptionDivO
+stubHandlerExceptionDivO :      ; Exception "division par zéro"
+       push dword 0x0           ; On empile un "code"
+       push dword 0x0           ; On empile le numéro de l'exception
+       pushad                   ; sauvegarde des registres
+       call gestionException    ; appel de la fonction d'aiguillage
+       popad                    ; restauration des registres
+       add esp, 0x08            ; on "dépile" le code et le numéro
+       iret
+\end{lstlisting}
+
+   Et voici maintenant le code du gestionnaire bas niveau de
+l'exception 0x0a (``TSS invalde'') qui empile l'indice du TSS en
+erreur~:
+
+\begin{lstlisting}{language=nasm}
+global stubHandlerExceptionInvalidTSS
+stubHandlerExceptionInvalidTSS :
+       push dword 0x0a          ; On empile le numéro de l'exception
+       pushad                   ; sauvegarde des registres
+       call gestionException    ; appel de la fonction d'aiguillage
+       popad                    ; restauration des registres
+       add esp, 0x08            ; on "dépile" le code et le numéro
+       iret
+\end{lstlisting}
+
+   Notons que lors d'une interruption, le microprocesseur empile les
+valeurs de {\tt EFLAGS}, {\tt CS} et {\tt EIP} (voir par exemple
+\cite{intel386pru1986} page 159).
+
+   Si vous observez le fichier \lstinline!interBasNiveau.nasm!, vous
+verrez que les 32 gestionnaires d'exception sont générées de la sorte
+grâce à deux macros.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Les \irq}
+
+   En ce qui concerne les \irq, les choses sont encore plus simples
+car toutes les interruptions ont le même comportement et les fonctions
+sont générées (encore via une macro) avec des noms génériques.
+
+   Voici par exemple à quoi ressemble le handler généré pour l'\irq
+0~:
+   
+\begin{lstlisting}
+stubHandlerIRQ0 :
+   push dword 0            ; On empile le numéro de l'IRQ
+   jmp  handlerIRQ
+
+handlerIRQ :
+   pusha                   ; On empile les registres
+   call MANUX_HANDLER_IRQ  ; On appelle la fonction d'aiguillage
+   popa                    ; On dépile les registres
+   add esp, 4              ; Dépile le numéro d'IRQ
+   iret
+\end{lstlisting}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Les interruptions logicielles}
+
+   Une fois de plus, les handlers bas niveau sont générés par une
+macro. Si nous observons le handler de l'interruption numéro 42, elle
+ressemble au code suivant
+
+\begin{lstlisting}
+stubHandlerInt42 :
+        push dword 42            ; On empile le numéro de l'interruption
+	jmp  handlerInt
+        
+handlerInt :
+	pushad                   ; Sauvegarde des registres
+        call gestionInterruption ; Invocation de la focntion d'aiguillage
+	popad                    ; Restauration des registres
+        add esp, 4               ; On dépile le numéro d'interruption
+        iret
+\end{lstlisting}
+
+   Regardons maintenant à quoi ressemblent les fonctions d'aiguillage.
+
+%-------------------------------------------------------------------------------
+%      
+%-------------------------------------------------------------------------------
+\subsection{Les fonctions d'aiguillage}
+
+   Les fonctions d'aiguillage sont extrèmement simples : on utilise un
+tableau dans lequel sont stoquées les pointeurs de fonction de chaque
+interruption. La fonction d'aiguillage se contente donc d'invoquer la
+fonction stoquée à l'indice correspondant.
+
+   Pour les \irq, ce travail est réalisé par une fonction spécifique
+au pilote du \pic.
+   
+%-------------------------------------------------------------------------------
+%      
+%-------------------------------------------------------------------------------
+\subsection{Définition d'un handler en C}
+
+   Nous pouvons par exemple écrire la fonction
+\lstinline!handlerPanique! dont le rôle est d'afficher un message
+permettant de déterminer la cause de l'interruption :
+
+\begin{lstlisting}
+void handlerPanique(uint32_t itNum, TousRegistres registres,
+		    uint32_t eip, uint32_t cs, uint32_t eFlags)
+{
+   ...
+}
+\end{lstlisting}
+
+   Nous la définissons avec les paramètres qui sont, dans l'ordre
+inverse, les valeurs empilées par le processeur lors de l'interruption
+puis par le handler ``bas niveau'' décrit ci-desssus.
+
+   La structure \lstinline!TousRegistres!, décrite dans {\tt
+manux/types.h}, permet de manipuler simplement l'ensemble des
+registres.
+   
+%-------------------------------------------------------------------------------
+%      
+%-------------------------------------------------------------------------------
+\subsection{Insertion d'un handler dans l'{\sc idt}}
+
+   La procédure suivante initialise une entrée dans l'{\sc idt} :
+
+\begin{lstlisting}{}
+void positionnerHandlerInterruption(IDT idt, int i, Handler handler)
+/*
+ * Affectation du handler de l'interruption i
+ */
+{
+   idt[i].itg.offsetFaible = ((uint32_t)handler & 0xFFFF);
+   idt[i].itg.offsetFort = ((uint32_t)handler >> 16);
+   idt[i].itg.parametres = 0x8E00;
+   idt[i].itg.selSegment = SELECTEUR_SEGMENT_CODE;
+}
+
+\end{lstlisting}
+
+   Elle sera donc appelée par la procédure d'initialisation de l'{\sc idt} pour
+chacune des interruptions.
+
+%-------------------------------------------------------------------------------
+%      Initialisation de la table
+%-------------------------------------------------------------------------------
+\subsection{Initialisation de la table IDT}
+
+   C'est la fonction C \lstinline!initialiserIDT()! qui est invoquée
+par \lstinline!main()! pour initialiser la table.
+   
+   Nous avons maintenant tous les éléments pour construire notre {\sc
+idt}. C'est le rôle de la fonction C \lstinline!initialiserIDT()!.
+   
+   Nous y positionnons donc tous les handlers sur le handler minimaliste
+qui ne fait rien :
+
+\begin{lstlisting}{}
+   /* Comportement par defaut : on ne fait rien ! */
+   for (i = 0; i < 256; i++) {
+      positionnerHandlerInterruption(idt, i, stubHandlerNop);
+   }
+\end{lstlisting}
+
+   Nous allons ensuite définir un handler un peu plus utile pour les
+interruptions que peut nous générer le matériel
+
+\begin{lstlisting}{}
+   positionnerHandlerInterruption(idt, 0, stubHandlerPanique_0);
+   positionnerHandlerInterruption(idt, 1, stubHandlerPanique_1);
+   ...
+\end{lstlisting}
+   
+   Nous pouvons enfin définir les handlers plus spécifiques
+
+\begin{lstlisting}{}
+   /* Le handler du timer */
+   positionnerHandlerInterruption(idt, intTimer, stubHandlerTimer);
+
+   /* Le handler du clavier */
+   positionnerHandlerInterruption(idt, intClavier, stubHandlerClavier);
+\end{lstlisting}
+
+%...............................................................................
+%
+%...............................................................................
+\subsection{Gestion du {\sc pic} Intel 8259a dans ManuX}
+
+   Ce circuit est géré au travers de fonctions définies dans {\tt
+include/manux/intel-8259a.h} et implantées dans {\tt
+     i386/intel-8259a.c}.
+
+   L'objectif est assez simple : fournir (aux drivers des matériels
+utilisant un mécanisme d'interruption) une interface générique,
+c'est-à-dire indépendante du {\sc pic} utilisé. Nous allons donc
+définir quelques fonctions de base permettant à ces drivers de
+s'interfacer avec le système d'interruption. Si on souhaite utiliser
+un autre circuit {\sc pic} (par exemple un  {\sc apic}), il
+``suffira'' de réécrire ces fonctions, il n'y aura pas besoin de
+modifier le code des nombreux drivers (au moins deux, rendez-vous
+compte du boulot !) qui l'utilisent.
+
+   Le principe général consiste à définir un handler d'interruption
+unique qui va prendre en charge toutes les interruptions générées au
+travers du {\sc pic}. Ce handler traitera les aspects spécifiques au
+{\sc pic} puis invoquera le handler de chacun des ``clients''
+c'est-à-dire des drivers des matériels qui sont à la source des
+interrruptions.
+
+   Décrivons les fonctions principales. Vous retrouverez leur code
+dans {\tt i386/intel-8259a.c}.
+
+\paragraph{\tt i8259aInit} permet d'initialiser
+les circuits (le {\sc pic}) et de les configurer pour que les
+interruptions générées utilisent une plage de numéros commençant à une
+valeur passée en paramètre.
+\paragraph{\tt i8259aAjouterHandler} permet d'associer une fonction
+et des données à une {\sc irq}. C'est par le biais de cette fonction
+qu'un client va se faire connaître auprès de notre système.
+\paragraph{\tt i8259aGestionIRQ}

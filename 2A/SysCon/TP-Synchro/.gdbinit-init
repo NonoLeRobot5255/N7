@@ -1,0 +1,8 @@
+set processor i8086
+set tdesc filename target.xml
+dir noyau
+dir lib
+dir boot
+dir usr
+dir sf
+file init.elf

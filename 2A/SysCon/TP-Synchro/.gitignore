@@ -1,0 +1,17 @@
+LISEZ-MOI*
+*~
+*.o
+*.a
+*.bin
+noyau/symbols
+noyau/noyau.obj
+noyau/noyau.elf
+boot/bourage
+./manux
+outils/taillenoyau
+taille.conf
+**/*.aux
+**/Manux.idx
+**/*.log
+**/Manux.pdf
+noyaux/*

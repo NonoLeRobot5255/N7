@@ -1,0 +1,188 @@
+# Quelques éléments globaux qui n'ont pas trop de raison d'être modifiés.
+# Je les place ici pour alléger un peu les Makefile
+#
+#==========================================================================
+
+# Le fichier de configuration générale. Il n'est pas nécessaire de le
+# définir. Toute la configuration par défaut est dans le fichier
+# include/manux/config.h
+#
+# L'idée est de placer des fichiers de configuration dans le répertoire
+# multiconf. Cela permettra de construire une ISO avec les noyaux ainsi
+# configurés
+#
+
+# Le fichier de configuration général
+ifdef CFG
+MANUX_FICHIER_CONFIG = $(ROOTDIR)/multiconf/$(CFG).h
+endif
+ifndef MANUX_FICHIER_CONFIG
+MANUX_FICHIER_CONFIG = $(ROOTDIR)/include/manux/config.h
+endif
+
+# L'ensemble des fichiers de configuration qui peuvent être utilisés
+#pour construire le fichier de configuration général
+CONFIG_FILES=$(ROOTDIR)/include/config/*.h
+
+# Position des librairies
+LIBI386   = $(if $(MANUX_LIBI386), $(ROOTDIR)/i386/libi386.a)
+LIBMANUX  = $(ROOTDIR)/lib/libmanux.a
+LIBSF     = $(ROOTDIR)/sf/libsf.a
+LIBUSR    = $(if $(MANUX_USR), $(ROOTDIR)/usr/libusr.a)
+
+# Les fichiers contenant le noyau. Le premier est l'ELF sorti de LD,
+# le second en est une version binaire pour "mon" loader, et le
+# troisième est la version avec un en-tête pour multiboot
+NOYAU_ELF     = $(ROOTDIR)/noyau/noyau.elf
+NOYAU_BIN     = $(ROOTDIR)/noyau/noyau.bin
+NOYAUMB_ELF   = $(ROOTDIR)/noyau/noyaumb.elf
+
+# Le script de link pour ld (il est obtenu par un traitement de manux.ld)
+LD_SCRIPT     = manux.lds
+
+#--------------------------------------------------------------------------
+#   Gestion de l'assembleur
+#--------------------------------------------------------------------------
+ASM_EXT     = nasm
+ASM         = nasm
+ASM_BIN_OPT = -f bin
+ASM_ELF_OPT = -f elf32 -g3 -F dwarf
+
+ASM_DEF     = -D MANUX_BOOT_START_ADDRESS=$(MANUX_BOOT_START_ADDRESS) \
+              -D MANUX_INIT_START_ADDRESS=$(MANUX_INIT_START_ADDRESS) \
+	      -D MANUX_INIT_MAGIC=$(MANUX_INIT_MAGIC) \
+	      -D MANUX_KERNEL_START_ADDRESS=$(MANUX_KERNEL_START_ADDRESS) \
+              -D MANUX_STACK_SEG_16=$(MANUX_STACK_SEG_16) \
+              -D MANUX_ELF_HEADER_SIZE=$(MANUX_ELF_HEADER_SIZE) \
+              -D MANUX_ADRESSE_ECRAN=$(MANUX_ADRESSE_ECRAN) \
+              -D MANUX_NB_SECT_INIT=$(MANUX_NB_SECT_INIT) \
+              -D MANUX_NB_SECT_KERNEL=$(MANUX_NB_SECT_KERNEL) \
+              -D MANUX_NB_SECT_RAMDISK=$(MANUX_NB_SECT_RAMDISK) \
+              -D MANUX_SEGMENT_TRANSIT_RAMDISK=$(MANUX_SEGMENT_TRANSIT_RAMDISK) \
+              -D MANUX_portDonneesClavier=$(MANUX_portDonneesClavier) \
+              -D MANUX_portCmdClavier=$(MANUX_portCmdClavier) \
+	      -D MANUX_NB_IRQ=$(MANUX_NB_IRQ) \
+	      -D MANUX_INT_BASE_IRQ=$(MANUX_INT_BASE_IRQ) \
+	      -D MANUX_NB_INTERRUPTIONS=$(MANUX_NB_INTERRUPTIONS) \
+	      -D MANUX_NB_EXCEPTIONS=$(MANUX_NB_EXCEPTIONS) \
+              -D MANUX_PREMIER_SECT_RAMDISK=$(MANUX_PREMIER_SECT_RAMDISK)
+
+#--------------------------------------------------------------------------
+#   Création des images
+#--------------------------------------------------------------------------
+# Le fichier de boot pour multiboot
+MB_MANUX_ELF  = $(ROOTDIR)/boot/mb-manux.elf
+
+CREER_ISO=$(ROOTDIR)/outils/creationISO
+ISO_REP_BASE=$(HOME)/tmp/isodir
+ISO_FICHIER=manux.iso
+
+# Pour le boot sur disquette
+FLOPPY_IMG = manux.img
+FLOPPYELF_IMG = manuxelf.img
+TAILLE_CONF = $(ROOTDIR)/boot/taille.conf
+BSEC_BIN = $(ROOTDIR)/boot/bootsector.bin
+INIT_BIN = $(ROOTDIR)/boot/init-manux.bin
+BSEC_ELF = $(ROOTDIR)/boot/bootsector.elf
+INIT_ELF = $(ROOTDIR)/boot/init-manux.elf
+
+COMPRESS = gzip
+
+#--------------------------------------------------------------------------
+#   Les commandes pour lancer ManuX dans un émulateur
+# -nographic pour pas d'environnement graphique
+#--------------------------------------------------------------------------
+# Pour debuger le virtio
+#                   -trace "virtio_*" \
+# Pour la console virtio
+#                   -device virtio-serial-pci \
+#                   -device virtio-serial-pci,id=virtio-console0 \
+#                   -device virtconsole,chardev=stdio,id=serial0 \
+# Pour le réseau virtio
+#                   -netdev user,id=v1,hostfwd=tcp::4832-:4832 \
+#                   -device virtio-net-pci,disable-legacy=off,tx_queue_size=256,rx_queue_size=256,indirect_desc=off,ctrl_vq=off,page-per-vq=on,mac=c0:ff:ee:de:ad:be,netdev=v1 \
+#--------------------------------------------------------------------------
+RUN_MANUX_RAMSIZE = 64M
+QEMU_RAMSIZE      = -m $(RUN_MANUX_RAMSIZE)
+QEMU_DEBUG        = -gdb tcp::1234 -S
+
+QEMU_VIRTIO_CONSOLE = -chardev stdio,id=cons1 \
+                   -device virtio-serial-pci \
+                   -device virtconsole,chardev=cons1
+		   
+QEMU_VIRTIO_NET     = -device virtio-net-pci,mac=c0:ff:ee:de:ad:be,netdev=v1 \
+                   -netdev user,id=v1,hostfwd=tcp::4832-:4832 \
+                   -object filter-dump,id=f1,netdev=v1,file=dump.dat
+
+RUN_MANUX_FLOPPY = qemu-system-i386 \
+		   $(QEMU_VIRTIO_CONSOLE) \
+		   $(QEMU_VIRTIO_NET) \
+		   $(QEMU_RAMSIZE) \
+                   -drive format=raw,file=$(FLOPPY_IMG),index=0,if=floppy
+		   
+RUN_MANUXMB_ELF  = qemu-system-i386 \
+		   $(QEMU_VIRTIO_CONSOLE) \
+		   $(QEMU_VIRTIO_NET) \
+		   $(QEMU_RAMSIZE) \
+                   -kernel $(NOYAUMB_ELF)
+		   
+RUN_MANUXMB_ELF_DBG = qemu-system-i386 \
+		   $(QEMU_VIRTIO_CONSOLE) \
+		   $(QEMU_VIRTIO_NET) \
+		   $(QEMU_RAMSIZE) \
+		   $(QEMU_DEBUG) \
+                   -kernel $(NOYAUMB_ELF)
+		   
+RUN_MANUX_ISO    = qemu-system-i386 \
+		   $(QEMU_VIRTIO_CONSOLE) \
+		   $(QEMU_VIRTIO_NET) \
+		   $(QEMU_RAMSIZE) \
+		   -cdrom
+
+RUN_MANUX_ISO_DBG= qemu-system-i386 \
+		   $(QEMU_VIRTIO_CONSOLE) \
+		   $(QEMU_VIRTIO_NET) \
+		   $(QEMU_RAMSIZE) \
+		   $(QEMU_DEBUG) \
+		   -cdrom
+
+RUN_MANUX_VBOX   = vboxmanage startvm ManuX
+
+#--------------------------------------------------------------------------
+# Les paramètres du gcc
+#
+#   "-fno-stack-protector" permet d'éviter les "undefined references to
+# `__stack_chk_fail'" sur les GCC récents
+#
+#   "-nostdinc -fno-builtin -nodefaultlibs -nostartfiles" permettent
+# de n'utiliser aucune fonctions prédéfinies ou de librairies standard
+#
+#   Optimisation
+#     -O2 par défaut
+#     -O0 pour debuguer
+#
+#--------------------------------------------------------------------------
+CFLAGS   = -fno-pie -m32 -march=i686 -Wall  \
+           -g -ggdb -gdwarf  \
+	   -I$(ROOTDIR)/include  \
+           -nostdinc -fno-builtin -nodefaultlibs -nostartfiles \
+           -fno-toplevel-reorder \
+           -fno-stack-protector \
+           -O4 \
+	 # -mpreferred-stack-boundary=2 (par défaut c'est 4, d'où des "sub $0x10,%esp")
+         # -fomit-frame-pointer
+
+CFLAGS   +=   $(if $(MANUX_FICHIER_CONFIG), --include $(MANUX_FICHIER_CONFIG))
+
+#..........................................................................
+#   Les flags pour le monde utilisateur
+#..........................................................................
+UCFLAGS   = -fno-pie -m32 -march=i686 -Wall \
+           -I../usr/include \
+           -nostdinc -fno-builtin \
+           -fomit-frame-pointer \
+           -fno-toplevel-reorder \
+           -fno-stack-protector \
+           -O2
+
+#UCFLAGS   +=   $(if $(MANUX_FICHIER_CONFIG), --include $(MANUX_FICHIER_CONFIG))

@@ -1,0 +1,436 @@
+%===============================================================================
+%
+%===============================================================================
+\section{Les principaux outils}
+
+   Le but de cette section est de décrire brièvement les outils
+utilisés pour compiler et exécuter \manux.
+
+   L'essentiel du code de \manux est écrit en C, et un peu
+d'assembleur est nécessaire ici ou là, \ldots Le processus de
+compilation est évidemment automatisé avec l'outil {\em make}. Je vais
+décire sommairement cette étape dans la sous-section
+\ref{subsection:compilation}.
+
+   \manux peut ensuite être exécuté sur une machine réelle, mais il
+est évidemment possible d'utiliser un émulateur. Nous évoquerons les
+possibilités dans la sous-section \ref{subsection:execution}.
+
+   Le débugage est un élément important dans la phase de développement
+d'un logiciel, et il se révèle parfois un peu délicat lorsqu'il s'agit
+de développer un noyau. Nous évoquerons des outils dans les
+sous-sections \ref{subsection:debugage_interne} et
+\ref{subsection:debugage_externe}.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Le compilateur C}
+
+   Le compilateur GCC est utilisé, la version 11.3.0 avec une cible
+\lstinline!x86_64-linux-gnu! fonctionne parfaitement. Je n'ai jamais
+eu de problème avec aucune version de GCC jusqu'à présent.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{L'assembleur}
+
+   J'utilise \nasm \autocite{nasm-website}  pour les quelques fichiers
+écrits en assembleur, dans sa version 2.14.
+ 
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{La compilation}
+
+   La commpilation générale du noyau est fondée sur l'outil {\tt
+make}, et j'utilise la version 4.2.1 de \gnu {\tt make}.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Les scripts}
+
+   Quelques outils de scripts tels que {\tt awk} sont utilisés, rien
+de très original, et tout système Linux correctement installé devrait
+fournir ce qui est nécessaire.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{La gestion des fichiers {\sc iso}}
+
+   Les fichiers {\sc iso} son générés par la commande {\tt
+     grub-mkrescue} qui utilise {\tt xorriso}.
+   
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{L'exécution dans un émulateur}
+
+   Bien sûr, l'idée n'est pas de faire fonctionner ManuX sur du
+matériel réel, même si c'est tout à fait possible, mais plutôt dans un
+émulateur.
+
+   J'utilise pour cela \qemu dans sa version 3.1.0. On peut
+également utiliser {\tt bochs} ainsi que VirtualBox.
+   
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{La documentation}
+
+   La maigre documentation (que vous êtes  en train de lide) est
+écrite essentiellement en LaTeX. N'importe quelle version convient
+parfaitement.
+
+   J'utilise également DoxyGen et mkdocs pour générer ensuite une
+version navigable en ligne.
+
+%===============================================================================
+%
+%===============================================================================
+\section{Compilation de ManuX}
+
+   Le {\tt Makefile} principal défini un certain nombre de cibles
+utilisables pour compiler et exécuter ManuX.
+   
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{La création du noyau}
+
+   Sans grande surprise, on compile avec la commande
+
+\begin{lstlisting}
+  make
+\end{lstlisting}
+
+  Différentes cibles peuvent être créées
+
+\begin{itemize}
+   \item {\tt manux} permet de compiler une image du noyau ;
+   \item {\tt run} permet de lancer un émulateur (par défaut pour le moment c'est \qemu) ;
+   \item {\tt clean} permet d'effacer tous les fichiers issus de compilation ;
+   \item {\tt iso} permet de créer une image \iso.
+\end{itemize}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Gestion de configurations multiples}
+
+   L'essentiel de la configuration de ManuX se fait dans le fichier
+\fichier{include/manux}{config}{h}. Il est cependant possible de
+demander à \make d'utiliser un fichier différent.
+
+   Le répertoire {\tt multiconf} contient différents fichiers de
+configuration. Chacun de ces fichiers permet alors de générer une
+version différente de ManuX.
+
+   Ainsi, le fichier \fichier{multiconf}{printk}{h} définit la
+configuration permettant de compiler un noyau ManuX montrant
+l'utilsation de {\tt printk}. On le compile de la façon suivante
+
+\begin{lstlisting}
+  make CFG=printk
+\end{lstlisting}
+
+   Il peut alors être exécuté par exemple avec
+
+\begin{lstlisting}
+  make run
+\end{lstlisting}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Création d'un fichier \iso}
+
+   Il est également possible de créer un fichier \iso contenant une ou
+plusieurs configuration de ManuX.
+
+   Pour créer un fichier \iso contenant la version actuellement
+définie dans le fichier \fichier{include/manux}{config}{h} on
+utilisera simplement
+
+\begin{lstlisting}
+  make iso
+\end{lstlisting}
+
+   L'exécution pourra alors se faire via la commande
+
+\begin{lstlisting}
+  make runiso
+\end{lstlisting}
+
+   Il est également possible de générer un fichier \iso contenant
+toutes les versions de ManuX décrites par les fichiers du répertoire
+\lstinline!multiconf! de la façon suivante
+
+\begin{lstlisting}
+  make multiso
+\end{lstlisting}
+
+On l'exécutera de la même façon :
+
+\begin{lstlisting}
+  make runiso
+\end{lstlisting}
+   
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{L'édition de liens}
+
+   Afin d'assembler tous les éléments en un seul fichier
+\lstinline!noyau.elf! qui pourra ensuite être utilisé par {\em
+  Multiboot}, nous allons utiliser l'éditeur de liens \lstinline!ld!.
+Le comportement de \lstinline!ld! est conditionné par un fichier qui
+s'appelle un {\em linker script}. Un tel script décrit en particulier
+comment les différentes sections des fichiers d'entrée sont disposées
+dans le fichier de sortie et comment la mémoire est organisée.
+
+%https://wiki.osdev.org/Linker_Scripts
+
+Le code suivant montre un exemple simple de script :
+
+\begin{lstlisting}
+ENTRY(start)
+SECTIONS {
+    . = 1M 
+    .boot :
+    {
+        *(.multiboot)
+    }
+    adresseDebutManuX = .;
+    .text : {
+       *(.text)
+    }        
+    .rodata : {
+       *(.rodata)
+    }
+    .data : {
+       *(.data)
+    }
+    .bss : {
+       *(.bss)
+    }
+}
+\end{lstlisting}
+
+   Dans ce script, nous avous défini le nom du point d'entrée (ici {\tt
+  start}), et nous avons décrit un certain nombre de sections avec
+leur ordre d'apparition dans le fichier de sortie et leur
+contenu. Vous remarquerez également que l'on utilise la notation
+``{\tt .}'' pour spécifier l'adresse courante et que cette adresse
+peut être consultée mais également modifiée. Ainsi la ligne {\tt . =
+  1M} stipule que l'on se place ) l'adresse 1M. D'un autre côté la
+ligne {\tt adresseDebutManuX = .} stipule que l'on enregistre dans la
+variable {\tt adresseDebutManuX} la valeur de l'adresse courante
+(celle du début de la section {\tt . text} donc).
+
+
+%===============================================================================
+%
+%===============================================================================
+\section{Exécution de ManuX}
+\label{section:execution}
+
+   Le but n'est évidemment pas de faire tourner cette merveille sur du
+vrai matériel, mais plutôt dans un émulateur.
+
+%...............................................................................
+%
+%...............................................................................
+\subsection{L'émulateur Qemu}
+
+   C'est maintenant \qemu \cite{qemu-website}  que j'utilise, par exemple de la façon
+suivante
+   
+\begin{lstlisting}
+   qemu-system-i386 -drive format=raw,file=manux,index=0,if=floppy -m 64M
+\end{lstlisting}
+
+  C'est d'ailleurs la commande que lance
+
+\begin{lstlisting}
+   make runfloppy
+\end{lstlisting}
+
+   Une autre façon de démarrer \manux est la suivante
+
+\begin{lstlisting}
+   qemu-system-i386 -kernel noyau.elf -m 64M
+\end{lstlisting}
+
+  C'est ce que fait la commande
+
+\begin{lstlisting}
+   make run
+\end{lstlisting}
+
+   Mais on préférera probablement passer par une image ISO :
+
+\begin{lstlisting}
+   qemu-system-i386 -m 64M -cdrom manux.iso
+\end{lstlisting}
+
+  C'est ce que fait la commande
+
+\begin{lstlisting}
+   make runiso
+\end{lstlisting}
+
+   De nombreuses options sont disponibles, mais ce n'est pas le moment
+d'en parler !
+
+%...............................................................................
+%
+%...............................................................................
+\subsection{L'émulateur Bochs}
+
+   J'utilisais initialement cet outil, mais les fichiers de
+configuration ne semblent plus convenir aux dernières versions de
+Bochs {} \cite{bochs-website} il faudrait les mettre à jour !
+
+%===============================================================================
+%
+%===============================================================================
+\section{Le débugage de ManuX}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Le débugage ``interne''}
+\label{subsection:debugage_interne}
+
+   Ce que j'appelle ici le débugage interne, c'est tous les outils que
+l'on peut utiliser dans le code lui-même pour essayer de comprendre ce
+qu'il s'y passe.
+
+   Nous avons pour le moment quelques outils de base, copieusement bugués
+eux-mêmes (!).
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{La fonction {\tt printk\_debug}}
+
+   Elle permet de produire des messages d'erreur qui seront envoyés de
+façon sélective en fonction de la valeur de \lstinline!masqueDebugage!
+qui doit être construite dans {\tt manux/debug.h}.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{La macro {\tt assert}}
+
+   Elle est définie dans le fichier \fichier{include/manux}{debug}{h}
+et elle permet de vérifier {\em lors de l'exécution} qu'une propostion
+est vérifiée ou non. Si elle ne l'est pas, un message est affiché.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Le handler {\tt handlerPanique}}
+
+   La fonction {\tt handlerPanique} est définie dans le fichier
+\fichier{include/manux}{debug}{h} et permet d'afficher un état du
+système qui peut être utile à des fin de débugage.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Le fichier {\tt noyau/symbols}}
+
+   Il va surtout nous servir pour aider au débugage externe, mais il
+est généré à la compilation du noyau.
+ 
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Le débugage ``externe''}
+\label{subsection:debugage_externe}
+
+   Une technique pour débuguer est d'utiliser {\tt qemu} couplé avec
+{\tt gdb}. Pour cela, je lance par exemple {\tt qemu} de la façon suivante
+
+\begin{lstlisting}
+   qemu-system-i386 -drive format=raw,file=manux,index=0,if=floppy  -rtc
+base=localtime -m 64M -gdb tcp::1234  -S 
+\end{lstlisting}
+
+   Je lance ensuite {\tt gdb} dans un autre terminal avec un
+\lstinline!.gdbinit! qui contient~:
+
+\begin{verbatim}
+  target remote :1234
+  dir noyau
+  dir lib
+  file noyau/noyau.elf
+\end{verbatim}
+
+   La commande \lstinline!dir! permet de dire à {\tt gdb} où trouver
+les fichiers sources et la command \lstinline:file: lui permet de
+consulter le binaire du noyau pour y trouver l'adresse des fonctions
+et variables (ici en fait, c'est une autre compilation du noyau au
+format {\sc elf} !).
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Exécution}
+
+   Quelques commandes de base pour l'exécution de code dans {\tt gdb}
+
+\begin{itemize}
+     \item {\tt {\bf r} un} permet de lancer l'exécution d'un
+       programme (inutilisable ici étant donné notre fonctionnement :
+       on débogue à distance) ;
+     \item {\tt {\bf c} ontinue} permet de poursuivre l'exécution jusqu'au
+       prochain point d'arrêt/bug/fin/\ldots ;
+     \item {\tt {\bf s} tep} avance d'une instruction dans le code ;
+     \item {\tt {\bf n} ext}
+     \item {\tt {\bf b} reakpoint fonction}
+     \item {\tt {\bf b} reakpoint fichier:ligne}
+\end{itemize}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Affichage des registres}
+
+   Il peut être intéressant de consulter le contenu des registres
+
+\begin{itemize}
+     \item {\tt info registers} donne le contenu des principaux registres.
+\end{itemize}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Affichage des variables}
+
+   {\tt Gdb} permet également de consulter le contenu des variables :
+
+\begin{itemize}
+   \item {\tt p toto} affiche le contenu de la variable {\tt toto}.
+\end{itemize}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Désassemblage du code}
+
+    Une fonctionnalité intéressante est de pouvoir observer le code
+assembleur, ce qui peut permettre de comprendre certains comportements
+étranges, tels que les conséquences de choix d'optimisation du
+compilateur :
+
+\begin{itemize}
+   \item {\tt disassemble fonc} affiche le code assembleur de la
+     fonction {\tt fonc}.
+\end{itemize}
+

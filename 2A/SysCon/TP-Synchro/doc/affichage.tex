@@ -1,0 +1,283 @@
+%===============================================================================
+%      L'affichage
+%===============================================================================
+\section{Introduction}
+
+   Une des premières choses à faire, afin de nous simplifier la vie
+pour la suite du développement, est de se doter d'un service minimal
+d'affichage. Nous allons donc mettre en place quelques outils très
+simples fondés sur ce que nous founit le matériel.
+
+   Nous ne nous intéresserons ici qu'à l'affichage des messages du
+noyau, pas de ceux des éventuels processus utilisateurs. Nous
+étendrons cependant un peu ces outils de sorte à nous permettre cela
+par la suite.
+
+   Nous allons procéder ici en trois étapes principales.
+
+\begin{itemize}
+   \item   Dans un premier temps, nous allons écrire le code
+permettant un accès simple à l'écran et une gestion minimale de ce
+dernier dans un module ``{\em Console}''. Cet outil est suffisant pour
+que notre noyau soit capable de nous donner un signe de vie à
+l'écran. Mais nous n'allons pas nous arrêter en si bon chemin !
+
+   \item Nous pourrons alors écrire une fonction \lstinline!printk!
+utilisable partout dans le noyau et chargée de mettre en forme des
+messages riches et de les afficher sur la console,  \ldots{} ou ailleurs.
+
+   \item   Nous construirons là-dessus un ``journal'' du noyau, c'est-à-dire
+un outil permettant de rassembler et d'organiser les messages émis par
+les différents sous-systèmes du noyau au travers de {\tt printk}.
+Ils pourront être affichés sur la console, ou conservés pour être
+stockés/traités d'une autre façon.
+   Nous modifierons alors la fonction {\tt printk} de sorte à ce qu'elle
+envoie au journal ce qui doit être affiché. C'est lui qui aiguillera
+vers la bonne destination.
+
+\end{itemize}
+
+   L'avantage d'une telle structure est que nous pourrons la faire
+évoluer. Nous pourrons par exemple créér des consoles virtuelles
+fournissant le même service que notre outil de gestion de l'écran. Il
+sera très simple de les intégrer dans le noyau. De même, nous pourrons
+définir un affichage avec plusieurs niveaux d'importance des messages
+qui pourront ensuite être aiguillés en fonction de leur criticité.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\section{Gestion de l'écran : la console}
+
+   Les fichiers \fichier{include/manux}{console}{h} 
+et \fichier{lib}{console}{c} définissent et implantent un outil de
+gestion de base de la console.
+
+   Nous allons pour le moment initialiser et utiliser une console
+unique, que nous appellerons la ``console noyau''. Tous les messages
+émis par le noyau y seront transmis.
+
+   Nous allons définir essentiellement les éléments suivants
+
+\begin{itemize}
+   \item Le type \lstinline!Console! décrit ce qu'est une console.
+   \item La fonction \lstinline!consoleInitialisation()! initialise le
+     système de gestion de la console. Elle crée en particulier la
+     console noyau. Cette fonction est invoquée une fois et une seule
+     lors du démarrage du noyau.
+   \item La fonction \lstinline!consoleAfficher()! permet d'afficher
+     une chaîne de caractères sur la console.
+\end{itemize}  
+
+   Quelques autres fonctions, de moindre importance, sont également
+définies.
+   
+%...............................................................................
+%
+%...............................................................................
+\subsection{Fonctionnement de base}
+
+   Il se trouve que l'écran d'un PC peut être utilisé en mode textuel
+comme un simple tableau de caractères. Ce tableau est situé à une
+adresse bien connue $a$ et contient $l$ lignes de $c$
+caractères. Chaque caractère est codé sur deux octets : l'un définit
+le code {\sc ascii} du caractère affiché et l'autre la couleur du
+texte et du fond. 
+
+%...............................................................................
+%
+%...............................................................................
+\subsection{Définition du type {\tt Console}}
+
+   Le type permettant de définir une console est défini dans le fichier
+\fichier{include/manux}{console}{h}. Pour le moment nous ne créerons
+qu'une console, mais lorsque nous allons introduire les consoles
+virtuelles, nous étendrons ce type.
+
+   Le type \href{html/console_8h_source.html#l00062}{\tt Console} est
+donc très simple, il comprend quelques champs décrivant les
+caractéristiques de l'écran (sa taille, l'adresse de la zone mémoire)
+et l'état actuel de l'affichage (position du curseur et de
+l'attribut).
+   
+%...............................................................................
+%
+%...............................................................................
+\subsection{Initialisation de la console}
+
+   L'initialisation du système de gestion de console (assurée par la
+fonction \lstinline!consoleInitialisation()!) consiste essentiellement
+en l'initialisation de la console noyau.
+
+   La fonction d'initalisation de la console, implantée dans
+\fichier{lib}{console}{c}, est elle aussi très simple. Elle se
+contente d'une initialisation à des valeurs par défaut des champs du
+type {\tt Console}.
+
+   Nous n'utilisons ici pour le moment qu'une seule console, elle sera
+définie comme une variable statique du fichier
+\fichier{lib}{console}{c} et pourra être obtenue par la fonction {\tt
+  consoleNoyau()} lorsque n'écessaire.
+
+   En revanche, en prévision de la création de consoles virtuelles,
+toutes les fonctions d'affichage prennent en première paramètre un
+pointeur sur la console.
+
+%...............................................................................
+%
+%...............................................................................
+\subsection{Affichage sur la console}
+
+   On construit ici en particulier la fonction suivante, chargée
+d'afficher sur la console une chaîne de caractères passée en paramètre~:
+
+\begin{lstlisting}
+void afficherConsole(Console * cons, char * msg);
+\end{lstlisting}
+
+   Elle prend en paramètre une chaîne de caractères ``classique''
+(terminée par un caractère nul) et l'affiche sur la console sans aucune
+mise en forme.
+
+   La gestion de la console est une des toutes premières choses
+initialisées par le noyau, de sorte à pouvoir faire coucou dès que
+possible.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\section{Un premier {\tt printk()}}
+
+   Grâce à notre console, l'écriture de {\tt printk()} est assez
+simple, puisque cette fonction n'a plus qu'à se préoccuper de créer
+une chaîne de caractères et de la transmettre au journal (ou
+directement à la console si on n'utilise pas le journal).
+
+   Elle est définie dans le fichier \fichier{include/manux}{printk}{h}
+   et mise en \oe{}uvre dans le fichier
+   \fichier{noyau}{printk}{c}
+
+   La fonction essentielle est bien sûr :
+
+\begin{lstlisting}
+   void printk(char * format, ...);
+\end{lstlisting} 
+
+   Dont le rôle est de mettre en forme une chaîne de caractères
+qu'elle envoie ensuite à la console (ou au journal lorsque nous
+l'aurons créé). Elle utilise pour cela le code suivant
+
+\begin{lstlisting}
+   afficherConsoleN(consoleNoyau(), chaine, indice);  
+\end{lstlisting}
+
+   Le paramètre \lstinline!indice! donne la longueur de la chaîne de
+caractères \lstinline!chaine! qui est ainsi affichée sur la console du
+noyau.
+   
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\section{Mise en place d'un journal}
+
+   Le journal est spécifié dans le fichier
+\fichier{include/manux}{journal}{h} et implanté dans le fichier
+\fichier{lib}{journal}{c}.
+   
+   Nous allons définir un mécanisme de journal permettant de conserver
+les messages transmis par le noyau. Pour le moment, notre journal se
+contente de transmettre ces messages sur l'écran physique. Lorsque
+nous aurons mis en place des outils de gestion mémoire, nous pourrons
+étoffer ce mécanisme de journal.
+
+   Le journal est implanté dans les fichiers
+\lstinline!manux/journal.h! et \lstinline!lib/journal.c!. Il
+propose essentiellement la fonction suivante
+
+\begin{lstlisting}
+   void journaliser(char * message); 
+\end{lstlisting}
+
+   Elle utilise la fonction \lstinline!afficherConsoleN()! pour
+envoyer le message à la console.
+
+   La fonction \lstinline!printk()! est alors modifiée pour utiliser la
+fonction \lstinline!journaliser()! plutôt que passer directement par
+la console.
+
+   Évidemment, le journal est initialisé juste après la console.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Introduction de plusieurs niveaux de messages}
+
+   Maintenant que nous avons un système qui permet à tous les
+sous-systèmes d'envoyer des messages, essentiellement {\em via} la
+fonction \lstinline!printk()!, nous allons mettre en place un système
+permettra de filtrer un peu tous ces messages.
+
+   Pour cela, l'idée est d'utiliser la fonction \lstinline!printk()!
+de la façon suivante
+
+\begin{lstlisting}
+   printk("{2} Un message\n");
+\end{lstlisting}
+
+   Ce sont les trois premiers caractères qui vont permettre de
+réaliser cet aiguillage.
+
+   C'est plus précisément le chiffre qui va permettre de définir le
+niveau de criticité du message. Les valeurs suivantes sont définies
+dans \fichier{include/manux}{journal}{h}~:
+
+\begin{lstlisting}
+#define MANUX_JOURNAL_NIVEAU_PANIQUE      0
+#define MANUX_JOURNAL_NIVEAU_URGENCE      1
+#define MANUX_JOURNAL_NIVEAU_CRITIQUE     2
+#define MANUX_JOURNAL_NIVEAU_ERREUR       3
+#define MANUX_JOURNAL_NIVEAU_ATTENTION    4
+#define MANUX_JOURNAL_NIVEAU_NOTIFICATION 5
+#define MANUX_JOURNAL_NIVEAU_INFORMATION  6
+#define MANUX_JOURNAL_NIVEAU_DEBUGAGE     7
+\end{lstlisting}  
+
+   Les caractères qui encadrent le niveau de criticité permettent de
+définir le comportement. Précisons ici en effet que, dès que nous
+aurons mis en place des outils le permettant, nous allons associer un
+fichier au journal. Ce fichier permettra par exemple de conserver les
+messages du noyau, même après l'arrêt du système (ce qui est affiché
+sur la console disparait, ce qui nest pas pratique pour une analyse a
+posteriori).
+
+La signification de ces caractères est alors la suivante~:
+\begin{itemize}
+   \item \lstinline![n]! et le message sera envoyé sur la console ;
+   \item \lstinline!(n)! le message sera envoyé sur le fichier
+     associé au journal ;
+   \item \lstinline!{n}! le message sera transmis sur les deux
+      destinations.     
+\end{itemize}
+
+   Le code de la fonction \lstinline!journaliser()! est donc modifier
+en conséquence. Elle utiliser dans un premier temps la fonction
+\lstinline!aiguillerMessage()! qui traite ce ``préfixe'' de sorte aue
+le message soit transmis correctement, puis dans un second temps la
+fonction \lstinline!journaliserNiveau()! qui transmet effectivement le
+message à la (ou les) bonne(s) destination(s).
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\section{Plus de souplesse avec les consoles virtuelles}
+
+   Lorsque nous allons mettre en place la notion de tâches, il sera
+intéressant d'attribuer à chacune d'entre elles une console virtuelle
+potentiellement différente des autres. Nous pourrons ainsi basculer de
+l'une à l'autre pour mieux distinguer ce qu'affiche chaque tâche.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Utilisation des fichiers}
+

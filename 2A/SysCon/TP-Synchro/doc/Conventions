@@ -1,0 +1,14 @@
+   Mon problème pour le moment est de faire un choix entre des rêgles
+bien à moi qui me paraissent correctes et les conventions habituellement
+utilisées afin de faciliter la correspondance.
+
+   Il va bien falloir que je tranche !
+
+Les règles utilisées pour les identificateurs
+
+   . Les identificateurs sont uniquement composés de lettres et
+éventuellement de chiffres.
+   . Les différents mots d'un identificateurs sont distingués par leur 
+première lettre en majuscule.
+   . La première lettre du premier mot est en minuscule, sauf pour les 
+types, où elle est en majuscule.

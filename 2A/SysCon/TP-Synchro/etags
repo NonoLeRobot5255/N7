@@ -1,0 +1,982 @@
+
+boot/main.h,56
+#define __START_H__2,20
+#define FIRST_STACK_SIZE 4,41
+
+outils/taillenoyau.c,42
+#define TAILLE_BLOC 6,81
+int main(8,106
+
+sf/fichier.c,50
+int sys_ecrire(10,507
+void sfInitialiser(26,912
+
+i386/interruptions.c,246
+#define SELECTEUR_SEGMENT_CODE 16,701
+int nbTicks 27,975
+void exDivisionParZero(29,993
+void handlerTimer(37,1145
+void positionnerHandlerInterruption(50,1451
+void chargerIDT(61,1773
+void initialiserIDT(84,2447
+void handlerWarning(110,3149
+
+i386/segment.c,259
+DescriptorTable * gdtSysteme;9,459
+int setDescripteurSegment(11,490
+int setDescripteurTSS(33,1295
+void chargerGDT(55,2039
+void chargerLDT(75,2773
+void initialiserGDT(94,3418
+int ajouterDescTSS(131,4478
+void busifier(146,4812
+void debusifier(151,4907
+
+lib/malloc.c,495
+typedef struct _InfoGestionMemoire 18,811
+   void        * prochainBlocLibre;19,848
+} InfoGestionMemoire;20,884
+typedef struct _BlocLibre 25,976
+   unsigned int       taille;26,1004
+   InfoGestionMemoire igm;27,1072
+} BlocLibre;28,1099
+typedef struct _BlocAlloue 35,1282
+   unsigned int taille;36,1311
+   char         utilisateur[utilisateur37,1353
+} BlocAlloue;38,1410
+InfoGestionMemoire * infoMalloc44,1565
+void * malloc(47,1680
+void free(76,2428
+int initialiserMalloc(80,2460
+
+lib/string.c,18
+void bcopy 8,432
+
+lib/clavier.c,418
+int toucheTouche 15,598
+void initialiserClavier(17,621
+#define KEYCODE_ESC 30,831
+#define KEYCODE_TAB 31,857
+#define KEYCODE_F1 32,883
+#define KEYCODE_F2 33,909
+#define KEYCODE_F3 34,935
+#define KEYCODE_F4 35,961
+#define KEYCODE_F5 36,987
+#define KEYCODE_F6 37,1013
+#define KEYCODE_F7 38,1039
+#define KEYCODE_F8 39,1065
+#define KEYCODE_F9 40,1091
+#define KEYCODE_F10 41,1117
+void handlerClavier(44,1145
+
+lib/ramdisk.c,32
+void initialiserRamDisk(10,461
+
+lib/printk.c,44
+#define chiffre 12,536
+void printk(14,572
+
+lib/journal.c,160
+static Console journal;15,678
+char bufferJournal[bufferJournal21,779
+void initialiserJournal(23,806
+void journaliser(46,1357
+void afficherJournal(59,1602
+
+lib/console.c,815
+#define CON_SCREEN 17,995
+Console * consolesVirtuelles[consolesVirtuelles26,1218
+static int nbreConsolesVirtuelles 28,1272
+int consoleCourante 33,1363
+static Console ecran;39,1450
+void consoleInit(48,1677
+void affecterCouleurFond(65,2017
+void affecterCouleurTexte(70,2132
+void effacerConsole(75,2245
+void scrollUp(89,2579
+void avancerLigne(116,3409
+void avancerUnCar(136,3867
+inline void afficherConsoleCaractere(145,4028
+void afficherConsoleN(152,4282
+void afficherEcran(242,7264
+void afficherConsole(246,7332
+void afficherConsoleEntier(253,7457
+void afficherConsoleRegistre(268,7710
+void initialiserConsole(287,8132
+void basculerVersConsole(331,9481
+void montrerConsole(392,11879
+void basculerConsole(398,11976
+int consoleEcrire(405,12107
+MethodesFichier consoleMethodesFichier 417,12352
+
+include/manux/tache.h,1668
+#define TACHES_DEF7,424
+#define LDT_NB_BYTES 18,705
+typedef enum _EtatTache 24,881
+   Tache_En_Cours 25,907
+   Tache_Prete 26,956
+   Tache_Bloquee 27,1023
+} EtatTache;28,1078
+typedef void (CorpsTache(33,1152
+typedef struct _IntelTSS 38,1244
+   uint16 TSSPrecedent;39,1271
+   uint16 Reserve1;40,1319
+   uint32 ESP0;41,1339
+   uint16 SS0;42,1355
+   uint16 Reserve2;43,1370
+   uint32 ESP1;44,1390
+   uint16 SS1;45,1406
+   uint16 Reserve3;46,1421
+   uint32 ESP2;47,1441
+   uint16 SS2;48,1457
+   uint16 Reserve4;49,1472
+   uint32 CR3;50,1492
+   uint32 EIP;51,1552
+   uint32 EFLAGS;52,1567
+   uint32 EAX,53,1585
+   uint32 EAX, ECX,53,1585
+   uint32 EAX, ECX, EDX,53,1585
+          EBX,54,1610
+          EBX, ESP,54,1610
+          EBX, ESP, EBP,54,1610
+          ESI,55,1635
+          ESI, EDI;55,1635
+   uint16 ES;56,1682
+   uint16 Reserve5;57,1737
+   uint16 CS;58,1757
+   uint16 Reserve6;59,1813
+   uint16 SS;60,1833
+   uint16 Reserve7;61,1889
+   uint16 DS;62,1909
+   uint16 Reserve8;63,1965
+   uint16 FS;64,1985
+   uint16 Reserve9;65,2041
+   uint16 GS;66,2061
+   uint16 Reserve10;67,2117
+   uint16 LDT;68,2138
+   uint16 Reserve11;69,2195
+   uint16 Reserve12;70,2216
+   uint16 IOMBA;71,2237
+} IntelTSS;72,2254
+typedef struct _Tache 77,2317
+   IntelTSS           tss;78,2341
+   uint16             tss_LDT;79,2368
+   DescriptorTable *  ldt;80,2399
+   uint16             indiceTSSDescriptor;81,2426
+   TacheID            numero;82,2501
+   EtatTache          etat;83,2531
+   void             * tailleMemoire;84,2559
+   struct _Console  * console;85,2618
+   Fichier            fichiers[fichiers86,2691
+} Tache;87,2768
+
+include/manux/stdarg.h,777
+#define _STDARG_H9,243
+#define _ANSI_STDARG_H_10,261
+#undef __need___va_list12,319
+#define __GNUC_VA_LIST66,1209
+typedef char *__gnuc_va_list;__gnuc_va_list68,1314
+typedef void *__gnuc_va_list;__gnuc_va_list70,1350
+#define __va_rounded_size(82,1671
+#define __va_rounded_size(85,1789
+#define va_start(89,1903
+#undef va_end92,1998
+#define va_end(94,2069
+#define va_arg(101,2433
+#define va_arg(106,2697
+#define __va_copy(114,3040
+#undef _VA_LIST144,3982
+#undef _BSD_VA_LIST148,4026
+#define _VA_LIST_157,4344
+#define _VA_LIST 160,4395
+typedef __gnuc_va_list va_list;163,4449
+#define __VA_LIST165,4496
+typedef __gnuc_va_list va_list;181,5203
+#define _VA_LIST_186,5455
+#define _VA_LIST189,5497
+#define _VA_LIST_DEFINED192,5546
+#define _VA_LIST_T_H195,5599
+
+include/manux/atomique.h,437
+#define ATOMIQUE_DEF7,426
+typedef uint32 Atomique;17,681
+#define atomiqueInit(19,707
+#define atomiqueLire(22,761
+static __inline__ booleen atomiqueTestInit(25,801
+typedef struct _ExclusionMutuelle 44,1316
+   Atomique   verrou;45,1352
+   ListeTache tachesEnAttente;46,1374
+} ExclusionMutuelle;47,1405
+#define initialiserExclusionMutuelle(49,1427
+#define entrerExclusionMutuelle(53,1598
+#define sortirExclusionMutuelle(62,2101
+
+include/manux/types.h,516
+#define MANUX_TYPES7,426
+typedef unsigned char uint8;10,461
+typedef unsigned short uint16;14,513
+typedef unsigned long uint32;18,567
+typedef int booleen;22,621
+#   define TRUE 26,663
+#   define FALSE 30,703
+typedef struct _TousRegistres 37,884
+   uint32 edi;38,916
+   uint32 esi;39,931
+   uint32 ebp;40,946
+   uint32 esp;41,961
+   uint32 ebx;42,976
+   uint32 edx;43,991
+   uint32 ecx;44,1006
+   uint32 eax;45,1021
+} TousRegistres;46,1036
+typedef uint16 TacheID;51,1098
+typedef void * Page;56,1188
+
+include/manux/config.h,207
+#define MANUX_CONFIG7,426
+#define TAILLE_PAGE 12,491
+#define NOMBRE_PAGES_SYSTEME 19,703
+#   define ADRESSE_DEBUT_TAS 25,833
+#   define NB_MAX_FICHIERS 33,1020
+#   define MANUX_NB_CONSOLES_MAX 46,1288
+
+include/manux/string.h,31
+#define DEF_MANUX_STRING7,430
+
+include/manux/semaphore.h,175
+#define SEMAPHORE_DEF7,427
+typedef struct _Semaphore 16,561
+  int        valeur;17,589
+  Atomique   verrou;18,610
+  ListeTache tachesEnAttente;19,631
+} Semaphore;20,661
+
+include/manux/listetaches.h,291
+#define LISTETACHES_DEF8,510
+typedef struct _CelluleTache 13,577
+   struct _Tache        * tache;14,608
+   struct _CelluleTache * suivant;15,641
+} CelluleTache;16,676
+typedef struct _ListeTache 18,693
+   CelluleTache * tete;19,722
+   CelluleTache * queue;20,746
+} ListeTache;21,771
+
+include/manux/journal.h,26
+#define JOURNAL_DEF8,506
+
+include/manux/irq.h,74
+#define IRQ_DEF6,340
+#define IRQTimer 13,431
+#define IRQClavier 14,455
+
+include/manux/i386.h,63
+#define I386_DEF7,422
+#define str(16,534
+#define ltr(20,586
+
+include/manux/io.h,62
+#define IO_DEF6,339
+#define outb(11,397
+#define inb(17,519
+
+include/manux/limites.h,23
+#define ULONG_MAX 1,0
+
+include/manux/clavier.h,92
+#define CLAVIER_DEF7,425
+#define portDonneesClavier 11,472
+#define portCmdClavier 12,504
+
+include/manux/pagination.h,151
+#define PAGINATION_DEF8,509
+typedef uint32 PDE;16,653
+typedef uint32 PTE;22,765
+typedef PDE * PageDirectory;28,867
+typedef PTE * PageTable;34,974
+
+include/manux/segment.h,788
+#define SEGMENT_DEF7,425
+typedef struct _DescSegment 14,508
+   uint16 limiteFaible;15,538
+   uint16 baseFaible;16,562
+   uint8  baseInter;17,584
+   uint8  type;18,605
+   uint8  limiteFort;19,621
+   uint8  baseFort;20,643
+} DescSegment;21,663
+typedef struct _DescTSS 26,723
+   uint16 limiteFaible;27,749
+   uint16 baseFaible;28,773
+   uint8  baseInter;29,795
+   uint8  type;30,818
+   uint8  limiteFort;31,858
+   uint8  baseFort;32,899
+} DescTSS;33,919
+typedef union _Descripteur 35,931
+   DescSegment ds;36,960
+   DescTSS     dt;37,979
+} Descripteur;38,998
+typedef struct _DescriptorTable 44,1127
+  int         capacite;45,1161
+  int         taille;46,1185
+  Descripteur descripteur[descripteur47,1207
+} DescriptorTable;48,1237
+#define tailleGDTSysteme 50,1257
+
+include/manux/appelsysteme.h,745
+#define APPEL_SYSTEME_DEF7,431
+#   define MANUX_AS_INT 15,577
+#   define NB_MAX_APPELS_SYSTEME 22,700
+#define NBAS_NUMERO_TACHE 33,887
+#define NBAS_CONSOLE 34,917
+#define NBAS_OBTENIR_PAGES 35,947
+#define NBAS_ECRIRE 36,977
+#define NBAS_FORK 37,1007
+typedef struct _ParametreAS 48,1265
+   uint32 ecx;49,1295
+   uint32 edx;50,1310
+   uint32 ebx;51,1325
+   uint32 esp;52,1340
+   uint32 ebp;53,1355
+   uint32 esi;54,1370
+   uint32 edi;55,1385
+   uint32 adresseRetourInterruption;56,1400
+   uint32 eflags;57,1455
+   uint32 csretour;58,1473
+   uint32 adresseRetourInterface;59,1535
+} ParametreAS;60,1597
+#define appelSysteme0(66,1704
+#define appelSysteme1(81,2256
+#define appelSysteme2(96,2937
+#define appelSysteme3(111,3644
+
+include/manux/interBasNiveau.h,35
+#define INTER_BAS_NIVEAU_DEF7,434
+
+include/manux/fichier.h,262
+#define FICHIER_DEF7,425
+typedef struct _Fichier 14,555
+   void                    * prive;15,581
+   struct _MethodesFichier * methodes;16,649
+} Fichier;17,688
+typedef struct _MethodesFichier 22,763
+   int (*ecrire)ecrire23,797
+} MethodesFichier;24,858
+
+include/manux/scheduler.h,48
+#define SCHEDULER_DEF7,427
+#define KHZ 17,599
+
+include/manux/printk.h,25
+#define STD_IO_DEF7,424
+
+include/manux/memoire.h,88
+#define MEMOIRE_DEF8,506
+#   define NULL 13,591
+#define DEBUT_MEMOIRE_ETENDUE 16,617
+
+include/manux/malloc.h,55
+#define MANUX_MALLOC_DEF9,592
+#   define NULL 12,631
+
+include/manux/ramdisk.h,26
+#define RAMDISK_DEF7,425
+
+include/manux/console.h,851
+#define MANUX_CONSOLE_DEF26,1890
+typedef struct _Console 36,2198
+   char              * adresseEcran;37,2224
+   char              * adresseEcranCopie;39,2362
+   int                 ligne,41,2497
+   int                 ligne, colonne 41,2497
+   unsigned char       attribut;42,2537
+   uint8               nbLignes;43,2570
+   uint8               nbColonnes;44,2603
+   ExclusionMutuelle   scAcces;45,2638
+} Console;46,2670
+   COUL_NOIR 59,2909
+   COUL_NOIR       = 0x0,x059,2909
+   COUL_BLEU_CLAIR 60,2935
+   COUL_BLEU_CLAIR = 0x9,x960,2935
+   COUL_VERT,61,2961
+   COUL_CYAN,62,2975
+   COUL_ROUGE,63,2989
+   COUL_MAGENTA,64,3004
+   COUL_JAUNE,65,3021
+   COUL_BLANC,66,3036
+   COUL_BLEU_FONCE 67,3051
+   COUL_BLEU_FONCE = 0x01,x0167,3051
+   COUL_BLEU,68,3078
+   COUL_MAUVE 69,3092
+} Couleur;70,3111
+#define ASCII_ESC 75,3173
+
+include/manux/interruptions.h,754
+#define INTERRUPTION_DEF6,349
+#define intTimer 13,464
+#define intClavier 14,488
+   uint16 reserve1;20,595
+   uint16 tss;21,615
+   uint8  reserve2;22,630
+   uint8  parametres;23,650
+   uint16 reserve3;24,672
+} TaskGateDescriptor;25,692
+   uint16 offsetFaible;31,787
+   uint16 selSegment;32,811
+   uint16 parametres;33,833
+   uint16 offsetFort;34,855
+} InterruptGate;35,877
+   uint16 offsetFaible;41,962
+   uint16 selSegment;42,986
+   uint16 parametres;43,1008
+   uint16 offsetFort;44,1030
+} TrapGate;45,1052
+   TaskGateDescriptor tsg;51,1132
+   InterruptGate      itg;52,1159
+   TrapGate           trg;53,1186
+} IDTGate;54,1213
+typedef IDTGate * IDT;59,1277
+typedef void (Handler(64,1364
+#define cli(71,1473
+#define sti(77,1614
+
+include/manux/sfm.h,880
+#define SFM_DEF7,421
+#define SFM_MAGIC 14,525
+#define SFM_TAILLE_BLOC 19,582
+#define SFM_NB_BLOCS_DIRECTS 24,653
+#define SFM_LONGUEUR_NOM 29,735
+typedef struct _SFMSuperBloc 34,787
+   uint32 magic;35,818
+   uint8  version;36,835
+   uint32 offsetPremierBlocLibre;37,854
+   uint32 offsetInodeRacine;38,888
+} SFMSuperBloc;39,917
+typedef enum _SFMTypeFichier 44,976
+   SFM_FICHIER_ELEMENTAIRE 45,1007
+   SFM_REPERTOIRE 46,1039
+} SFMTypeFichier;47,1070
+typedef struct _SFMInode 52,1120
+   uint32 taille;53,1147
+   SFMTypeFichier type;54,1165
+   uint32 blocsDirects[blocsDirects55,1192
+} SFMInode;56,1238
+typedef struct _SFMEntreeRepertoire 61,1303
+   char nomFichier[nomFichier63,1363
+} SFMEntreeRepertoire;64,1401
+typedef struct _SFMRepertoire 69,1461
+   uint32 nombreEntrees;70,1493
+   SFMEntreeRepertoire entrees[entrees71,1518
+} SFMRepertoire;72,1553
+
+include/manux/errno.h,115
+#define ERRNO_H8,502
+#define ESUCCES 10,519
+#define ENOENT 11,582
+#define ENOMEM 12,654
+#define EINVAL 13,717
+
+pouet.c,15
+void main(1,0
+
+noyau/tache.c,185
+TacheID numeroProchaineTache 23,937
+Tache * tacheCourante 28,1047
+unsigned int nbActivations 30,1118
+void activerTache(32,1186
+Tache * creerTache(46,1445
+TacheID sysFork(126,4068
+
+noyau/listetaches.c,99
+void initialiserListeTache(11,507
+void insererCelluleTache(17,621
+Tache * extraireTache(39,1201
+
+noyau/appelsysteme.c,194
+void * vecteurAppelsSysteme[vecteurAppelsSysteme15,724
+int definirAppelSysteme(17,777
+void initialiserAppelsSysteme(28,1030
+void entrerAppelSysteme(36,1301
+void sortirAppelSysteme(41,1360
+
+noyau/scheduler.c,456
+Tache * tacheScheduler;30,1149
+Atomique schedulerEnCours 32,1174
+booleen basculeConsoleDemandee 37,1280
+booleen afficheEtatSystemeDemande 38,1320
+Atomique verrouScheduler;43,1416
+ListeTache listeTaches;48,1499
+Tache * tacheEnCours 53,1552
+void setFrequenceTimer(55,1582
+void basculerTache(67,1844
+void scheduler(126,3615
+void initialiserScheduler(141,3982
+void ordonnancerTache(163,4687
+int AS_numeroTache(201,5764
+uint32 AS_console(210,5940
+
+noyau/semaphore.c,70
+void semInit(10,505
+void semObtenir(16,620
+void semRelacher(24,856
+
+noyau/memoire.c,321
+#   define AFFECTATION_PAGES 22,1045
+int nombrePagesSysteme 28,1146
+TacheID * proprietairePage 35,1365
+static int nombrePages 40,1478
+void initialiserMemoire(42,1507
+void * allouerPageSysteme(63,2094
+void * allouerPage(89,2822
+void * allouerPages(116,3522
+void libererPage(121,3584
+int AS_obtenirPages(125,3626
+
+noyau/main.c,1065
+#define TEST_CONSOLE_VIRTUELLE68,1979
+Atomique atome;81,2355
+#define tourBete 82,2371
+#define tourDebile 83,2392
+ExclusionMutuelle exclusionMutuelle;87,2452
+typedef struct _InfoSysteme 124,3052
+   uint16 memoireDeBase;125,3082
+   uint16 memoireEtendue;126,3118
+   uint16 tailleRamdisk;127,3154
+   uint16 adresseRamdiskLo;128,3212
+   uint16 adresseRamdiskHi;129,3279
+} InfoSysteme;130,3307
+void _start(132,3323
+void tacheVoid(297,7982
+void tacheBete(301,8035
+void tacheDebile(316,8431
+void exclusionMutuelleTest(335,8915
+void exclusionMutuelleTestA(358,9756
+void exclusionMutuelleTestB(368,9895
+void exclusionMutuelleTestC(378,10035
+#define NBRE_APPELS 393,10255
+int  __appelSystemeNul(395,10279
+void testAppelSysteme(414,10800
+#define NBRE_MESSAGES 437,11454
+void tacheA(439,11486
+void tacheB(451,11668
+void tacheC(467,12023
+void tacheD(483,12378
+void tacheE(499,12735
+void testStdio(520,13147
+void calculerPremiers(539,13508
+void testCV1(566,14172
+void testCV2(582,14451
+void testPagTache1(602,14764
+void testPagTache2(633,15505
+
+noyau/pagination.c,188
+PageDirectory repertoirePaginationSysteme;16,679
+void creerTablePaginationDirecte(18,723
+void creerTablePagination(74,2857
+int ajouterPage(133,4908
+int initialiserPagination(167,6061
+
+usr/include/stdio.h,23
+#define _STDIO_H7,422
+
+usr/include/stdarg.h,777
+#define _STDARG_H9,243
+#define _ANSI_STDARG_H_10,261
+#undef __need___va_list12,319
+#define __GNUC_VA_LIST66,1209
+typedef char *__gnuc_va_list;__gnuc_va_list68,1314
+typedef void *__gnuc_va_list;__gnuc_va_list70,1350
+#define __va_rounded_size(82,1671
+#define __va_rounded_size(85,1789
+#define va_start(89,1903
+#undef va_end92,1998
+#define va_end(94,2069
+#define va_arg(101,2433
+#define va_arg(106,2697
+#define __va_copy(114,3040
+#undef _VA_LIST144,3982
+#undef _BSD_VA_LIST148,4026
+#define _VA_LIST_157,4344
+#define _VA_LIST 160,4395
+typedef __gnuc_va_list va_list;163,4449
+#define __VA_LIST165,4496
+typedef __gnuc_va_list va_list;181,5203
+#define _VA_LIST_186,5455
+#define _VA_LIST189,5497
+#define _VA_LIST_DEFINED192,5546
+#define _VA_LIST_T_H195,5599
+
+usr/include/manux/tache.h,1667
+#define TACHES_DEF7,424
+#define LDT_NB_BYTES 18,705
+typedef enum _EtatTache 23,811
+   Tache_En_Cours 24,837
+   Tache_Prete 25,886
+   Tache_Bloquee 26,953
+} EtatTache;27,1008
+typedef void (CorpsTache(32,1082
+typedef struct _IntelTSS 37,1174
+   uint16 TSSPrecedent;38,1201
+   uint16 Reserve1;39,1249
+   uint32 ESP0;40,1269
+   uint16 SS0;41,1285
+   uint16 Reserve2;42,1300
+   uint32 ESP1;43,1320
+   uint16 SS1;44,1336
+   uint16 Reserve3;45,1351
+   uint32 ESP2;46,1371
+   uint16 SS2;47,1387
+   uint16 Reserve4;48,1402
+   uint32 CR3;49,1422
+   uint32 EIP;50,1482
+   uint32 EFLAGS;51,1497
+   uint32 EAX,52,1515
+   uint32 EAX, ECX,52,1515
+   uint32 EAX, ECX, EDX,52,1515
+          EBX,53,1540
+          EBX, ESP,53,1540
+          EBX, ESP, EBP,53,1540
+          ESI,54,1565
+          ESI, EDI;54,1565
+   uint16 ES;55,1612
+   uint16 Reserve5;56,1667
+   uint16 CS;57,1687
+   uint16 Reserve6;58,1743
+   uint16 SS;59,1763
+   uint16 Reserve7;60,1819
+   uint16 DS;61,1839
+   uint16 Reserve8;62,1895
+   uint16 FS;63,1915
+   uint16 Reserve9;64,1971
+   uint16 GS;65,1991
+   uint16 Reserve10;66,2047
+   uint16 LDT;67,2068
+   uint16 Reserve11;68,2125
+   uint16 Reserve12;69,2146
+   uint16 IOMBA;70,2167
+} IntelTSS;71,2184
+typedef struct _Tache 76,2247
+   IntelTSS           tss;77,2271
+   uint16             tss_LDT;78,2298
+   DescriptorTable *  ldt;79,2329
+   uint16             indiceTSSDescriptor;80,2356
+   TacheID            numero;81,2431
+   EtatTache          etat;82,2461
+   void             * tailleMemoire;83,2489
+   struct _Console  * console;84,2548
+   Fichier            fichiers[fichiers85,2621
+} Tache;86,2698
+
+usr/include/manux/stdarg.h,777
+#define _STDARG_H9,243
+#define _ANSI_STDARG_H_10,261
+#undef __need___va_list12,319
+#define __GNUC_VA_LIST66,1209
+typedef char *__gnuc_va_list;__gnuc_va_list68,1314
+typedef void *__gnuc_va_list;__gnuc_va_list70,1350
+#define __va_rounded_size(82,1671
+#define __va_rounded_size(85,1789
+#define va_start(89,1903
+#undef va_end92,1998
+#define va_end(94,2069
+#define va_arg(101,2433
+#define va_arg(106,2697
+#define __va_copy(114,3040
+#undef _VA_LIST144,3982
+#undef _BSD_VA_LIST148,4026
+#define _VA_LIST_157,4344
+#define _VA_LIST 160,4395
+typedef __gnuc_va_list va_list;163,4449
+#define __VA_LIST165,4496
+typedef __gnuc_va_list va_list;181,5203
+#define _VA_LIST_186,5455
+#define _VA_LIST189,5497
+#define _VA_LIST_DEFINED192,5546
+#define _VA_LIST_T_H195,5599
+
+usr/include/manux/atomique.h,437
+#define ATOMIQUE_DEF7,426
+typedef uint32 Atomique;17,681
+#define atomiqueInit(19,707
+#define atomiqueLire(22,761
+static __inline__ booleen atomiqueTestInit(25,801
+typedef struct _ExclusionMutuelle 44,1316
+   Atomique   verrou;45,1352
+   ListeTache tachesEnAttente;46,1374
+} ExclusionMutuelle;47,1405
+#define initialiserExclusionMutuelle(49,1427
+#define entrerExclusionMutuelle(53,1598
+#define sortirExclusionMutuelle(62,2101
+
+usr/include/manux/types.h,516
+#define MANUX_TYPES7,426
+typedef unsigned char uint8;10,461
+typedef unsigned short uint16;14,513
+typedef unsigned long uint32;18,567
+typedef int booleen;22,621
+#   define TRUE 26,663
+#   define FALSE 30,703
+typedef struct _TousRegistres 37,884
+   uint32 edi;38,916
+   uint32 esi;39,931
+   uint32 ebp;40,946
+   uint32 esp;41,961
+   uint32 ebx;42,976
+   uint32 edx;43,991
+   uint32 ecx;44,1006
+   uint32 eax;45,1021
+} TousRegistres;46,1036
+typedef uint16 TacheID;51,1098
+typedef void * Page;56,1188
+
+usr/include/manux/config.h,165
+#define MANUX_CONFIG7,426
+#define TAILLE_PAGE 12,491
+#define NOMBRE_PAGES_SYSTEME 19,703
+#   define ADRESSE_DEBUT_TAS 25,833
+#   define NB_MAX_FICHIERS 33,1020
+
+usr/include/manux/string.h,31
+#define DEF_MANUX_STRING7,430
+
+usr/include/manux/semaphore.h,175
+#define SEMAPHORE_DEF7,427
+typedef struct _Semaphore 16,561
+  int        valeur;17,589
+  Atomique   verrou;18,610
+  ListeTache tachesEnAttente;19,631
+} Semaphore;20,661
+
+usr/include/manux/listetaches.h,291
+#define LISTETACHES_DEF8,510
+typedef struct _CelluleTache 13,577
+   struct _Tache        * tache;14,608
+   struct _CelluleTache * suivant;15,641
+} CelluleTache;16,676
+typedef struct _ListeTache 18,693
+   CelluleTache * tete;19,722
+   CelluleTache * queue;20,746
+} ListeTache;21,771
+
+usr/include/manux/journal.h,26
+#define JOURNAL_DEF8,506
+
+usr/include/manux/irq.h,74
+#define IRQ_DEF6,340
+#define IRQTimer 13,431
+#define IRQClavier 14,455
+
+usr/include/manux/i386.h,63
+#define I386_DEF7,422
+#define str(16,534
+#define ltr(20,586
+
+usr/include/manux/io.h,62
+#define IO_DEF6,339
+#define outb(11,397
+#define inb(17,519
+
+usr/include/manux/limites.h,23
+#define ULONG_MAX 1,0
+
+usr/include/manux/clavier.h,92
+#define CLAVIER_DEF7,425
+#define portDonneesClavier 11,472
+#define portCmdClavier 12,504
+
+usr/include/manux/pagination.h,151
+#define PAGINATION_DEF8,509
+typedef uint32 PDE;16,653
+typedef uint32 PTE;22,765
+typedef PDE * PageDirectory;28,867
+typedef PTE * PageTable;34,974
+
+usr/include/manux/segment.h,788
+#define SEGMENT_DEF7,425
+typedef struct _DescSegment 14,508
+   uint16 limiteFaible;15,538
+   uint16 baseFaible;16,562
+   uint8  baseInter;17,584
+   uint8  type;18,605
+   uint8  limiteFort;19,621
+   uint8  baseFort;20,643
+} DescSegment;21,663
+typedef struct _DescTSS 26,723
+   uint16 limiteFaible;27,749
+   uint16 baseFaible;28,773
+   uint8  baseInter;29,795
+   uint8  type;30,818
+   uint8  limiteFort;31,858
+   uint8  baseFort;32,899
+} DescTSS;33,919
+typedef union _Descripteur 35,931
+   DescSegment ds;36,960
+   DescTSS     dt;37,979
+} Descripteur;38,998
+typedef struct _DescriptorTable 44,1127
+  int         capacite;45,1161
+  int         taille;46,1185
+  Descripteur descripteur[descripteur47,1207
+} DescriptorTable;48,1237
+#define tailleGDTSysteme 50,1257
+
+usr/include/manux/appelsysteme.h,745
+#define APPEL_SYSTEME_DEF7,431
+#   define MANUX_AS_INT 15,577
+#   define NB_MAX_APPELS_SYSTEME 22,700
+#define NBAS_NUMERO_TACHE 33,887
+#define NBAS_CONSOLE 34,917
+#define NBAS_OBTENIR_PAGES 35,947
+#define NBAS_ECRIRE 36,977
+#define NBAS_FORK 37,1007
+typedef struct _ParametreAS 48,1265
+   uint32 ecx;49,1295
+   uint32 edx;50,1310
+   uint32 ebx;51,1325
+   uint32 esp;52,1340
+   uint32 ebp;53,1355
+   uint32 esi;54,1370
+   uint32 edi;55,1385
+   uint32 adresseRetourInterruption;56,1400
+   uint32 eflags;57,1455
+   uint32 csretour;58,1473
+   uint32 adresseRetourInterface;59,1535
+} ParametreAS;60,1597
+#define appelSysteme0(66,1704
+#define appelSysteme1(81,2256
+#define appelSysteme2(96,2937
+#define appelSysteme3(111,3644
+
+usr/include/manux/interBasNiveau.h,35
+#define INTER_BAS_NIVEAU_DEF7,434
+
+usr/include/manux/fichier.h,262
+#define FICHIER_DEF7,425
+typedef struct _Fichier 14,555
+   void                    * prive;15,581
+   struct _MethodesFichier * methodes;16,649
+} Fichier;17,688
+typedef struct _MethodesFichier 22,763
+   int (*ecrire)ecrire23,797
+} MethodesFichier;24,858
+
+usr/include/manux/scheduler.h,48
+#define SCHEDULER_DEF7,427
+#define KHZ 17,599
+
+usr/include/manux/printk.h,25
+#define STD_IO_DEF7,424
+
+usr/include/manux/memoire.h,88
+#define MEMOIRE_DEF8,506
+#   define NULL 13,591
+#define DEBUT_MEMOIRE_ETENDUE 16,617
+
+usr/include/manux/malloc.h,55
+#define MANUX_MALLOC_DEF9,592
+#   define NULL 12,631
+
+usr/include/manux/ramdisk.h,26
+#define RAMDISK_DEF7,425
+
+usr/include/manux/console.h,687
+#define MANUX_CONSOLE_DEF14,998
+typedef struct _Console 23,1280
+   char              * adresseEcran;24,1306
+   int                 ligne,25,1343
+   int                 ligne, colonne 25,1343
+   unsigned char       attribut;26,1383
+   uint8               nbLignes;27,1416
+   uint8               nbColonnes;28,1449
+   ExclusionMutuelle   scAcces;29,1484
+} Console;30,1516
+   COUL_NOIR 43,1755
+   COUL_BLEU_CLAIR,44,1773
+   COUL_VERT,45,1793
+   COUL_CYAN,46,1807
+   COUL_ROUGE,47,1821
+   COUL_MAGENTA,48,1836
+   COUL_JAUNE,49,1853
+   COUL_BLANC,50,1868
+   COUL_BLEU_FONCE,51,1883
+   COUL_BLEU,52,1903
+   COUL_MAUVE 53,1917
+} Couleur;54,1936
+#define ASCII_ESC 59,1998
+
+usr/include/manux/interruptions.h,754
+#define INTERRUPTION_DEF6,349
+#define intTimer 13,464
+#define intClavier 14,488
+   uint16 reserve1;20,595
+   uint16 tss;21,615
+   uint8  reserve2;22,630
+   uint8  parametres;23,650
+   uint16 reserve3;24,672
+} TaskGateDescriptor;25,692
+   uint16 offsetFaible;31,787
+   uint16 selSegment;32,811
+   uint16 parametres;33,833
+   uint16 offsetFort;34,855
+} InterruptGate;35,877
+   uint16 offsetFaible;41,962
+   uint16 selSegment;42,986
+   uint16 parametres;43,1008
+   uint16 offsetFort;44,1030
+} TrapGate;45,1052
+   TaskGateDescriptor tsg;51,1132
+   InterruptGate      itg;52,1159
+   TrapGate           trg;53,1186
+} IDTGate;54,1213
+typedef IDTGate * IDT;59,1277
+typedef void (Handler(64,1364
+#define cli(71,1473
+#define sti(77,1614
+
+usr/include/manux/sfm.h,880
+#define SFM_DEF7,421
+#define SFM_MAGIC 14,525
+#define SFM_TAILLE_BLOC 19,582
+#define SFM_NB_BLOCS_DIRECTS 24,653
+#define SFM_LONGUEUR_NOM 29,735
+typedef struct _SFMSuperBloc 34,787
+   uint32 magic;35,818
+   uint8  version;36,835
+   uint32 offsetPremierBlocLibre;37,854
+   uint32 offsetInodeRacine;38,888
+} SFMSuperBloc;39,917
+typedef enum _SFMTypeFichier 44,976
+   SFM_FICHIER_ELEMENTAIRE 45,1007
+   SFM_REPERTOIRE 46,1039
+} SFMTypeFichier;47,1070
+typedef struct _SFMInode 52,1120
+   uint32 taille;53,1147
+   SFMTypeFichier type;54,1165
+   uint32 blocsDirects[blocsDirects55,1192
+} SFMInode;56,1238
+typedef struct _SFMEntreeRepertoire 61,1303
+   char nomFichier[nomFichier63,1363
+} SFMEntreeRepertoire;64,1401
+typedef struct _SFMRepertoire 69,1461
+   uint32 nombreEntrees;70,1493
+   SFMEntreeRepertoire entrees[entrees71,1518
+} SFMRepertoire;72,1553
+
+usr/include/manux/errno.h,115
+#define ERRNO_H8,502
+#define ESUCCES 10,519
+#define ENOENT 11,582
+#define ENOMEM 12,654
+#define EINVAL 13,717
+
+usr/include/unistd.h,23
+#define _UNISTD_H2,18
+
+usr/stdio.c,64
+#define NULL 9,456
+#define chiffre 10,481
+void printf(12,517
+
+usr/init.c,16
+void init(6,76

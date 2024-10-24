@@ -1,0 +1,213 @@
+%===============================================================================
+%
+%===============================================================================
+\section{Introduction}
+
+   Nous allons décrire ici les outils permettant de définir et
+manipuler les fichiers ainsi que les interfaces permettant d'accéder à
+des fichiers.
+
+   Nous verrons également que ces interfaces permettent l'accès à d'autres outils
+d'échange d'information. C'est en effet une pratique classique que de
+proposer une interface la plus simple et la plus homogène possible à
+tous les outils de stockage et d'échange de données.
+
+   Nous allons commencer par essayer de définir clairement les deux
+principales structures de données classiquement utilisées : le {\em
+  noeud d'index} et le {\em fichier ouvert}.
+
+   La première de ces structures donne des informations sur la
+structure et les propriétés du fichier ; c'est au travers d'elle que
+nous pourrons savoir où se trouve physiquement le fichier, à qui il
+appartient, qu'est-ce qu'un utilisateur a le droit d'en faire, etc
+\ldots
+
+   La seconde contient des informations plus dynamiques sur un fichier
+qui est manipulé par une tâche. On y trouvera donc par exemple la
+position actuelle dans le fichier.
+
+   Une analogie simple nous permet de dire que le n\oe{}ud d'index
+nous permet de savoir qu'un livre est situé dans la troisième rangée
+de la deuxième étagère (et qu'il est interdit d'écrire sur le livre
+!), la où le fichier ouvert contient par exemple un marque page
+positionné à la prochaine page qu'un utilisateur s'apprète à lire.
+
+%===============================================================================
+%
+%===============================================================================
+\section{Notion de noeud d'index}
+
+   La structure permettant de décrire les propriétés d'un fichier est
+classiquement appelée {\em n\oe{}ud d'index}, ou plus souvent {\em
+  inode} (pour {\em index node}).
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Dans ManuX}
+
+   ManuX définit la structure \lstinline!NoeudI! et les fonctions
+associées  dans le fichier \fichier{include/manux}{noeudi}{h}. Les
+fonctions sont implantées dans le fichier \fichier{sf}{noeudi}{c}.
+
+   Une chose importante à avoir en tête est le fait qu'un fichier
+décrit par un NoeudI peut être de diverses natures et qu'il est donc
+important de garder trace d'informations permettant de savoir comment
+le manipuler.
+
+   La structure \lstinline!NoeudI! intègre en particulier les champs
+suivants~:
+
+\begin{itemize}
+   \item \lstinline!methodesFichier! fourni les fonctions de
+     manipulation d'un fichier du type concerné.
+   \item \lstinline!prive! est un pointeur vers des données
+     spécifiques au type du fichier et permettant de définir des
+     propriétés spécifiques du fichier.
+\end{itemize}
+    
+\subsubsection{Les méthodes de manipulation des fichiers}
+
+%===============================================================================
+%
+%===============================================================================
+\section{Description d'un fichier ouvert}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Dans ManuX}
+
+   Dans ManuX, un fichier ouvert est décrit dans la structure
+\lstinline!fichier! qui contient en particulier les données suivantes
+   
+\begin{itemize}
+   \item \lstinline!noeudI! 
+   \item \lstinline!prive! est un pointeur vers des données
+     spécifiques au type du fichier et permettant de conserver trace
+     de l'état du fichier.
+\end{itemize}
+   
+
+%===============================================================================
+%
+%===============================================================================
+\section{Outils de base de manipulation des fichiers}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Interface utilisateur}
+
+   L'interface fournie à l'espace utilisateur est généralement simple
+et la plus abstraite possible. Elle passe par un certain nombre
+d'appels système permettant en particulier d'ouvrir, de lire, d'écrire
+et de fermer un fichier.
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Dans le noyau}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Dans ManuX}
+
+   ManuX définit une interface utilisateur classique fondée sur
+quelques appels systèmes inspirés de ce que l'on trouve dans un
+système Unix.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{L'interface}
+
+%
+%
+%
+\paragraph{Ouverture d'un fichier}
+
+L'ouverture d'un fichier se fait à l'aide de l'appel système
+\lstinline!UNDEFINED!.
+
+%
+%
+%
+\paragraph{Lecture dans un fichier}
+
+L'appel système \lstinline!lire! est défini dans le fichier
+\fichier{usr/include}{stdio}{h} de la façon suivante~:
+
+\begin{lstlistings}
+int lire(int fd, void * buffer, int nb);
+\end{lstlistings}
+
+%
+%
+%
+\paragraph{Écriture dans un fichier}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Dans le noyau}
+
+%
+%
+%
+\paragraph{Lecture dans un fichier}
+
+   L'implantation de l'appel système de lecture est réalisée dans la
+fonction \lstinline!sys_lire()! implantée dans le fichier
+\fichier{sf/fichier}{c}. L'appel système est défini dans la fonction
+\lstinline!sfInitialiser() du même fichier.
+
+   Cette fonction peut servir en particulier à mettre en place des
+contrôles de sécurité. Elle se contente pour le moment de faire appel
+à la fonction \lstinline!fichierLire()! qui est en charge d'aiguiller
+vers la fcontion de lecture spécifique au type du fichier ciblé.
+
+%===============================================================================
+%
+%===============================================================================
+\section{Un exemple : les consoles}
+
+   Je ne vais pas revenir ici sur l'implantation des consoles, déjà
+décrite avec brio dans le chapitre qui leur est dédié. Regardons
+simplement comment elles se retrouvent affublées d'une interface de
+type fichier.
+
+   Dans le fichier \fichier{lib}{console}{c}, les fonctions de
+manipulation d'une console sont définies de la façon suivante
+
+\begin{lstinline}
+/**
+ * @brief Déclaration des méthodes permettant de traiter une console
+ * comme un fichier
+ */
+MethodesFichier consoleMethodesFichier = {
+   .ouvrir = consoleOuvrir,
+   .ecrire = consoleEcrire,
+   .lire = consoleFichierLire
+};
+\end{lstinline}
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{La fonction d'écriture}
+
+   La fonction \lstinline!consoleEcrire()! est alors simplement
+constituée d'un appel à la fonction d'affichage dans la console visée,
+dont un pointeur est obtenu via le champ privé.
+
+   ATTENTION ! il faut aller le chercher via le noeudI, ce qui n'est
+   pas le cas pour le moment !!!
+   
+%===============================================================================
+%
+%===============================================================================
+\section{Les tubes de communication}
+
+Les méthodes de manipulation

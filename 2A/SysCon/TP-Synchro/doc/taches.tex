@@ -1,0 +1,151 @@
+%===============================================================================
+%      Gestion des tâches
+%===============================================================================
+\section{Gestion d'une tâche}
+
+   Nous disposons désormais du minimum permettant d'exécuter quelques
+instructions et d'en voir les conséquences à l'écran. Je vous propose
+donc de mettre en place la notion de {\em tâche} qui nous permettra de
+faire avancer ``en même temps'' plusieurs activités. ManuX devient
+donc à partir de maintenant un système multitâche.
+
+   Attention, pour le moment, ce ne sera que du multitâche
+collaboratif. En effet, nous n'allons pas encore mettre en place du
+multitâche {\em préemptif}, ce qui signifie que une tâche ne rendra la
+main (enfin, le processeur) que lorsqu'elle en aura envie !
+
+   De plus, nous ne nous intéressons pas non plus à l'ordonnancement,
+et mettrons en place un simple {\em round robin}.
+
+%-------------------------------------------------------------------------------
+%      Définition d'une tâche
+%-------------------------------------------------------------------------------
+\subsection{Définition d'une tâche}
+
+   La structure d'une tâche est définie dans le fichier {\tt
+manux/tache.h} au travers d'une struture \lstinline!Tache!. Afin de
+nous simplifier la vie, nous allons utiliser dans ManuX l'aide
+proposée par les processeurs Intel\footnote{Les systèmes récents, pour
+  des raisons de performances, n'utilisent pas ces fonctionnalités.}.
+
+   De ce fait, la structure \lstinline!Tache! contient des champs liés
+au processeur et des champs purement liés au noyau.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Champs liés au noyau}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Champs liés au processeur}
+
+\begin{itemize}
+   \item \lstinline!IntelTSS tss! qui permet, comme son nom laisse à
+penser, de stoquer les informations relatives à l'état de la tâche au
+niveau du processeur ({\sc tss} pour {\em Task State Segment}). On
+trouvera des informations sur ce champs dans les documentations Intel.
+Dans ManuX, une initialisation minimale est faite de cette structure
+lors de la création d'une tâche dans \lstinline!creerTache!.
+
+   \item \lstinline!uint16 indiceTSSDescriptor! représente l'indice,
+dans la {\sc gdt}, du {\em {\sc tss} Descriptor} de la tâche. C'est
+par un \lstinline!ljmp! vers ce champs que l'on va activer la tâche.
+
+   \item \lstinline!DescriptorTable * ldt! est la table locale de
+decripteurs associée à cette tâche.
+\end{itemize}
+
+%Ètant donnée la gestion limitée de la mémoire à ce niveau du
+%système, les structures définissant une tâche sont placées dans une
+%même page mémoire et organisées comme représenté sur la figure
+%\ref{Figure:PageTache}.
+%
+%\begin{figure}[htbp]
+%\epsfxsize=5cm
+%$$
+%\epsfbox{PageTache.eps}
+%$$
+%\caption{\label{Figure:PageTache}Structure d'une page de tâche}
+%\end{figure} 
+x
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Les descripteurs de tâche Intel}
+
+   Le {\em Task State Segment} ({\sc tss}) des processeurs Intel
+permet de stoquer et de manipuler les informations relatives à une
+tâche. Dans ManuX, une structure est définie permettant de décrire
+dans le noyau le {\sc tss} de chaque tâche : la structure
+\lstinline!IntelTSS! est définie dans
+\lstinline!manux/tache.h!
+
+%-------------------------------------------------------------------------------
+%      Création d'une tâche
+%-------------------------------------------------------------------------------
+\subsection{Création d'une tâche}
+
+%-------------------------------------------------------------------------------
+%      Basculement vers une tâche
+%-------------------------------------------------------------------------------
+\subsection{Basculement vers une tâche}
+
+   En ce qui concerne le basculement d'une tâche à l'autre, nous
+allons profiter des mécanismes fournis par les processeurs Intel au
+travers de l'instruction {\tt ljmp}. L'{\em Indirect far JMP} permet
+en effet de faire un basculement de tâche lorsque l'argument qui lui
+est passé, sur 48 bits (oui madame, 6 octets !) est constitué d'un
+sélecteur de segment (sur 16 bits) qui référence un {\sc tss} puis
+d'un {\em offset} (qui ne sera pas utilisé pour le coup !).
+
+   Bref, le basculement d'une tâche vers une autre se résume à une
+instruction de saut !
+
+%-------------------------------------------------------------------------------
+%      Destruction d'une tâche
+%-------------------------------------------------------------------------------
+\subsection{Destruction d'une tâche}
+
+%===============================================================================
+%      Gestion des listes de tâches
+%===============================================================================
+\section{Gestion des listes de tâches}
+
+   Il est évidemment important de ne pas perdre trace des tâches
+créées sur le système ! Nous allons pour cela les placer dans des
+listes.
+
+   La structure \lstinline!ListeTache! permettant cela est définie
+dans le fichier \fichier{manux}{listetaches}{h}. Il est extrèmement
+simple (liste simplement chaînée), donc je ne le détaille pas ici.
+
+   Une première liste est définie permettant de conserver toutes les
+tâches du système. Chaque tâche créée (et non encore détruite) sera
+donc présente dans cette liste.
+
+   D'autres listes seront créées permettant de stoquer les tâches en
+fonction de leurs activités. Une liste contiendra par exemple les
+tâches prêtes à être exécutées. D'autres listes contiendront les
+tâches en attente d'un événement spécifiques (typiquement la
+disponibilité d'une ressource).
+   
+\includegraphcs{images/exemple-taches.png}
+
+%-------------------------------------------------------------------------------
+% Allocation des éléments de liste
+%-------------------------------------------------------------------------------
+\subsection{Allocation des éléments de liste}
+
+   Bon, là il faut qu'on parle d'un truc dont je ne suis pas très fier
+\ldots
+
+   Pour ne pas avoir à s'em\lodts bêter ici avec de la gestion
+dynamique de mémoire, et sûrement aussi dans un intérêt pédagogiqe
+évident, j'ai fait le choix de positionner les cellules impliquées
+dans la gestion des listes dans la page mémoire qui est allouée pour
+chaque tâche.
+
+        
+ 

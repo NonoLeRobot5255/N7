@@ -1,0 +1,161 @@
+%===============================================================================
+%      Les appels système
+%===============================================================================
+\section{Les appels systèmes}
+
+   Les appels systèmes constituent une part importante de l'interface
+entre le noyau et les applications. Dans ManuX, le choix a été fait
+d'implanter ce mécanisme au travers d'une interruption. C'est une
+technique classique (utilisée par exemple par Linux).
+
+   Leur mise en \oe{}uvre passe par plusieurs étapes que je vais
+détailler ici. L'objectif d'un appel système est d'offrir à une
+application utilisateur un service qui ne peut être rendu que part le
+noyau. Pour des raisons de confort d'utilisation, ces services sont
+rendus sous la forme de fonctions classiques, comme une librairie
+traditionnelle. Pour en arriver là, nous pouvons distinguer quatre
+étapes
+
+\begin{itemize}
+   \item L'application utilise une fonction C pour invoquer un appel
+     système. Le code de cette fonction doit donc être construit de
+     sorte à préparer puis mettre en \oe{}uvre la sollicitation du
+     service auprès du noyau (par le biais d'une interruption ici).
+   \item L'interruption est déclanchée et le code du handler de cette
+     interruption est exécuté.
+   \item Le handler va devoir déterminer quelle est la fonction du
+     noyau qui doit être utilisée pour rendre le service voulu à
+     l'application.
+   \item La fonction en question va être exécutée et le service fourni
+     à l'application.
+\end{itemize}
+
+   Nous allons maintenant décrire la mise en \oe{}uvre de ces étapes
+en prenant comme exemple un appel système qui nous permettra d'envoyer
+un message sur la console. Nous pourrons ainsi écrire un
+\lstinline!printf! pour les applications !
+
+%-------------------------------------------------------------------------------
+%      Définition de l'interface
+%-------------------------------------------------------------------------------
+\subsection{Définition des éléments communs noyau/application}
+
+   Le fichier \fichier{manux}{appelsystemenum}{h} donne en particulier les
+numéros des différents appels systèmes. Il doit donc absolument être
+commun au noyau et aux ``applications'' (voir la documentation sur
+l'espace utilisateur).
+
+%-------------------------------------------------------------------------------
+%      Définition de l'interface
+%-------------------------------------------------------------------------------
+\subsection{Définition de l'interface}
+
+   Ce que j'appelle interface est la signature de la fonction
+directement utilisable dans une application pour invoquer un appel
+système.
+
+   Cette interface est donc décrite côté applications, dans les
+fichiers de {\tt usr}.
+   
+   Des macros ont été créées dans le fichier \fichier{usr/include/manux}{appelsysteme}{h}
+pour simplifier une telle définition. Ce
+sont par exemple les ``fonctions'' \lstinline!appelSysteme0!,
+\lstinline!appelSysteme1!, \ldots 
+
+   On utilisera donc une telle macro chaque fois qu'il sera nécessaire
+de définir un nouvel appel système. C'est ainsi que dans le fichier
+\lstinline!usr/include/unistd.h! on trouve par exemple :
+
+\begin{lstlisting}
+appelSysteme2(NBAS_AFFICHER, int, afficherConsole, void *, int);
+\end{lstlisting}
+
+   Cette ligne défini donc la fonction \lstinline!afficherConsole()!
+qui va permettre à une application d'envoyer un message sur la console.
+
+%-------------------------------------------------------------------------------
+%      Ecriture de l'appel système
+%-------------------------------------------------------------------------------
+\subsection{Écriture de l'appel système}
+
+   La partie la plus importante est naturellement d'écrire le code de
+l'appel système. Celui-ci consiste simplement en une fonction C
+classique (qui en utilise éventuellement d'autres, naturellement). La
+seule contrainte étant que si cette fonction a des paramètres, le
+premier d'entre eux (qui ne présente aucun intéret pour le
+programmeur) doit être de type \lstinline!ParametreAS!.
+
+   Ce paramètre sert uniquement a ``recadrer'' les paramètres suivants 
+dans la pile suite aux décalages induits dans celle-là par les appels
+successifs à l'interface de l'appel système, à l'interruption, et à
+l'appel système lui-même d'une part, et à la sauvegarde des registres
+d'autre part.
+
+   Observons par exemple le code permettant la mise en \oe{}uve de
+l'appel système \lstinline!ecrireConsole!. Il se trouve dans le
+fichier {\tt lib/console.c} :
+
+\begin{lstlisting}
+/**
+ * L'implantation de l'AS ecrireConsole
+ */
+int sys_ecrireConsole(ParametreAS as, void * msg, int n)
+{
+   assert(tacheEnCours != NULL);
+   Console * cons = tacheEnCours->console;
+   
+   assert(cons != NULL);
+   afficherConsoleN(cons, msg, n);
+
+   return n; 
+}
+\end{lstlisting}
+
+   Bien sÃ»r, cette fonction utilise le code de manipulation de la
+console déjà écrit.   
+
+%-------------------------------------------------------------------------------
+%      Enregistrement de l'appel système
+%-------------------------------------------------------------------------------
+\subsection{Enregistrement de l'appel système}
+
+   L'enregistrement de l'appel système dans le système d'exploitation est
+réalisé par une invocation de la fonction suivante, définie dans {\tt
+appelsysteme.h} et codée dans {\tt noyau/appelsysteme.c} :
+
+\begin{lstlisting}{}
+int definirAppelSysteme(int num, void * appel);
+\end{lstlisting}
+
+   où 
+
+\begin{description}
+   \item[\lstinline!num!] est le numéro de l'appel système enregistré ;
+   \item[\lstinline!appel!] est la fonction de traitement de cet appel
+système.
+\end{description}
+
+   Le travail de cette fonction est donc simplement de placer dans la
+table des appels systèmes (\lstinline!vecteurAppelsSysteme!) la
+fonction de traitement de cet appel système.
+
+   C'est donc ici la ``partie noyau'' qui est réalisée, c'est-à-dire
+la définition des actions à mener lorsque l'appel système est invoqué.
+
+   Nous trouvons par exemple dans la fonction
+\lstinline!initialiserAppelsSysteme()! du fichier {\tt
+  noyau/appelsysteme.c} la ligne de déclaration de notre appel système
+\lstinline!ecrireConsole! :
+
+\begin{lstlisting}{}
+void initialiserAppelsSysteme()
+{
+   ...
+  
+   /* Envoyer une chaine de caracteres sur la console */
+   definirAppelSysteme(NBAS_ECRIRE_CONS, sys_ecrireConsole);
+
+   ...
+}
+\end{lstlisting}{}
+

@@ -1,0 +1,8 @@
+;-------------------------------------------------------------------------------
+;      Les références biblio
+;-------------------------------------------------------------------------------
+; [1]  Intel Architecture Software Developer's Manual, Vol 3
+; [2]  Protected Mode Tutorial, Till Gerken (PMTUT.txt)
+; [3]  PC, programmation système, CampusPress
+; [4]  INTEL 80386 PROGRAMMER'S REFERENCE MANUAL 1986 : https://css.csail.mit.edu/6.858/2014/readings/i386.pdf
+[5] https://pdos.csail.mit.edu/6.828/2005/readings/hardware/8259A.pdf (8259APROGRAMMABLE INTERRUPT CONTROLLER(8259A/8259A-2) specifications)

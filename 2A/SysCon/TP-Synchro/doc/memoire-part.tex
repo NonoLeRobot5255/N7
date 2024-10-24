@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage{epsf, a4, makeidx, Manu}
+\usepackage{palatino}
+\usepackage{multicol}
+\usepackage{graphicx} 
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+
+\newcommand{\note}[1]{}
+\title{La gestion de la mémoire}
+
+\author{Chaput Emmanuel}
+
+\usepackage{listings}
+\lstloadlanguages{C}
+\input{lstasm}
+
+\begin{document}
+
+\lstset{language=C,%
+        basicstyle=\ttfamily,%
+        keywordstyle=\bfseries,%
+        ndkeywordstyle=\bfseries \underbar ,%
+        identifierstyle=\em,%
+        extendedchars}
+
+
+\input{memoire.tex}
+\end{document}
+
+ 

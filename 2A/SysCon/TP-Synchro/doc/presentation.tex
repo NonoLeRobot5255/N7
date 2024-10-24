@@ -1,0 +1,234 @@
+%===============================================================================
+%
+%===============================================================================
+\section{Introduction}
+
+\subsection{Préambule}
+   Ce document n'est constitué pour le moment que de quelques notes
+que j'ai pu prendre en essayant de réaliser le début d'un truc qui pourrait
+vaguement laisser penser que j'essaye de réaliser un noyau de système
+d'exploitation. 
+
+   Ces notes me sont purement personelles et je vous invite donc, qui que
+vous soyez, arrêtez de lire ça ! Vous êtes encore là ? C'est pas sympa \ldots
+
+%-------------------------------------------------------------------------------
+%
+%-------------------------------------------------------------------------------
+\subsection{Présentation}
+
+   Ce document rassemble quelques notes prises durant ma tentative de
+dévelop\-pement de \manux (``Misérable Approximation de Noyau
+Un*X''). Mon but en développant cette chose est uniquement de mieux
+comprendre les problèmes liés à l'implantation d'un système
+d'exploitation. Je n'ai en aucun cas comme objectif d'arriver à un
+{\sc os} utilisable à d'autres fins que tester des mécanismes
+systèmes. 
+
+   De plus, je ne recherche absolument pas la performance dans le code 
+que j'écris, mais plutôt la lisibilité et la compréhensibilité. Ça
+peut ne pas sauter aux yeux dans les parties de code encore en
+développement (c'est à dire partout pour le moment) \ldots 
+
+%===============================================================================
+%       Organisation générale
+%===============================================================================
+\section{Organisation générale}
+
+   Comme tout système digne de ce nom, ManuX-32 définit un mode
+utilisateur et un mode noyau. Il n'utilise pour l'instant pas les
+différents modes fournis par le processeur, mais j'ai bon espoir pour
+que cela arrive bientôt.
+
+%-------------------------------------------------------------------------------
+%   Structure du code
+%-------------------------------------------------------------------------------
+\subsection{Structure du code}
+
+   Le code de ManuX est réparti dans quelques fichiers, eux-mêmes
+organisés dans quelques répertoires.
+
+   Au plus haut niveau, nous allons distinguer deux grandes parties
+   que sont le ``code noyau'' et le ``code utilisateur''.
+   
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Le code ``utilisateur''}
+
+   Le code du monde utilisateur est confiné dans le répertoire {\tt
+usr}.
+  Les principaux fichiers de {\tt usr} sont les suivants
+
+\begin{description}
+   \item[{\tt unistd.c}] implante les principales fonctions (décrites
+     dans {\tt include/unistd.h}) permettant l'accès aux fonctions du
+     noyau. Comme nous le verrons, ce sont donc surtout des appels
+     systèmes. 
+   \item[{\tt stdio.c}] implante les principales fonctions (décrites
+     dans {\tt include/stdio.h}) permettant de réaliser des
+     entrées/sorties.
+   \item[{\tt init.c}] implante le code de la première tâche lancée
+     automatiquement par le noyau lorsqu'il est initialisé.
+\end{description}
+
+   La compilation du code utilisateur nécessite naturellement des
+fichiers inclus. Ils se trouvent dans le répertoire {\tt
+  usr/include}. Certains
+     des fichiers, situés dans le répertoire {\tt include/manux} sont
+     en fait des copies depuis l'arborescence du noyau. Ils sont mis à
+     jour au travers de la cible {\tt usrinc} du {\tt Makefile
+       principal}. Il s'agit de 
+
+\begin{description}
+   \item[{\tt config.h}] qui décrit la configuration du noyau, il est
+     donc important de pouvoir en disposer dans le mode utilisateur
+     afin de savoir ce qui est disponible ;
+   \item[{\tt types.h}] qui définit les types utilisés dans le noyau ;
+   \item[{\tt appelsystemenum.h}] qui donne les numéros des appels
+     systèmes ;
+   \item[{\tt string.h}] est là pour offir au mode utilisateur des
+     fonctions présentes dans le noyau ({\tt memcpy()}, \ldots). Il
+     n'est pas nécessaire que ce soit le même, mais cela évite de
+     tenir à jour deux fichiers !
+\end{description}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Le code du noyau proprement dit}
+
+
+\begin{description}
+   \item[{\tt lib}]
+   \item[{\tt noyau}]
+   \item[{\tt i386}]
+   \item[{\tt outils}]
+   \item[{\tt boot}]
+   \item[{\tt sf}]
+   \item[{\tt doc}]
+\end{description}
+
+%-------------------------------------------------------------------------------
+%   
+%-------------------------------------------------------------------------------
+\subsection{Configuration}
+
+   La configuration se fait essentiellement au travers du fichier {\tt manux/config.h}.
+
+   Certaines valeurs sont utilisées ailleurs que dans du C (dans du NASM,
+ou directement dans le {\tt Makefile}) et une cible  {\tt make} est là
+pour générer un fichier {\tt make.conf} qui contient ces
+variables. Pour qu'elle fonctionne, il est impératif que ces macros
+débutent par \lstinline!MANUX\_!
+
+   D'autres valeurs doivent être déterminées durant la phase de
+compilation (par exemple la taille du noyau). Elles sont donc
+calculées par le programme {\tt outils/taillenoyau} et placées dans le
+fichier {\tt taille.conf}.
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Le fichier {\tt include/config.h}}
+
+   Il permet de choisir l'inclusion, ou non, de certines parties du
+noyau, et parfois de les paramétrer.
+
+%
+%
+%
+\paragraph{Configuration du fichier de boot}
+
+\begin{description}
+   \item[{\tt MANUX\_TAILLE\_PAGE}]
+   \item[{\tt MANUX\_NOMBRE\_PAGES\_SYSTEME}]
+   \item[{\tt MANUX\_ADRESSE\_DEBUT\_TAS}]
+   \item[{\tt MANUX\_NB\_MAX\_FICHIERS}]
+   \item[{\tt MANUX\_CONSOLES\_VIRTUELLES}]
+   \item[{\tt MANUX\_JOURNAL}]
+\end{description}
+
+%
+%
+%
+\paragraph{Configuration de l'adressage du noyau}
+\begin{description}
+   \item[{\tt MANUX\_TAILLE\_PAGE}]
+   \item[{\tt MANUX\_NOMBRE\_PAGES\_SYSTEME}]
+   \item[{\tt MANUX\_ADRESSE\_DEBUT\_TAS}]
+\end{description}
+
+%
+%
+%
+\paragraph{Configuration de l'affichage}
+
+\begin{description}
+   \item[{\tt MANUX\_CONSOLES\_VIRTUELLES}]
+   \item[{\tt MANUX\_JOURNAL}]
+\end{description}
+
+%
+%
+%
+\paragraph{Configuration du système de fichiers}
+
+\begin{description}
+   \item[{\tt NB\_MAX\_FICHIERS}]
+\end{description}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Le fichier {\tt make.conf}}
+
+%...............................................................................
+%
+%...............................................................................
+\subsubsection{Le fichier {\tt taille.conf}}
+
+
+%-------------------------------------------------------------------------------
+%   
+%-------------------------------------------------------------------------------
+\subsection{Organisation de ce document}
+
+   Mon but est de décrire les choses de façon progressive, dans
+l'ordre dans lequel je les ai faites, et dans l'ordre dans lequel il
+me semble pertinent de les faire de sorte à construire progressivement
+un noyau qui fonctionne.
+
+   La section ``{\em Les outils de développement}'' décrit sommairement
+les outils nécessaires à la compilation, le débogage et le lancement
+de ManuX.
+
+   La section ``{\em Le boot}'' montre comment faire en sorte que notre
+code soit chargé en mémoire par le {\sc bios} de la machine puis
+exécuté. C'est une partie assez technique, très spécifique au matériel
+ciblé, et peu intéressante. Je vous autorise à la passer. À la fin de
+cette partie, le code du noyau lui même commence à être exécuté, c'est
+donc là que les choses deviennent croustillantes ! Mais c'est
+également là que les ennuis commencent, \ldots
+
+   Afin de pouvoir voir ce que nous faisons, une première activité va
+consister à écrire du code pouvant afficher des choses à l'écran, nous
+pourrons enfin avoir notre ``{\tt Hello world !}'' du noyau. Pour
+cela, nous allons créer une ``console'' et une fonction
+\lstinline!printk! dans la section ``{\em L'affichage}''.
+
+   La section ``{\em Les appels systèmes}'' sera ensuite consacrée à
+mettre en place le mécanisme permettant aux applications de
+communiquer avec le noyau. Pour le moment, ce mécanisme n'est pas
+nécessaire, un simple appel de fonction permet cela, mais lorsque nous
+mettrons en place des mécanimes de protection, nous seronsbien
+contents d'avoir fait les choses proprement !
+
+   Dans la section ``{\em Un premier {\tt init}}'', nous alons écrire
+un premier ``code utilisateur''
+
+   Nous allons ensuite nous attaquer à un morceau assez conséquent :
+la gestion de la mémoire qui sera décrite dans la section ``{\em La
+  gestion de la mémoire}''. Nous ferons dans ManuX les choses aussi
+simplement que possible. 
+   
