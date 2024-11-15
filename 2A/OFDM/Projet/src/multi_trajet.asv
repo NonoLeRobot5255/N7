@@ -1,7 +1,7 @@
 %on utilise freqz pour ça 
 
 %% tracé du module et de la phase de la réponse en fréquence du canal de propagation.
-freqz([0.407,0.815,0.407],1,1024,'whole')
+freqz([0.407,0.815,0.407],1,1024)
 % %on ferme tout 
 % clear all;
 % close all;
