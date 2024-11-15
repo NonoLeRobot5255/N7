@@ -4,8 +4,9 @@ close all;
 
 %% variables 
 N = 16;
-N_actif = 1;
+N_actif = 6;
 nb_bits = 1000;
+d=4;
 
 S=zeros(N, nb_bits);
 %% modulateur 
@@ -13,7 +14,11 @@ S=zeros(N, nb_bits);
     % Mapping
     for i=1:N_actif
         S(i,:) = randi([0 1],1,nb_bits)*2 -1;
-    end    
+    end  
+
+    for i=N-N_actif:N
+        S(i,:) = randi([0 1],1,nb_bits)*2 -1;
+    end
     
 
 
@@ -23,7 +28,7 @@ S=zeros(N, nb_bits);
 
     %dsp
     dsp = pwelch(Y,[],[],[],16,'center'); % on utilise la fréquence pour centrer correctement pwelch
-
+    
     %tracé
     figure('Name','dsp')
     nexttile
