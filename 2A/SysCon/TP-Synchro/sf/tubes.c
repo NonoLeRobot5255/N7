@@ -109,11 +109,10 @@ size_t tubeEcrire(Fichier *f, void *buffer, size_t nbOctets)
    }
 
    tube = f->iNoeud->prive;
-   while (tubePlein(tube))
-   {
-   }
-   printk("le tube est de taille %d\n", tube->taille);
+
    exclusionMutuelleEntrer(&(tube->verrou));
+   wait(tubeVide(tube));
+   printk_debug(DBG_KERNEL_TUBE, "la taille du tube est %d\n", tube->taille);
 
    // On fait une boucle, car il est possible que l'on doive écrire en
    // deux fois si on est proche de la fin du tableau qui contient les
@@ -170,8 +169,6 @@ size_t tubeLire(Fichier *f, void *buffer, size_t nbOctets)
    while (tubeVide(tube))
    {
    }
-
-   printk("le tube est de taille %d\n", tube->taille);
    exclusionMutuelleEntrer(&(tube->verrou));
 
    do
