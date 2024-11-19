@@ -1,15 +1,14 @@
 %on utilise freqz pour ça 
-%on ferme tout 
+%% on ferme tout 
 clear all;
 close all;
 
-% réponse impultionelle 
+%% réponse impultionelle 
 h = [0.407,0.815,0.407];
+
 %% tracé du module et de la phase de la réponse en fréquence du canal de propagation.
-freqz(h,1,1024,'whole')
+freqz(h,1,1024,16,'whole')
 title('Réponse en fréquence du canal de propagation');
-xlabel('Fréquence (rad/échantillon)');
-ylabel('Amplitude et Phase');
 grid on;
 
 
@@ -43,23 +42,36 @@ figure('Name','DSP')
         SignalSortieCanal=filter(h,1,Y) ;
 
         %dsp
-        dsp = pwelch(SignalSortieCanal,16,[],[],16,'twosided'); % on utilise la fréquence pour centrer correctement pwelch
+        [Pxx,~] = pwelch(SignalSortieCanal,[],[],[],16,'twosided');
         
-        %tracé
-        nexttile
-        plot(10*log(dsp))
-        xlabel('fréquence')
-        ylabel('dsp')
+        total_energy = sum(Pxx) * (16 / length(Pxx));
+        Pxx_normalized = Pxx / total_energy;
+        figure;
+        subplot(2,1,1);
+        plot(Pxx, 10*log10(Pxx));
+        title('DSP originale');
+        xlabel('Fréquence (Hz)');
+        ylabel('Amplitude (dB)');
+        
+        subplot(2,1,2);
+        plot(Pxx_normalized, 10*log10(Pxx_normalized));
+        title('DSP normalisée');
+        xlabel('Fréquence (Hz)');
+        ylabel('Amplitude normalisée (dB)');
+        %tracé 
+        % nexttile
+        % plot(10*log(dsp))
+        % xlabel('fréquence')
+        % ylabel('dsp')
      %% Démodulation 
 
      %démodulation
      Y_reshape = reshape(SignalSortieCanal, size(Xe));
      Y_recep = fft(Y_reshape,N);
-     Y_recep = sign(Y_recep);
         
-     %constellation porteuse 6 et 15
-     porteuse6 = real(Y_reshape(6, :));
-     porteuse15 = real(Y_reshape(15, :));
+     %constellation porteuse 6 et 15 (ok)
+     porteuse6 = Y_recep(6, :);
+     porteuse15 = Y_recep(15, :);
 
 
      figure('Name','constellation porteuse 6')

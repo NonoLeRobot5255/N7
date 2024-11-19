@@ -1,15 +1,15 @@
 %on utilise freqz pour ça 
-%on ferme tout 
+%% on ferme tout 
 clear all;
 close all;
 
-% réponse impultionelle 
+%% réponse impultionelle 
 h = [0.407,0.815,0.407];
+
 %% tracé du module et de la phase de la réponse en fréquence du canal de propagation.
-freqz(h,1,1024,'whole')
+freqz(h,1,1024,16,'whole')
 title('Réponse en fréquence du canal de propagation');
-xlabel('Fréquence (rad/échantillon)');
-ylabel('Amplitude et Phase');
+
 grid on;
 
 
@@ -43,11 +43,11 @@ figure('Name','DSP')
         SignalSortieCanal=filter(h,1,Y) ;
 
         %dsp
+        [dsp,f] = pwelch(SignalSortieCanal,[],[],[],16,'twosided');
         
-        [pxx, f] = pwelch(SignalSortieCanal, [], [], [], 16); % pxx = DSP, f = fréquence
-        dsp_normalisee = pxx*16 / sum(pxx); % Normalisation entre 0 et 16
+        %tracé 
         nexttile
-        plot(10*log(dsp_normalisee))
+        plot(f,10*log(dsp))
         xlabel('fréquence')
         ylabel('dsp')
      %% Démodulation 
