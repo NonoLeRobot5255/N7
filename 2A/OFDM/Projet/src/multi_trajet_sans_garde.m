@@ -34,7 +34,7 @@ figure('Name','DSP')
 
 
 
-        % filtrage
+        %% Canal
         Xe = ifft(S,N);
         Y = reshape(Xe, 1, nb_bits*N);
 
@@ -43,11 +43,11 @@ figure('Name','DSP')
         SignalSortieCanal=filter(h,1,Y) ;
 
         %dsp
-        dsp = pwelch(SignalSortieCanal,[],[],[],16,'centered'); % on utilise la fréquence pour centrer correctement pwelch
         
-        %tracé
+        [pxx, f] = pwelch(SignalSortieCanal, [], [], [], 16); % pxx = DSP, f = fréquence
+        dsp_normalisee = pxx*16 / sum(pxx); % Normalisation entre 0 et 16
         nexttile
-        plot(10*log(dsp))
+        plot(10*log(dsp_normalisee))
         xlabel('fréquence')
         ylabel('dsp')
      %% Démodulation 
@@ -55,10 +55,32 @@ figure('Name','DSP')
      %démodulation
      Y_reshape = reshape(SignalSortieCanal, size(Xe));
      Y_recep = fft(Y_reshape,N);
-     Y_recep = sign(Y_recep);
+        
+     %constellation porteuse 6 et 15 (ok)
+     porteuse6 = Y_recep(6, :);
+     porteuse15 = Y_recep(15, :);
 
-     eyediagram([SignalSortieCanal())
+
+     figure('Name','constellation porteuse 6')
+     scatter(real(porteuse6), imag(porteuse6))
+     xlabel('partie réel')
+     ylabel('partie imaginaire')
 
 
-     %TEB
-     TEB = mean(S~=Y_recep,"all");
+     figure('Name','constellation porteuse 15')
+     scatter(real(porteuse15), imag(porteuse15))
+     xlabel('partie réel')
+     ylabel('partie imaginaire')
+     
+
+
+     %% TEB
+     Y_fin = [];
+     for i=1:length(Y_recep)
+        if real(Y_recep)>0
+            Y_fin = [Y_fin 1];
+        else
+            Y_fin= [Y_fin -1];
+        end
+     end
+     TEB = mean(S~=Y_fin,"all")
