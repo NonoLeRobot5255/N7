@@ -17,7 +17,7 @@ grid on;
 N = 16;
 N_actif = 16;
 nb_bits = 1000;
-
+taille_garde = 2;
 
 
 %% figure de zinzin
@@ -36,7 +36,9 @@ figure('Name','DSP')
 
         %% Canal
         Xe = ifft(S,N);
-        Y = reshape(Xe, 1, nb_bits*N);
+        zero = zeros(taille_garde,nb_bits);
+        Xe = [zero;Xe];
+        Y = reshape(Xe, 1, nb_bits*(N+taille_garde));
 
 
         %filtre 
@@ -54,7 +56,8 @@ figure('Name','DSP')
 
      %démodulation
      Y_reshape = reshape(SignalSortieCanal, size(Xe));
-     Y_recep = fft(Y_reshape,N);
+     Xs = Y_reshape(taille_garde+1:N+taille_garde,:);
+     Y_recep = fft(Xs,N);
         
      %constellation porteuse 6 et 15 (ok)
      porteuse6 = Y_recep(6, :);
