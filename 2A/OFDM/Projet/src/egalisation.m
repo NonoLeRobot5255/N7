@@ -5,8 +5,8 @@ close all;
 
 %% réponse impultionelle 
 h = [0.407,0.815,0.407];
-ck = fft([h zeros(1,1000-3)]);
-matr_ck = repmat(ck, 16,1);
+ck = fft(h,16);
+matr_ck = repmat(ck(:), 1, 1000);
 
 %% tracé du module et de la phase de la réponse en fréquence du canal de propagation.
 freqz(h,1,1024,16,'whole')
