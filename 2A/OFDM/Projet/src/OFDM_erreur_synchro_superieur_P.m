@@ -6,7 +6,7 @@ close all;
 %% réponse impultionelle 
 h = [0.407,0.815,0.407];
 ck = fft(h,16);
-matr_ck = repmat(ck(:), 1, 1000);
+matr_ck = repmat(ck(:), 1, 999);
 
 
 %% variables 
@@ -52,13 +52,17 @@ figure('Name','DSP')
         ylabel('dsp')
      %% Démodulation 
 
-     %démodulation
-     Y_reshape = reshape(SignalSortieCanal, size(Xe));
-
      % erreur de synchro ici
-     Xs = Y_reshape(j+1:N+j,:);
+     SignalSortieCanal(1:7)=[];
+     SignalSortieCanal(end-14:end)=[];
 
-     Y_recep = fft(Xs,N);
+     %démodulation
+     Y_reshape = reshape(SignalSortieCanal, size(Xe,1),size(Xe,2)-1);
+
+
+     
+
+     Y_recep = fft(Y_reshape,N);
      Y_ck =(1./matr_ck).* Y_recep;
         
      %constellation porteuse 6 et 15 (ok)
