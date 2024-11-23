@@ -4,31 +4,31 @@ close all;
 
 %% variables 
 N = 16;
-N_actif = 16;
-nb_bits = 1000;
+N_actif = 1;
+nb_bits_porteuse = 1000;
+nb_bits = nb_bits_porteuse * N;
 
 
-
-%% figure de zinzin
-figure('Name','porteuse 1 et 4 actives')
+%% figure pour représenter les porteuses actives
+figure('Name','dsp en fonction du nombre de porteuses actives')
      %% modulateur 
         
     
         % Mapping
-        S=zeros(N, nb_bits);
+        S=zeros(N, nb_bits_porteuse);
         for i=1:N_actif
-            S(i,:) = randi([0 1],1,nb_bits)*2 -1;
+            S(i,:) = randi([0 1],1,nb_bits_porteuse)*2 -1;
         end 
  
         
     
     
         % filtrage
-        Xe = ifft(S,N);
-        Y = reshape(Xe, 1, nb_bits*N);
+        Signal_filtre = ifft(S,N);
+        Signal_sortie = reshape(Signal_filtre, 1, nb_bits);
     
         %dsp
-        dsp = pwelch(Y,[],[],[],16,'centered'); % on utilise la fréquence pour centrer correctement pwelch
+        dsp = pwelch(Signal_sortie,[],[],[],16,'centered'); % on utilise la fréquence pour centrer correctement pwelch
         
         %tracé
         
@@ -40,10 +40,10 @@ figure('Name','porteuse 1 et 4 actives')
      %% Démodulation 
      
      %démodulation
-     Y_reshape = reshape(Y, size(Xe));
-     Y_recep = fft(Y_reshape,N);
-     Y_recep = sign(Y_recep);
+     Signal_en_ligne = reshape(Signal_sortie, size(Signal_filtre));
+     bit_fin = fft(Signal_en_ligne,N);
+     bit_fin = sign(bit_fin);
     
      
      %TEB
-     TEB = mean(S~=Y_recep,"all");
+     TEB = mean(S~=bit_fin,"all");

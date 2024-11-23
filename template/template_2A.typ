@@ -1,29 +1,38 @@
-// The project function defines how your document looks.
-// It takes your content and some metadata and formats it.
-// Go ahead and customize it to your liking!
-#let project(title: "", authors: (),teachers: (), annee : "", body) = {
-  // Set the document's basic properties.
+#let project(title: "", authors: (),teachers: (), year : "", body) = { //modulable design
   set document(author: authors, title: title)
   set page(numbering: "1", number-align: right)
+  set heading(numbering: "1.1.")
   set text(font: "New Computer Modern", lang: "fr")
 
-  // Title row.
+  // ENSEEIHT logo.
+  grid(
+  columns: (2.5fr, auto),
+  gutter: 4.5em,
+  [
+    #box(figure(image("INP.jpeg", width: 10em))),
+    
+  ],
+  [
+
+    #box(figure(image("ENSEEIHT_logo.png", width: 11em)))
+    
+  ]
+)
   align(right)[
-   #box( figure(
-  image("ENSEEIHT_logo.png",width: 20%)
-))
-#line(length: 95%, stroke: black)
+  // here we open the block and write the title and thematic
+  #line(length: 95%, stroke: black)
   ]
   align(center)[
     #block(text(weight: 700, 1.75em, title))
   ]
 
-  // Author information.
+  // Author(s)
   pad(
     top: 0.5em,
     x: 2em,
     align(text("Auteur"+ if authors.len()>1 {"s"} + " : ", size: 1.25em),center),
   )
+  // here I write all the authors
   pad(
     bottom: 0.5em,
     x: 2em,
@@ -35,11 +44,13 @@
       ..authors.map(author => align(center, strong(author))),
     ),
   )
+  // Teacher(s)
   pad(
     top: 0.5em,
     x: 2em,
     align(text("professeur"+ if teachers.len()>1 {"s"} + " : ", size: 1.25em),center),
   )
+  // here I write all the teachers
   pad(
     bottom: 0.5em,
     x: 2em,
@@ -51,6 +62,7 @@
       ..teachers.map(teacher => align(center, strong(teacher))),
     ),
   )
+  // here I write the year and my grade
   pad(
     top: 0.5em,
     x: 10em,
@@ -59,7 +71,7 @@
     gutter: 20%, 
     [#text("Projet de deuxième année de SN", size: 0.75em)],
 
-    [#text("année : " + annee, size: 0.75em)]
+    [#text("année : " + year, size: 0.75em)]
   )
 )
 
@@ -67,11 +79,11 @@
 
   align(text("",size : 23pt),center)
   pagebreak()
-
+  // table of contents.
   outline( depth: 4 , indent : 2em )
 
   pagebreak()
-  // Main body.
+  // main body.
   set par(justify: true)
   body
   
