@@ -6,7 +6,7 @@ close all;
 N = 16;
 N_actif = 16;
 nb_bits = 10000;
-EbN0dB = [0:0.01:6];
+EbN0dB = [0:0.01:8];
 EbN0=10.^(EbN0dB./10);
 taille_garde=2;
 M=4;
@@ -55,8 +55,3 @@ figure('Name','porteuse 1 et 4 actives')
         semilogy(EbN0dB,TEB)
         hold on 
         semilogy(EbN0dB,TEB_th)
-        
-
-     
-     
-     
