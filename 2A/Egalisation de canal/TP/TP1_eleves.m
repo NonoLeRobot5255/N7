@@ -9,7 +9,7 @@ clear all;
 
 %Frame length
 M=4; %2:BPSK, 4: QPSK
-N  = 10000; % Number of transmitted bits or symbols
+N  = 1000000; % Number of transmitted bits or symbols
 Es_N0_dB = [0:3:30]; % Eb/N0 values
 %Multipath channel parameters
 hc=[1 0.8*exp(1i*pi/3) 0.3*exp(1i*pi/6) ];%0.1*exp(1i*pi/12)];%ISI channel
@@ -111,7 +111,7 @@ for ii = 1:length(Es_N0_dB)
 
     P= (H.'*inv((Ry))*conj(H));
     [alpha,dopt]=max(diag(abs(P)));
-    %p(d+1))=1
+    %p(d+1)=1;
     p(dopt)=1;
     Gamma = conj(H)*p;
     w_zf_fir = (inv(Ry)*Gamma).';
@@ -128,6 +128,32 @@ for ii = 1:length(Es_N0_dB)
     nErr_Hatinfdirectimp(1,ii) = size(find([bits(:)- bHat(:)]),1);
     nErr_Hat(1,ii) = size(find([bits(:)- bHat(:)]),1);
 
+    %% FIR
+    Nw=10;
+    d = 5;
+    H = toeplitz([hc(1) zeros(1,Nw-1)]',[hc, zeros(1,Nw-1)]);
+    Ry = (conj(H)*H.');
+    p = zeros(Nw+Lc-1,1);
+
+    P= (H.'*inv((Ry))*conj(H));
+    [alpha,dopt]=max(diag(abs(P)));
+    p(d+1)=1;
+    p(dopt)=1;
+    Gamma = conj(H)*p;
+    w_zf_fir = (inv(Ry)*Gamma).';
+
+    sig_e_opt = sigs2 -conj(w_zf_fir)*Gamma;
+    bias = 1-sig_e_opt/sigs2;
+    shat = conv(w_zf_fir,y);
+    shat = shat(dopt:end);
+
+    bHat = zeros(2,length(bits));
+    bHat(1,:)=real(shat(1:N))<0;
+    bHat(2,:)=imag(shat(1:N))<0;
+
+    nErr_Hat1infdirectimp(1,ii) = size(find([bits(:)- bHat(:)]),1);
+    nErr_Hat1(1,ii) = size(find([bits(:)- bHat(:)]),1);
+
 end
 simBer_zfinfdirectimp = nErr_zfinfdirectimp/N/log2(M); % simulated ber
 simBer_zfinf = nErr_zfinf/N/log2(M); % simulated ber
@@ -138,6 +164,8 @@ simBer_mmseinf = nErr_mmse/N/log2(M); % simulated ber
 simBer_Hatinfdirectimp = nErr_Hatinfdirectimp/N/log2(M); % simulated ber
 simBer_Hatinf = nErr_Hat/N/log2(M); % simulated ber
 
+simBer_Hat1infdirectimp = nErr_Hat1infdirectimp/N/log2(M); % simulated ber
+simBer_Hat1inf = nErr_Hat1/N/log2(M); % simulated ber
 
 
 % plot
@@ -150,6 +178,8 @@ hold on
 semilogy(Es_N0_dB,simBer_mmseinfdirectimp(1,:),'p-','Linewidth',2);
 hold on
 semilogy(Es_N0_dB,simBer_Hatinfdirectimp(1,:),'p-','Linewidth',2);
+hold on
+semilogy(Es_N0_dB,simBer_Hat1infdirectimp(1,:),'p-','Linewidth',2);
 % semilogy(Es_N0_dB,simBer_mmseinf(1,:),'gr-','Linewidth',2);
 axis([0 50 10^-6 0.5])
 grid on
