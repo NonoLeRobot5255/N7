@@ -9,7 +9,7 @@ clear all;
 
 %Frame length
 M=4; %2:BPSK, 4: QPSK
-N  = 1000000; % Number of transmitted bits or symbols
+N  = 10000; % Number of transmitted bits or symbols
 Es_N0_dB = [0:3:30]; % Eb/N0 values
 %Multipath channel parameters
 hc=[1 0.8*exp(1i*pi/3) 0.3*exp(1i*pi/6) ];%0.1*exp(1i*pi/12)];%ISI channel
@@ -64,6 +64,8 @@ for ii = 1:length(Es_N0_dB)
     bhat_zf(2,:)= imag(s_zf(1:N)) < 0;
     nErr_zfinfdirectimp(1,ii) = size(find([bits(:)- bhat_zf(:)]),1);
 
+
+
     %Otherwise, to handle the non causal case
     %ZF
     Nzf=200;
@@ -71,34 +73,71 @@ for ii = 1:length(Es_N0_dB)
     [w_zfinf]=ComputeRI( Nzf, r, p, k );
     s_zf=conv(w_zfinf,y);
 
+
     %MMSE
-    % deltac= zeros( 1 , 2 * Lc-1 ) ;
-    % deltac ( Lc ) = 1 ;
-    % Nmmse = 200 ;%c a u s a l p a r t
-    % [ r , p , k ] = residuez(fliplr(conj(hc)),(conv(hc,fliplr(conj(hc)))+(sig2b/sigs2)*deltac)) ;
-    % [ w_mmseinf ] = ComputeRI (Nmmse,r,p,k );
-    % s_zf = conv(w_mmseinf,y);
+    deltac= zeros( 1 , 2 * Lc-1 ) ;
+    deltac ( Lc ) = 1 ;
+    Nmmse = 200 ;%c a u s a l p a r t
+    [ r , p , k ] = residuez(fliplr(conj(hc)),(conv(hc,fliplr(conj(hc)))+(sig2b/sigs2)*deltac)) ;
+    [ w_mmseinf ] = ComputeRI (Nmmse,r,p,k );
+    s_mmse = conv(w_mmseinf,y);
 
     bhat_zf = zeros(2,length(bits));
     bhat_zf(1,:)= real(s_zf(Nzf:N+Nzf-1)) < 0;
     bhat_zf(2,:)= imag(s_zf(Nzf:N+Nzf-1)) < 0;
-    
-    nErr_zfinf(1,ii) = size(find([bits(:)- bhat_zf(:)]),1);
-    
+
+    bhat_mmse = zeros(2,length(bits));
+    bhat_mmse(1,:)= real(s_mmse(Nmmse:N+Nmmse-1)) < 0;
+    bhat_mmse(2,:)= imag(s_mmse(Nmmse:N+Nmmse-1)) < 0;
+    nErr_mmseinfdirectimp(1,ii) = size(find([bits(:)- bhat_mmse(:)]),1);
+
+    nErr_zf(1,ii) = size(find([bits(:)- bhat_zf(:)]),1);
+    nErr_mmse(1,ii) = size(find([bits(:)- bhat_mmse(:)]),1);
     %% tracé de la DSP
     nexttile
-    [dsp,f] = pwelch(s_zf,[],[],[],'twosided');
+    [dsp,f] = pwelch(s_mmse,[],[],[],'twosided');
     plot(f,10*log(dsp))
     title('dsp')
     xlabel('fréquence')
     ylabel('dsp')
     
-  
-   
+    
+    %% FIR
+    Nw=10;
+    d = 5;
+    H = toeplitz([hc(1) zeros(1,Nw-1)]',[hc, zeros(1,Nw-1)]);
+    Ry = (conj(H)*H.');
+    p = zeros(Nw+Lc-1,1);
+
+    P= (H.'*inv((Ry))*conj(H));
+    [alpha,dopt]=max(diag(abs(P)));
+    %p(d+1))=1
+    p(dopt)=1;
+    Gamma = conj(H)*p;
+    w_zf_fir = (inv(Ry)*Gamma).';
+
+    sig_e_opt = sigs2 -conj(w_zf_fir)*Gamma;
+    bias = 1-sig_e_opt/sigs2;
+    shat = conv(w_zf_fir,y);
+    shat = shat(dopt:end);
+
+    bHat = zeros(2,length(bits));
+    bHat(1,:)=real(shat(1:N))<0;
+    bHat(2,:)=imag(shat(1:N))<0;
+
+    nErr_Hatinfdirectimp(1,ii) = size(find([bits(:)- bHat(:)]),1);
+    nErr_Hat(1,ii) = size(find([bits(:)- bHat(:)]),1);
 
 end
 simBer_zfinfdirectimp = nErr_zfinfdirectimp/N/log2(M); % simulated ber
 simBer_zfinf = nErr_zfinf/N/log2(M); % simulated ber
+
+simBer_mmseinfdirectimp = nErr_mmseinfdirectimp/N/log2(M); % simulated ber
+simBer_mmseinf = nErr_mmse/N/log2(M); % simulated ber
+
+simBer_Hatinfdirectimp = nErr_Hatinfdirectimp/N/log2(M); % simulated ber
+simBer_Hatinf = nErr_Hat/N/log2(M); % simulated ber
+
 
 
 % plot
@@ -106,10 +145,15 @@ simBer_zfinf = nErr_zfinf/N/log2(M); % simulated ber
 figure
 semilogy(Es_N0_dB,simBer_zfinfdirectimp(1,:),'bs-','Linewidth',2);
 hold on
-semilogy(Es_N0_dB,simBer_zfinf(1,:),'rs-','Linewidth',2);
+% semilogy(Es_N0_dB,simBer_zfinf(1,:),'rs-','Linewidth',2);
+% hold on
+semilogy(Es_N0_dB,simBer_mmseinfdirectimp(1,:),'p-','Linewidth',2);
+hold on
+semilogy(Es_N0_dB,simBer_Hatinfdirectimp(1,:),'p-','Linewidth',2);
+% semilogy(Es_N0_dB,simBer_mmseinf(1,:),'gr-','Linewidth',2);
 axis([0 50 10^-6 0.5])
 grid on
-legend('sim-zf-inf/direct','sim-zf-inf/direct');
+legend('sim-zf-inf/direct','sim-mmse-inf/direct');
 xlabel('E_s/N_0, dB');
 ylabel('Bit Error Rate');
 title('Bit error probability curve for QPSK in ISI with ZF equalizers')
