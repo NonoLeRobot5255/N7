@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "inoeud.h": "c",
-        "appelsysteme.h": "c"
+        "appelsysteme.h": "c",
+        "scheduler.h": "c"
     }
 }
