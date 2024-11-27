@@ -35,7 +35,7 @@ ensemble stable = ensemble de sommets qui ne sont pas adjacents en terme de colo
 
 nombre de stabilité = cardinal maximal d'un ensemble stable dans un graphe il sera noté $alpha (G)$, avec $gamma (G)$ nombre de chromatique et N(G) le nombre de sommets :
 
-$alpha (G) + gamma (G) >= N(G)$
+$alpha (G) * gamma (G) >= N(G)$
 
 On en déduit :
 
