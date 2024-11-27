@@ -19,7 +19,7 @@
  * @brief Nombres de lecteurs et écrivains
  */
 #define NB_LECTEURS 2
-#define NB_ECRIVAINS 1
+#define NB_ECRIVAINS 15
 
 int fd[2]; // Le tube
 
@@ -47,6 +47,7 @@ void lecteur()
    } while (r > 0);
 
    printf("\n[%d] Fini ... En tout, j'ai lu %d !\n", identifiantTache(), c);
+   fermer(fd[0]);
 }
 
 void ecrivain()
@@ -74,6 +75,7 @@ void ecrivain()
    } while (r > 0);
 
    printf("[%d] En tout, j'ai ecrit %d !\n", identifiantTache(), c);
+   fermer(fd[1]);
 }
 
 void init()
