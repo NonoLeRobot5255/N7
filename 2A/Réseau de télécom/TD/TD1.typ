@@ -14,3 +14,9 @@ Pourquoi commutationn de circuit ?
 
 - remonter dans la hiérarchie de manière très simple.
 - permet de déterminer le chemin à suivre pour atteindre la destination.
+
+IMS = gérer le type de codage en focntion des ressources dispo
+
+4. pourquoi mode paquet sur sémaphore ?
+
+- pour éviter la congestion du réseau.
