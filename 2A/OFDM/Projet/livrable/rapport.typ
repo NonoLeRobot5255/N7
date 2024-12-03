@@ -22,7 +22,9 @@ Nous serons dans un contexte de canal sélectif en fréquence et nous serons la 
 
 Dans cette partie nous implentons Une chaine de transmission OFDM sans canal. Pour étudier le comportement nous n'activeront que certaines porteuses. Nous distingueront 3 cas :
 
-== Premier cas : 1 porteuse active 
+== Emission
+
+=== Premier cas : 1 porteuse active 
 
 #figure(
   image("../screen_rapport/porteuse 1 active.png",width: 80%), 
@@ -36,7 +38,7 @@ Dans cette partie nous implentons Une chaine de transmission OFDM sans canal. Po
 
 Nous voyons que la porteuse active créer un "pic" sur notre DSP, ce qui est normal car nous avons une fréquence porteuse qui est active.
 #pagebreak()
-== Deuxième cas : 2 porteuses actives.
+=== Deuxième cas : 2 porteuses actives.
 
 #figure(
   image("../screen_rapport/porteuse 1 et 3 actives.png",width: 80%), 
@@ -49,3 +51,33 @@ Nous voyons que la porteuse active créer un "pic" sur notre DSP, ce qui est nor
   )
 
 Nous voyons que les deux porteuses actives créent un "pic" sur notre DSP, le placement des pics étant déterminé par le nombre et le placement des porteuses actives. De plus on peut voir que si les deux porteuses sont côte à côte, les "pics" se rejoignent pour former un seul "pic".
+
+=== troisème cas : 8 porteuses du milieu actives
+
+#figure(
+  image("../screen_rapport/8porteusesdumilieu.png",width: 80%), 
+  caption: [Porteuse])
+
+
+Nous voyons que les 8 porteuses du milieu étant actives, elles créent une sorte de palier du au fait qu'elles sont actives et que les autres porteuses sont inactives.
+
+=== explication 
+
+Nous avons parler de pics et de palier, ce qui se cache dans ces termes est le fait que la densité spéctrale de puissance est plus élevée à ces endroits là. Cela est du au fait que les porteuses actives vont créer des "pics" de puissance à ces endroits là. D'où le terme de pic.
+
+== Réception sans canal
+
+Dans cette partie nous vérifions qu'à la récéption notre TEB(Taux d'Erreur Binaire) sera nul. Pour cela les 16 porteuses seront actives. 
+
+#figure(
+  image("../screen_rapport/TEB+toutes_actives.png",width: 80%), 
+  caption: [DSP des 16 porteuses actives et TEB]
+  )
+
+  Nous vérifions bien que notre TEB est nul, ce qui est normal car nous n'avons pas de canal et que les 16 porteuses sont actives.
+
+  = Implantation de la chaine de transmission OFDM avec canal multi-trajets, sans bruit
+
+  == Implantation sans intervalle de garde
+
+  
