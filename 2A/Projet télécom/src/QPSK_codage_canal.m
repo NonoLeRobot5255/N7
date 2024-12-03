@@ -4,10 +4,10 @@ close all;
 %% QPSK bande de base
 
 %% constantes
-
+rendement = 1/2;
 % B = 1.35 *Rs = 54 * 10^6;
 Rb = 84.4*10^6;
-Fe = 2*Rb;
+Fe = Rb;
 Te = 1/Fe;
 Tb = 1/Rb;
 n=2;
@@ -17,7 +17,6 @@ Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
 nb_bits = 10000 ;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
-
 
 EbN0dB = [-4:0.5:4];
 EbN0=10.^(EbN0dB./10);
@@ -65,4 +64,7 @@ end
 figure
 %TEB simulé bande de base
 semilogy(EbN0dB,TEB)
+xlabel('Eb/N0 (dB)')
+ylabel('TEB')
+
 grid on
