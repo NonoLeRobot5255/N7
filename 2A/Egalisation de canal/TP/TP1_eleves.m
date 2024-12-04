@@ -32,7 +32,7 @@ for ii = 1:length(Es_N0_dB)
    s = 1/sqrt(2)*((1-2*bits(1,:))+1j*(1-2*bits(2,:))); % QPSK modulation following the BPSK rule for each quadatrure component: {0 -> +1; 1 -> -1} 
    sigs2=var(s);
    
-   % Channel convolution: equivalent symbol based representation
+   % Channel convolution: equivalent symbol based representation²&
    z = conv(hc,s);
    
    %Generating noise
@@ -103,7 +103,7 @@ for ii = 1:length(Es_N0_dB)
     
     
     %% FIR
-    Nw=10;
+    Nw=16;
     d = 5;
     H = toeplitz([hc(1) zeros(1,Nw-1)]',[hc, zeros(1,Nw-1)]);
     Ry = (conj(H)*H.');
@@ -129,15 +129,14 @@ for ii = 1:length(Es_N0_dB)
     nErr_Hat(1,ii) = size(find([bits(:)- bHat(:)]),1);
 
     %% FIR
-    Nw=10;
     d = 5;
     H = toeplitz([hc(1) zeros(1,Nw-1)]',[hc, zeros(1,Nw-1)]);
-    Ry = (conj(H)*H.');
+    Ry = sigs2 * (conj(H)*H.')+sig2b*eye(Nw);
     p = zeros(Nw+Lc-1,1);
 
-    P= (H.'*inv((Ry))*conj(H));
+    P= 1/sigs2 * (H.'*inv((Ry/sigs2))*conj(H));
     [alpha,dopt]=max(diag(abs(P)));
-    p(d+1)=1;
+    %p(d+1)=1;
     p(dopt)=1;
     Gamma = conj(H)*p;
     w_zf_fir = (inv(Ry)*Gamma).';
@@ -169,10 +168,12 @@ simBer_Hat1inf = nErr_Hat1/N/log2(M); % simulated ber
 
 
 % plot
+s_ml = mlseeq(y, hc,[1+i -1+i 1-i -1-i], 5, 'rst', 1, [], []);
 
 figure
 semilogy(Es_N0_dB,simBer_zfinfdirectimp(1,:),'bs-','Linewidth',2);
 hold on
+semilogy(Es_N0_dB,s_ml(1,:),'bs-','Linewidth',2)
 % semilogy(Es_N0_dB,simBer_zfinf(1,:),'rs-','Linewidth',2);
 % hold on
 semilogy(Es_N0_dB,simBer_mmseinfdirectimp(1,:),'p-','Linewidth',2);
