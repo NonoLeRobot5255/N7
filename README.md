@@ -1,9 +1,22 @@
-Ce git est celui de mes projets fais a l'ENSEEIHT, 
-je suis dans le departement science du numérique en 2ème année dans la filière réseau.
+# Projets réalisés à l'ENSEEIHT
 
-Ce qu'il y a à prendre de la première année est principalement dans le dossier télécom où je m'en suis bien sorti sur les TP/Projet. 
-Pour le reste en SEC (système d'exploitation centralisé) j'ai bien réussi, sur le projet d'internet je peux peut être aider de même.
+Ce dépôt Git regroupe les projets que j'ai réalisés à l'ENSEEIHT.  
+Je suis en **2ᵉ année** dans le département **Science du numérique**, filière **Réseau**.
 
+---
 
+## Contenu de la première année
 
-Bon courage à toi si tu es en 1A, c'est dur surtout le premier semetre mais on peut tous s'en sortir (je dis ça parce que je m'en suis sorti alors que je viens de médecine).
+### Télécom  
+Les travaux pratiques et projets présents dans le dossier **Télécom** sont particulièrement intéressants, et je m'en suis bien sorti sur ces sujets.  
+
+### SEC (Système d'Exploitation Centralisé)  
+J'ai également bien réussi cette partie, notamment le **projet d'internet**, sur lequel je peux peut-être apporter mon aide.  
+
+---
+
+## Message aux 1A
+
+Bon courage à toi si tu es en **1ᵉʳ année** !  
+C'est une période difficile, surtout le premier semestre, mais on peut tous s'en sortir.  
+*(Je dis ça parce que je m'en suis sorti, alors que je viens de médecine !)*  
