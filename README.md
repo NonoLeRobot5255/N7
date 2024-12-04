@@ -1,6 +1,6 @@
-# Projets réalisés à l'ENSEEIHT
+# Projets réalisés à l'ENSEEIHT (et pas que)
 
-Ce dépôt Git regroupe les projets que j'ai réalisés à l'ENSEEIHT.  
+Ce dépôt Git regroupe les projets que j'ai réalisés à l'ENSEEIHT. Je commence aussi a y mettre les cours etc...
 Je suis en **2ᵉ année** dans le département **Science du numérique**, filière **Réseau**.
 
 ---
