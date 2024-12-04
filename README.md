@@ -11,7 +11,11 @@ Je suis en **2ᵉ année** dans le département **Science du numérique**, fili�
 Les travaux pratiques et projets présents dans le dossier **Télécom** sont particulièrement intéressants, et je m'en suis bien sorti sur ces sujets.  
 
 ### SEC (Système d'Exploitation Centralisé)  
-J'ai également bien réussi cette partie, notamment le **projet d'internet**, sur lequel je peux peut-être apporter mon aide.  
+J'ai également bien réussi cette partie, même si je ne suis pas le meilleur git que tu croisera.
+
+### Réseau
+
+Dans cet UE je peux aider aussi, vu que je suis en Réseau, du coup hésites pas à m'envoyer un message si t'as des questions.
 
 ---
 
