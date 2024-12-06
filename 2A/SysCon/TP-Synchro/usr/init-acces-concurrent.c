@@ -18,8 +18,8 @@
 /**
  * @brief Nombres de lecteurs et écrivains
  */
-#define NB_LECTEURS 2
-#define NB_ECRIVAINS 15
+#define NB_LECTEURS 1
+#define NB_ECRIVAINS 1
 
 int fd[2]; // Le tube
 
