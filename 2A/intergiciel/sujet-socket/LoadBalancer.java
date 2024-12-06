@@ -20,9 +20,10 @@ public class LoadBalancer extends Thread {
             while (true) {
                 Thread t = new LoadBalancer(s.accept());
                 t.start();
+                System.out.println("New connection");
             }
         } catch (Exception e) {
-            System.out.println("Error: " + e);
+            System.out.println("Error (dans la ligne de commande) : " + e);
         }
 
     }
@@ -48,7 +49,7 @@ public class LoadBalancer extends Thread {
             server_out.close();
             s.close();
         } catch (Exception e) {
-            System.out.println("Error: " + e);
+            System.out.println(e);
         }
     }
 
