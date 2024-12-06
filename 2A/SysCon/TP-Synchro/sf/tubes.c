@@ -96,7 +96,7 @@ int tubeFermer(Fichier *f)
 
 booleen tubePlein(Tube *t)
 {
-   return t->taille == MANUX_TUBE_CAPACITE && t->nbLecteurs == 0;
+   return t->taille == MANUX_TUBE_CAPACITE;
 }
 /**
  * @brief Écriture dans un fichier
@@ -120,14 +120,17 @@ size_t tubeEcrire(Fichier *f, void *buffer, size_t nbOctets)
    printk_debug(DBG_KERNEL_TUBE, "il y a %d lecteurs\n", tube->nbLecteurs);
 
    exclusionMutuelleEntrer(&(tube->verrou));
+   printk_debug(DBG_KERNEL_TUBE, "ecrivain dans exclusion");
    while (tubePlein(tube) && tube->nbLecteurs > 0)
    {
       conditionAttendre(&(tube->tubeNonPlein), &(tube->verrou));
       break;
    }
+   // Si il n'y a plus de lecteurs et que le tube est plein, on sort et on fait sortir les lecteurs
    if (tube->nbLecteurs == 0 && tubePlein(tube))
    {
       exclusionMutuelleSortir(&(tube->verrou));
+      conditionDiffuser(&(tube->tubeNonPlein));
       printk_debug(DBG_KERNEL_TUBE, "plus de lecteurs, je sort.\n");
       return 0;
    }
@@ -156,15 +159,19 @@ size_t tubeEcrire(Fichier *f, void *buffer, size_t nbOctets)
       nbOctetsEcrits += n;
    } while (n > 0);
 
-   conditionDiffuser(&(tube->tubeNonVide));
-   printk_debug(DBG_KERNEL_TUBE, "out\n");
    exclusionMutuelleSortir(&(tube->verrou));
+   if (tube->taille == 0)
+   {
+      conditionSignaler(&(tube->tubeNonVide));
+   }
+   printk_debug(DBG_KERNEL_TUBE, "out\n");
+
    return nbOctetsEcrits;
 }
 
 booleen tubeVide(Tube *t)
 {
-   return t->taille == 0 && t->nbEcrivains == 0;
+   return t->taille == 0;
 }
 
 size_t tubeLire(Fichier *f, void *buffer, size_t nbOctets)
@@ -189,16 +196,19 @@ size_t tubeLire(Fichier *f, void *buffer, size_t nbOctets)
    printk_debug(DBG_KERNEL_TUBE, "il y a %d lecteurs\n", tube->nbLecteurs);
 
    exclusionMutuelleEntrer(&(tube->verrou));
+   printk_debug(DBG_KERNEL_TUBE, "lecteur dans exclusion");
    while (tubeVide(tube) && tube->nbEcrivains > 0)
    {
       conditionAttendre(&(tube->tubeNonVide), &(tube->verrou));
       break;
    }
+   // Si il n'y a plus d'écrivains et que le tube est vide, on sort et on fait sortir les écrivains
    if (tube->nbEcrivains == 0 && tubeVide(tube))
    {
       exclusionMutuelleSortir(&(tube->verrou));
+      conditionDiffuser(&(tube->tubeNonVide));
       printk_debug(DBG_KERNEL_TUBE, "plus d'ecrivains, je sort.\n");
-      return 0;
+      return nbOctetsLus;
    }
 
    do
@@ -226,17 +236,14 @@ size_t tubeLire(Fichier *f, void *buffer, size_t nbOctets)
 
       nbOctetsLus += n;
    } while (n > 0);
-   if (tube->nbEcrivains > 0)
+   exclusionMutuelleSortir(&(tube->verrou));
+   if (tube->taille == 0)
    {
       conditionSignaler(&(tube->tubeNonPlein));
    }
-   else if (tube->taille == 0)
-   {
-      conditionDiffuser(&(tube->tubeNonPlein));
-   }
    conditionSignaler(&(tube->tubeNonPlein));
    printk_debug(DBG_KERNEL_TUBE, "out\n");
-   exclusionMutuelleSortir(&(tube->verrou));
+
    return nbOctetsLus;
 }
 
