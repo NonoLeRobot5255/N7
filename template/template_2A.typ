@@ -1,4 +1,4 @@
-#let project(title: "", authors: (),teachers: (), year : "", body) = { //modulable design
+#let project(title: "", authors: (),teachers: (), year : "",profondeur: int, body) = { //modulable design
   set document(author: authors, title: title)
   set page(numbering: "1", number-align: right)
   set heading(numbering: "1.1.")
@@ -80,7 +80,7 @@
   align(text("",size : 23pt),center)
   pagebreak()
   // table of contents.
-  outline( depth: 4 , indent : 2em )
+  outline( depth: profondeur , indent : 2em )
 
   pagebreak()
   // main body.
