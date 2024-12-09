@@ -9,6 +9,7 @@
     "BOUCHERET Marie-Laure", 
   ),
   year : "2024-2025",
+  profondeur : 2,
 )
 
 
@@ -74,10 +75,52 @@ Dans cette partie nous vérifions qu'à la récéption notre TEB(Taux d'Erreur B
   caption: [DSP des 16 porteuses actives et TEB]
   )
 
-  Nous vérifions bien que notre TEB est nul, ce qui est normal car nous n'avons pas de canal et que les 16 porteuses sont actives.
+Nous vérifions bien que notre TEB est nul, ce qui est normal car nous n'avons pas de canal et que les 16 porteuses sont actives.
 
-  = Implantation de la chaine de transmission OFDM avec canal multi-trajets, sans bruit
+= Implantation de la chaine de transmission OFDM avec canal multi-trajets, sans bruit
 
-  == Implantation sans intervalle de garde
+Dans cette partie nous étudierons l'impact d'un canal sans bruit dont le canal multi-trajet est de la forme suivante :
 
-  
+$y(t)= 0.407x(t) + 0.815x(t - "Ts" ) + 0.407x(t - 2"Ts" )$
+
+== Implantation sans intervalle de garde
+
+Nous pouvons voir que en ayant ce filtre la réponse impulsionelle de notre filtre sera de la forme suivante :
+
+$h (t) = 0,404delta(t) + 0,815delta(t-"Ts") + 0,407delta(t-2"Ts")$
+
+Nous pouvons a présent tracer le module et la phase en fréquence du canal de propagation : 
+
+#figure(
+  image("../screen_rapport/phase et frequence.png",width: 80%), 
+  caption: [Module et phase du canal de propagation]
+  )
+
+Nous pouvons voir à partir de ces figures qu'il y a une aténuration du signal sur la porteuse 8.
+
+Ainsi nous pouvons observer l'effet qu'à ce canal sur notre densité spéctrale de puissance :
+
+#figure(
+  image("../screen_rapport/dsp canal.png",width: 80%), 
+  caption: [densité spéctrale de puissance en sortie du canal]
+  )
+
+Nous pouvons constater que le canal a un effet sur notre DSP. En effet, la porteuse 8 est atténuée, ce qui correspond bien à nos attentes. En OFDM, nous utilisons un rectangle pour la mise en forme des symboles. Lorsqu’il traverse le canal de propagation, notre signal subit la réponse en fréquence de ce dernier, ce qui modifie sa mise en forme et entraîne l’atténuation observée.
+
+Les constellations des symboles reçus peuvent être intéressantes à observés, nous pouvons donc tracer les constellations des porteuses 6 et 15 :
+
+#figure(
+  image("../screen_rapport/const 6 et 15.png",width: 80%), 
+  caption: [constellation de la porteuse 6 et 15]
+  )
+
+Nous pouvons voir que la constellation de la porteuse 6 est déformée, ce qui est normal car elle est atténuée. La constellation de la porteuse 15 est quant à elle inchangée ou casiment. Nous voyons d'ailleurs une rotation induite par le canal.
+
+Malheuresement, pour notre TEB, il n'est plus nul dans ce cas là, nous avons par exemple sur cette simulation un TEB de 0.3609, nous voyons ça car même si nous n'avons pas de bruit, le canal créer de l'intérference inter porteuses (ICI) en rompant l'orthogonalité et donc nous voyons aparaitre un $"TEB" > 0$.
+
+== Implantation avec intervalle de garde composé de zéros
+
+Dans cette partie, nous allons ajouter un intervalle de garde composé de zéros devant chaque symbole
+OFDM transmis avant passage dans le canal de propagation.
+
+
