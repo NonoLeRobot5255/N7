@@ -10,16 +10,28 @@ commcnv_plotnextstates(trellis.outputs);
 
 %% code convolutif 
 % signal crée
-S = randi([0 1],1,nb_bits);
+S = randi([0 1],1,nb_bits) ;
+Sbis= [S zeros(1,2)];
 
 % codage canal
 code_codage=convenc(S,trellis);
 
-matrice_comparaison = [S ones(size(S))*2 ; code_codage];
+code_codage1 = 1 - 2 * code_codage ;
+
+
+
+
 
 % code sorti
 
-code_decode = vitdec(code_codage,trellis,5*(3-1),'term','hard');
+code_soft = vitdec(code_codage,trellis,5*(3-1),'trunc','soft',1);
+code_hard = vitdec(code_codage,trellis,5*(3-1),'trunc','hard');
+code_unquant = vitdec(code_codage1,trellis,5*(3-1),'trunc','unquant');
 
-mat = (S~=code_decode);
-TEB = mean(mat)
+mat1 = (S~=code_soft);
+mat2 = (S~=code_hard);
+mat3 = (S~=code_unquant);
+
+TEB_soft = mean(mat1);
+TEB_hard = mean(mat2);
+TEB_unquant = mean(mat3);

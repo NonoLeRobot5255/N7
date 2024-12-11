@@ -15,7 +15,7 @@ M = 2^n;
 
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 100000 ;
+nb_bits = 200000 ;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = [-4:0.5:4];
@@ -59,11 +59,14 @@ for k=1:length(EbN0)
     xe = z(length(h1):Ns:length(z)-1);
 
 
-    xr(1:2:nb_bits*2)=real(xe)<0;
-    xr(2:2:nb_bits*2)=imag(xe)<0;
+    xr(1:2:nb_bits*2)=real(xe);
+    xr(2:2:nb_bits*2)=imag(xe);
 
-    code_soft = vitdec(xr,treillis,5*(7-1),'trunc','soft',1);
-    code_hard = vitdec(xr,treillis,5*(7-1),'trunc','hard');
+    xr_h(1:2:nb_bits*2)=real(xe)<0;
+    xr_h(2:2:nb_bits*2)=imag(xe)<0;
+
+    code_soft = vitdec(xr,treillis,5*(7-1),'trunc','unquant');
+    code_hard = vitdec(xr_h,treillis,5*(7-1),'trunc','hard');
     
     TEB1(k) = mean(S ~= code_soft);
     TEB2(k) = mean(S ~= code_hard);
