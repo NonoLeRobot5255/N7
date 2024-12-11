@@ -52,3 +52,28 @@ Shannon ce torturé s'est demandé diverses questions :
 - Définition de l'info ?
 
 - Quantifier l'info ? Quantité de l'info ?
+
+Quantité d'info $i(x) = F(p(x))$ p(x) = probabilité que x soit vrai
+#pagebreak()
+Notion qu'on voulait que la fonction remplisse :
+  
+  - $F(1) = 0$
+
+  - $p(x)"descend" -->  i(x) "monte"$
+
+  - $i(x_1x_2) = i(x_1)+i(x_2)$
+
+  - $F(P_x_1;P_x_2) = F(P_x_1) + F(P_x_2)$
+
+donc fonction trouvée est :
+
+  - $F(p) = -log(p_x)$
+
+Unité de la quantité d'info = Binary unit (bit) mais c'est pas le bit de l'info. Du coup on peut l'appeler le Shannon
+
+on veut que $- log(1/2) = 1 "bit"$, donc on prend la base 2 du log.
+
+=== Pour résumer :
+$i(x) = -log_2(p(x))$
+
+
