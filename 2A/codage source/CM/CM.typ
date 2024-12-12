@@ -1,6 +1,6 @@
-= CM codage source
+= CM de codage source
 
-== Introduction
+= Introduction
 
 Codage source = coder les bits avant transmission pour réduire les ressources nécessaires à la transmission. 
 
@@ -16,7 +16,7 @@ La compression est possbile de deux manières :
 
 Dans tous les cas on rajoute un codeur entropique (La prof à dit je cite : "ça fait pas de mal de rajouter encore un trucs")
 
-=== Taux de compression 
+== Taux de compression 
 
 Il n'existe pas de codeur optimal, on doit les comparer pour savoir quel est le meilleur (empirique). On les compare en surtout avec le taux de compression (je crois) : 
 
@@ -27,7 +27,7 @@ Il n'existe pas de codeur optimal, on doit les comparer pour savoir quel est le 
 
   si objectif = 2kb/s, on a $64/2$ = 32 en taux de compression
 
-=== Notion de distorsion
+== Notion de distorsion
 
 Différentes définitions de la distorsion :
 
@@ -43,9 +43,9 @@ PSNR = pic signal/noise ratio (elle en a parlé mais osef)
 
 - (avec la puissance) Distorsion : $sigma_e² = integral(s_e (f) "df")$ 
 
-== Codage sans perte ou codage entropique 
+= Codage sans perte ou codage entropique 
 
-=== Théorie de l'information
+== Théorie de l'information
 
 Shannon ce torturé s'est demandé diverses questions : 
 
@@ -76,4 +76,17 @@ on veut que $- log(1/2) = 1 "bit"$, donc on prend la base 2 du log.
 === Pour résumer :
 $i(x) = -log_2(p(x))$
 
+=== Entropie
+
+Entropie d'une source = $H(x) = E(i(x)) = -sum(p(x)log_2(p(x)))$
+
+Entropie :
+
+-  moyenne de quantité d'info ($>0$).
+
+-  incertitude de la source.
+
+- mesure de son imprédictibilité.
+
+Entropie(anglais) < Entropie(Français) < Entropie(Allemand)
 
