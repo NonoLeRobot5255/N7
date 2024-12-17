@@ -9,3 +9,6 @@ Pourquoi parler de l'ADSL (technologie en fin de vie) ? Toujours intéressant à
 L'ADSL s'occupe du problème d'analogique sur l'entrée et la sortie. 
 
 DSL  = Digital Subscriber Line
+
+Supertrame de 70 trame comme ça on peut envoyer des infos sur $1/8$ de Trame 
+
