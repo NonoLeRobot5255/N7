@@ -90,3 +90,38 @@ Entropie :
 
 Entropie(anglais) < Entropie(Français) < Entropie(Allemand)
 
+*Ensuite on a vu le code de Huffman et comment le faire mais j'avais plus de batterie donc je le mettrais plus tard.*
+
+#pagebreak()
+
+= Codage avec perte 
+
+Décorrélateur = autre façon de representer les données --> mieux adapter a la compression.
+
+Quantificateur = on augmente le TC sans toucher à la distorsion.
+
+La puissance de l'erreur de quantification est proportionnelle à la puissance du signal d'entrée.
+
+erreur de quantification = $epsilon = x(n) - x_q(n)$
+ 
+Pas de quantification :
+ -  $sigma_epsilon² = (sigma_x² a^2 2^(-2n))/12 $
+
+$x_R = x + epsilon$
+
+mesure 1 pour quantifier la distorsion : SNR = $10log_10 ((sigma_x²)/(sigma_epsilon²))$
+
+H1 : $epsilon$ bruit de Q : uniforme entre $[-Delta/2;Delta/2]$  --> $sigma_epsilon^2 = Delta^2 /12 $
+
+Dynamique du signal $~ a*sigma_x$
+
+$a*sigma_x = N*Delta = 2^n Delta$
+
+donc $sigma_x^2 = 2^(2n)/a^2 Delta^2$
+
+alors $sigma_x^2/sigma_epsilon^2 = 2^(2n)/a^2 *12 $
+
+et donc $"SNR"= (20 log_10 2)-n ... $
+
+si on veut un TC de n, on à intérer que les données en entrées aient une puissance en entrée plus faible que les données sources.
+
