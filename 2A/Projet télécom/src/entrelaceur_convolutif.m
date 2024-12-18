@@ -46,6 +46,8 @@ for k=1:length(EbN0)
     S1 = step(codage_RS,S.');
     S1 = S1.';
 
+    O = bitToOctet(S1);
+    convintrlv(O,)
     Code_codage = convenc(S1,treillis,poiscailleur);
 
     dk = 1-2*Code_codage(1:2:length(S1)*(3/2)) +1i * (1-2*Code_codage(2:2:length(S1)*(3/2)));
