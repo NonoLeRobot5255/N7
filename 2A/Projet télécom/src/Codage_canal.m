@@ -15,10 +15,10 @@ M = 2^n;
 
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 200000 ;
+nb_bits = 1000000 ;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
-EbN0dB = [-4:0.5:4];
+EbN0dB = [-4:4];
 EbN0=10.^(EbN0dB./10);
 L= 8;
 h1 = rcosdesign(0.35,L,Ns); % filtre de mise en forme
