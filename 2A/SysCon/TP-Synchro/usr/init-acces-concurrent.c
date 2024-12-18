@@ -18,8 +18,8 @@
 /**
  * @brief Nombres de lecteurs et écrivains
  */
-#define NB_LECTEURS 1
-#define NB_ECRIVAINS 1
+#define NB_LECTEURS 2
+#define NB_ECRIVAINS 2
 
 int fd[2]; // Le tube
 
@@ -59,8 +59,10 @@ void ecrivain()
    printf("[%d] Je suis un ecrivain !\n", identifiantTache());
 
    fermer(fd[0]);
+   int cpt = 10;
    do
    {
+      cpt--;
       printf("[%d] Je vais ecrire %d\n", identifiantTache(), strlen(b));
       r = ecrire(fd[1], b, strlen(b));
       printf("[%d] Voila j'ai ecrit %d\n", identifiantTache(), r);
@@ -72,7 +74,7 @@ void ecrivain()
       {
          printf("[%d] Erreur ecriture\n", identifiantTache());
       }
-   } while (r > 0);
+   } while (cpt > 0);
 
    printf("[%d] En tout, j'ai ecrit %d !\n", identifiantTache(), c);
    fermer(fd[1]);
