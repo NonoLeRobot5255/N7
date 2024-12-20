@@ -101,8 +101,6 @@ public class Irc {
 class writeListener implements ActionListener {
 	public void actionPerformed (ActionEvent ae) {
 		try {
-
-
 			StreamMessage message = Irc.session.createStreamMessage();
 			message.writeString(Irc.myName+" : "+Irc.data.getText());
 			Irc.producer.send(message); Irc.session.createStreamMessage();
@@ -119,7 +117,6 @@ class connectListener implements ActionListener {
 	public void actionPerformed (ActionEvent ae) {
 		try {  
 			System.out.println("connect button pressed");
-			Irc.users.add(Irc.myName);
 			Irc.connectionFactory = new ActiveMQConnectionFactory(Irc.url);
 
 			Irc.connection = Irc.connectionFactory.createConnection();
@@ -151,6 +148,11 @@ class connectListener implements ActionListener {
 	StreamMessage message = Irc.session.createStreamMessage();
 	message.writeString("Connection de "+Irc.myName);
 	Irc.producer.send(message);
+
+	StreamMessage bd = Irc.session.createStreamMessage();
+	bd.writeString("Newuser "+Irc.myName);
+	Irc.producer.send(bd);
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -181,7 +183,7 @@ class whoListener implements ActionListener {
 class leaveListener implements ActionListener {
 	public void actionPerformed (ActionEvent ae) {
 		try {
-			System.out.println("leave button pressed");
+			Irc.connection.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
