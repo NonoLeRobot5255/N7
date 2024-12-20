@@ -1,0 +1,9 @@
+{
+    "java.project.sourcePaths": [
+        "."
+    ],
+    "java.project.referencedLibraries": [
+        "/home/nono/outils/apache-activemq-5.14.0/activemq-all-5.14.0.jar"
+    ],
+    "java.format.settings.url": ".vscode/java-formatter.xml"
+}
