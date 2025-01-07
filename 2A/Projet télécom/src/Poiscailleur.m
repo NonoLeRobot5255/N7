@@ -63,14 +63,11 @@ for k=1:length(EbN0)
     xr(1:2:nb_bits*(3/2))=real(xe);
     xr(2:2:nb_bits*(3/2))=imag(xe);
 
-    xr_h(1:2:nb_bits*(3/2))=real(xe)<0;
-    xr_h(2:2:nb_bits*(3/2))=imag(xe)<0;
-
     code_soft = vitdec(xr,treillis,5*(7-1),'trunc','unquant',poiscailleur);
-    code_hard = vitdec(xr_h,treillis,5*(7-1),'trunc','hard',poiscailleur);
+    code_soft_cl = vitdec(xr,treillis,5*(7-1),'trunc','unquant');
     
     TEB1(k) = mean(S ~= code_soft);
-    TEB2(k) = mean(S ~= code_hard);
+    TEB2(k) = mean(S ~= code_soft_cl);
 end
 
 figure
@@ -84,5 +81,5 @@ semilogy(EbN0dB,TEB2)
 hold on
 %TEB théorique
 semilogy(EbN0dB,qfunc(sqrt(2*EbN0)),'g')
-legend('TEB avec codage et décodage soft et poinçonnage','TEB avec codage et décodage hard et poinçonnage', 'TEB théorique')
+legend('TEB avec codage et décodage soft et poinçonnage','TEB avec codage et décodage soft', 'TEB théorique')
 grid on
