@@ -15,7 +15,7 @@ M = 2^n;
 
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 1880*8;
+nb_bits = 188000*8;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
 EbN0dB = [-4:0.25:4];
