@@ -7,9 +7,15 @@ N = 16;
 N_actif = 16;
 nb_bits_porteuse = 10000;
 nb_bits = nb_bits_porteuse * N;
+garde = 2;
 
 % réponse impultionelle du filtre
 h = [0.407,0.815,0.407]; 
+
+%egalisation 
+ck = fft(h,16);
+matr_ck = repmat(ck(:), 1, nb_bits_porteuse);
+H = conj(matr_ck);
 
 %% Réponse du canal
 % tracé du module et de la phase de la réponse en fréquence du canal de propagation.
@@ -33,7 +39,13 @@ figure('Name','dsp en sortie de canal')
     
         % modulation 
         Signal_module = ifft(S,N);
-        Signal_sortie = reshape(Signal_module, 1, nb_bits);
+
+        %% Intervalle de garde
+        Prefixe = Signal_module(N-garde+1:end,:);
+        Signal_garde = [Prefixe;Signal_module];
+
+        % signal en ligne
+        Signal_sortie = reshape(Signal_garde, 1, nb_bits+garde*nb_bits_porteuse);
 
         % canal
         Signal_sortie_canal = filter(h,1,Signal_sortie);         
@@ -51,14 +63,19 @@ figure('Name','dsp en sortie de canal')
 
      %% Démodulation 
      
-     %démodulation
-     Signal_matrice = reshape(Signal_sortie_canal, size(Signal_module));
+     %supression de l'intervalle de garde
+     Signal_matrice_canal = reshape(Signal_sortie_canal, size(Signal_garde));
+     signal_sans_garde = Signal_matrice_canal(garde+1:N+garde,:);
+
      %fft en sortie pour revenir a un signal binaire comparable 
-     bit_fin = fft(Signal_matrice,N);
+     bit_fin = fft(signal_sans_garde,N);
+     
+     %%Egalisation
+     bit_parfait = bit_fin.*H;
 
      %constellation porteuse 6 et 15 (ok)
-     porteuse6 = bit_fin(6, :);
-     porteuse15 = bit_fin(15, :);
+     porteuse6 = bit_parfait(6, :);
+     porteuse15 = bit_parfait(15, :);
 
 
      figure('Name','constellation porteuse 6')
@@ -73,8 +90,8 @@ figure('Name','dsp en sortie de canal')
      ylabel('partie imaginaire')
 
 
-     %on choisit +1 ou -1 affin de prédire
-     Signal_recep = real(bit_fin)>0;
+     %on choisit +1 ou -1 afin de prédire
+     Signal_recep = real(bit_parfait)>0;
      Signal_recep = Signal_recep*2-1;
     
      

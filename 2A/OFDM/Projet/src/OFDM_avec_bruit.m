@@ -5,13 +5,13 @@ close all;
 %% variables 
 N = 16;
 N_actif = 16;
-nb_bits = 10000;
-EbN0dB = [0:0.01:8];
+nb_bits = 5000000;
+EbN0dB = [0:0.5:8];
 EbN0=10.^(EbN0dB./10);
 taille_garde=2;
 M=4;
 %% figure de zinzin
-figure('Name','porteuse 1 et 4 actives')
+figure('Name','TEB théorique et simulé')
      %% modulateur 
         
     
@@ -52,6 +52,7 @@ figure('Name','porteuse 1 et 4 actives')
             
         end
         TEB_th = 2*qfunc(sqrt(2*log2(M)*10.^(EbN0dB/10))*sin(pi/M))/log2(M);
-        semilogy(EbN0dB,TEB)
+        semilogy(EbN0dB,TEB,'-o')
         hold on 
-        semilogy(EbN0dB,TEB_th)
+        semilogy(EbN0dB,TEB_th,'-o')
+        legend('TEB simulé', 'TEB théorique')
