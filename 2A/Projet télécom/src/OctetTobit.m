@@ -1,6 +1,6 @@
 function [bits] = OctetTobit(Octets)
     bits=zeros(1,length(Octets)*8);
-    if (Octets<0 || Octets>255)
+    if (sum(Octets<0 | Octets>255) ~= 0)
         error("Je n'ai pas aimé ta prise de lead. Tu peux dire adieux à tes tickets resto.")
     else
         for i=1:8

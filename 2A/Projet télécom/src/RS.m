@@ -84,12 +84,7 @@ for k=1:length(EbN0)
     code_soft_RS = step(decode_RS,code_soft.');
     code_soft_RS = code_soft_RS.';
 
-    code_hard = vitdec(xr_h,treillis,5*(7-1),'trunc','hard',poiscailleur);
-    code_hard_RS = step(decode_RS_h,code_hard.');
-    code_hard_RS = code_hard_RS.';
-
     TEB1(k) = mean(S ~= code_soft_RS);
-    TEB2(k) = mean(S ~= code_hard_RS);
 end
 
 figure
