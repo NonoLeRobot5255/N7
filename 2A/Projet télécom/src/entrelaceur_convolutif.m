@@ -18,7 +18,7 @@ Rs = Rb/log2(M);
 nb_bits = 188*8*66;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
-EbN0dB = [-4:0.25:4];
+EbN0dB = [100];
 EbN0=10.^(EbN0dB./10);
 L= 8;
 h1 = rcosdesign(0.35,L,Ns); % filtre de mise en forme
@@ -29,7 +29,7 @@ poiscailleur = [1 1 0 1];
 %codage de reed solomon
 codage_RS = comm.RSEncoder(204,188,BitInput=true);
 decode_RS = comm.RSDecoder(204,188,BitInput=true);
-decode_RS_h = comm.RSDecoder(204,188,BitInput=true);
+
 
 
 %codage convolutif
@@ -46,7 +46,8 @@ for k=1:length(EbN0)
     S1 = S1.';
     sauvegarde1 = S1;
     
-    S1 = [S1, zeros(1,16544)];
+    %S1_zeros = [S1, zeros(1,16544)];
+    
     %entrelacement
     O = bitToOctet(S1);
     trans = convintrlv(O,12,17);
@@ -94,7 +95,7 @@ for k=1:length(EbN0)
     F = convdeintrlv(fin, 12,17);
     code_soft = OctetTobit(F);
 
-    code_soft=code_soft(1:end-16544);
+    %code_soft_sanszeros=code_soft(16544:end);
 
 
     code_soft_RS = step(decode_RS,code_soft.');
@@ -123,7 +124,6 @@ for k=1:length(EbN0)
     % Filtrage
 
     y = filter(h1, 1, At);
-    T1 = ([0:length(y)-1] * Te);
 
     %bruit
     Px = mean(abs(y).^2);
@@ -160,8 +160,8 @@ xlabel('Eb/N0 (dB)')
 ylabel('TEB')
 hold on
 %TEB simulé avec hard décodage
-semilogy(EbN0dB,TEB2)
-hold on
+% semilogy(EbN0dB,TEB2)
+% hold on
 %TEB théorique
 semilogy(EbN0dB,qfunc(sqrt(2*EbN0)),'g')
 legend('Entrelasseur', 'RS', 'th')
