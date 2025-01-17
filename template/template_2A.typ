@@ -1,3 +1,11 @@
+// In this template there is 5 parameters : 
+// - title
+// - authors
+// - teachers
+// - year
+// - profondeur (for the depth of the table of contents)
+
+
 #let project(title: "", authors: (),teachers: (), year : "",profondeur: int, body) = { //modulable design
   set document(author: authors, title: title)
   set page(numbering: "1", number-align: right)
@@ -48,7 +56,7 @@
   pad(
     top: 0.5em,
     x: 2em,
-    align(text("professeur"+ if teachers.len()>1 {"s"} + " : ", size: 1.25em),center),
+    align(text("Professeur"+ if teachers.len()>1 {"s"} + " : ", size: 1.25em),center),
   )
   // here I write all the teachers
   pad(
