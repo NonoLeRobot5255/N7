@@ -10,6 +10,7 @@
 #include <unistd.h> // creerNouvelleTache
 #include <manux/string.h>
 
+
 /**
  * @brief Taille du buffer utilisé en lecture
  */
@@ -18,8 +19,8 @@
 /**
  * @brief Nombres de lecteurs et écrivains
  */
-#define NB_LECTEURS 2
-#define NB_ECRIVAINS 2
+#define NB_LECTEURS 7
+#define NB_ECRIVAINS 10
 
 int fd[2]; // Le tube
 
@@ -44,11 +45,13 @@ void lecteur()
       {
          printf("[%d] Erreur lecture\n", identifiantTache());
       }
+      basculerTache();
    } while (r > 0);
 
    printf("\n[%d] Fini ... En tout, j'ai lu %d !\n", identifiantTache(), c);
    fermer(fd[0]);
 }
+
 
 void ecrivain()
 {
@@ -59,7 +62,7 @@ void ecrivain()
    printf("[%d] Je suis un ecrivain !\n", identifiantTache());
 
    fermer(fd[0]);
-   int cpt = 10;
+   int cpt = 100;
    do
    {
       cpt--;
@@ -74,7 +77,8 @@ void ecrivain()
       {
          printf("[%d] Erreur ecriture\n", identifiantTache());
       }
-   } while (cpt > 0);
+      basculerTache();
+   } while (cpt >0);
 
    printf("[%d] En tout, j'ai ecrit %d !\n", identifiantTache(), c);
    fermer(fd[1]);
