@@ -15,41 +15,26 @@ M = 2^n;
 
 Ts = log2(M)*Tb;
 Rs = Rb/log2(M);
-nb_bits = 18800*8;
+nb_bits = 188*8*100 ;
 Ns = Fe * Ts; % Nombre d'échantillons par bits
 
-EbN0dB = [-4:0.25:4];
+EbN0dB = [-4:0.5:4];
 EbN0=10.^(EbN0dB./10);
 L= 8;
 h1 = rcosdesign(0.35,L,Ns); % filtre de mise en forme
 hr = fliplr(h1); % filtre de réception
-poiscailleur = [1 1 0 1];
 
-
-%codage de reed solomon
-codage_RS = comm.RSEncoder(204,188,BitInput=true);
-decode_RS = comm.RSDecoder(204,188,BitInput=true);
-decode_RS_h = comm.RSDecoder(204,188,BitInput=true);
-
-
-%codage convolutif
 treillis = poly2trellis(7,[171 133]);
 commcnv_plotnextstates(treillis.nextStates);
-
-
 for k=1:length(EbN0)
 
     %% modulateur :
     % Mapping
     S = randi([0 1],1,nb_bits);
     
-    S1 = step(codage_RS,S.');
-    S1 = S1.';
+    Code_codage = convenc(S,treillis);
 
-    Code_codage = convenc(S1,treillis,poiscailleur);
-
-    dk = 1-2*Code_codage(1:2:length(S1)*(3/2)) +1i * (1-2*Code_codage(2:2:length(S1)*(3/2)));
-
+    dk = 1-2*Code_codage(1:2:nb_bits*2) +1i * (1-2*Code_codage(2:2:nb_bits*2));
     At = [kron(dk, [1, zeros(1, Ns-1)]) zeros(1,length(h1))];
     
     %% canal 
@@ -74,18 +59,19 @@ for k=1:length(EbN0)
     xe = z(length(h1):Ns:length(z)-1);
 
 
-    xr(1:2:length(S1)*(3/2))=real(xe);
-    xr(2:2:length(S1)*(3/2))=imag(xe);
+    xr(1:2:nb_bits*2)=real(xe);
+    xr(2:2:nb_bits*2)=imag(xe);
 
-    xr_h(1:2:length(S1)*(3/2))=real(xe)<0;
-    xr_h(2:2:length(S1)*(3/2))=imag(xe)<0;
+    xr_h(1:2:nb_bits*2)=real(xe)<0;
+    xr_h(2:2:nb_bits*2)=imag(xe)<0;
 
-    code_soft = vitdec(xr,treillis,5*(7-1),'trunc','unquant',poiscailleur);
-    code_soft_RS = step(decode_RS,code_soft.');
-    code_soft_RS = code_soft_RS.';
-
-    TEB1(k) = mean(S ~= code_soft_RS);
+    code_soft = vitdec(xr,treillis,5*(7-1),'trunc','unquant');
+    code_hard = vitdec(xr_h,treillis,5*(7-1),'trunc','hard');
+    
+    TEB1(k) = mean(S ~= code_soft);
+    TEB2(k) = mean(S ~= code_hard);
 end
+
 
 figure
 %TEB simulé avec soft décodage
@@ -98,5 +84,5 @@ semilogy(EbN0dB,TEB2)
 hold on
 %TEB théorique
 semilogy(EbN0dB,qfunc(sqrt(2*EbN0)),'g')
-legend('TEB avec codage et décodage soft et poinçonnage','TEB avec codage et décodage hard et poinçonnage', 'TEB théorique')
+legend('TEB avec codage et décodage soft','TEB avec codage et décodage hard', 'TEB théorique')
 grid on
