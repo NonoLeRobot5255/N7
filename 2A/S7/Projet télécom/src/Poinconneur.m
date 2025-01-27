@@ -3,83 +3,78 @@ close all;
 
 %% QPSK bande de base
 
-%% constantes
+%% Constantes
 rendement = 1/2;
-% B = 1.35 *Rs = 54 * 10^6;
-Rb = 84.4*10^6;
-Fe = Rb;
-Te = 1/Fe;
-Tb = 1/Rb;
-n=2;
-M = 2^n;
+Rb = 84.4 * 10^6; % Débit binaire en bits par seconde
+Fe = Rb; % Fréquence d'échantillonnage 
+Te = 1 / Fe; % Période d'échantillonnage
+Tb = 1 / Rb; % Durée d'un bit
+n = 2; % Nombre de bits par symbole
+M = 2^n; % Ordre de la modulation
 
-Ts = log2(M)*Tb;
-Rs = Rb/log2(M);
-nb_bits = 100000 ;
-Ns = Fe * Ts; % Nombre d'échantillons par bits
+Ts = log2(M)*Tb; % Durée d'un symbole
+Rs = Rb / log2(M); % Débit symbole
+nb_bits = 100000 ; % Nombre total de bits à simuler
+Ns = Fe * Ts; % Nombre d'échantillons par symbole
 
-EbN0dB = [-4:4];
-EbN0=10.^(EbN0dB./10);
-L= 8;
+EbN0dB = [-4:4]; % Rapport signal sur bruit en dB
+EbN0 = 10.^(EbN0dB / 10); % Rapport signal sur bruit linéaire
+L = 8; % Longueur du filtre en nombre de symboles
 h1 = rcosdesign(0.35,L,Ns); % filtre de mise en forme
 hr = fliplr(h1); % filtre de réception
-poiscailleur = [1 1 0 1];
+poinconneur = [1 1 0 1];
 
+%codage convolutif
 treillis = poly2trellis(7,[171 133]);
 commcnv_plotnextstates(treillis.nextStates);
+
+%% CHAINE DE TRANSMISSION
 for k=1:length(EbN0)
 
     %% modulateur :
     % Mapping
     S = randi([0 1],1,nb_bits);
     
-    Code_codage = convenc(S,treillis,poiscailleur);
+    Code_codage = convenc(S,treillis,poinconneur);
 
     dk = 1-2*Code_codage(1:2:nb_bits*(3/2)) +1i * (1-2*Code_codage(2:2:nb_bits*(3/2)));
     At = [kron(dk, [1, zeros(1, Ns-1)]) zeros(1,length(h1))];
     
     %% canal 
-    % Filtrage
-    
+    % Filtrage de mise en forme
     y = filter(h1, 1, At);
     T1 = ([0:length(y)-1] * Te);
    
-    %bruit
+    % Ajout de bruit
     Px = mean(abs(y).^2);
     sigma2 = ((Px*Ns)/(2*log2(M)*EbN0(k)));
-    
     y_et_bruit_reel = y + sqrt(sigma2)*randn(1,length(y)); % bruit réel
     recu = y_et_bruit_reel + 1i *sqrt(sigma2)*randn(1,length(y)); % bruit imaginaire
     
     
-    %filtre de récéption
+    % Filtre de récéption
     z= filter(hr,1,recu);
 
     
-    %echantillonage et démapping 
+    % Demapping + Dépoinçonnage 
     xe = z(length(h1):Ns:length(z)-1);
-
-
     xr(1:2:nb_bits*(3/2))=real(xe);
     xr(2:2:nb_bits*(3/2))=imag(xe);
 
-    code_soft = vitdec(xr,treillis,5*(7-1),'trunc','unquant',poiscailleur);
-    code_soft_cl = vitdec(xr,treillis,5*(7-1),'trunc','unquant');
+    code_soft = vitdec(xr,treillis,5*(7-1),'trunc','unquant',poinconneur);
     
+    % Calcul du TEB
     TEB1(k) = mean(S ~= code_soft);
-    TEB2(k) = mean(S ~= code_soft_cl);
 end
 
+%% Trace des courbes
 figure
 %TEB simulé avec soft décodage
 semilogy(EbN0dB,TEB1)
 xlabel('Eb/N0 (dB)')
 ylabel('TEB')
 hold on
-%TEB simulé avec hard décodage
-semilogy(EbN0dB,TEB2)
-hold on
 %TEB théorique
 semilogy(EbN0dB,qfunc(sqrt(2*EbN0)),'g')
-legend('TEB avec codage et décodage soft et poinçonnage','TEB avec codage et décodage soft', 'TEB théorique')
+legend('TEB avec codage et décodage soft et poinçonnage', 'TEB théorique')
 grid on
