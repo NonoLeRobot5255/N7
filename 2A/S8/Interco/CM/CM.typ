@@ -4,7 +4,7 @@
 
 Dans ce premier CM, on à vu des généralités sur l'interconnexion de réseaux, surtout le modèle OSI et les normes ISO dedans (en anglais c'est l'inverse).
 
-== Deuxième CM
+== Deuxième CM et,plus
 
 En dessous de la couche transport $->$ tout va bien mais au dessus de la couche transport $->$ tout va mal.
 Standard aussi met en place standard sur métric et sur les délai $->$ usine à gaz infâme.
@@ -89,3 +89,30 @@ Le plus souvent on fait rien.
         - Adressage = on a juste une table de correspondance.
         - numéro de connexion = gérer  l'adressage
 
+
+== Troisième CM
+On lit le numéro de téléphone du destinataire et on sait la destination.
+Ce qui va compter dans la QOS c'est le temps de propagation.
+
+HDLC = avoir vie dure.
+
+Q.931 = protocole de signalisation pour établir une connexion. (applicatif)
+
+Q.921 = protocole de liaison de données (couche 2)
+
+Si GSM alors Q.931 mais on doit faire une passerelle pour passer dans le réseau.
+
+=== Voix sur IP
+
+on envoie la parole dans les paquets IP. Mais on a des problèmes de délai et de gigue. car TCP pas fait pour ça.
+
+comment on attape de la gigues ? On met des buffers en gros (on garde des paquets et on les lit en même temps).
+pour les signalisations on utilise TCP ou UDP.
+
+_Les opérateurs Télécom seront content quand la téléphonie sera morte_ (Car deux réseaux à opérer)
+
+multicast = trouver un arbre de diffusion optimal mais c'est chiant.
+
+On met une estampille temporelle dans les paquets pour savoir quand on les a reçu et avoir une idée du délai.
+
+j'abandonne ici, ça va trop vite et le prof à dit je cite "_J'ai plus de temps je vais accélérer_" 
