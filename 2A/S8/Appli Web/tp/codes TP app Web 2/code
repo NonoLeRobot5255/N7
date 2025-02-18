@@ -1,0 +1,9 @@
+include html
+<!DOCTYPE html>
+<body>
+    <a href="ajoutPersonne.html"> ajouter Personne </a>
+    <a href="ajouterAdresse.html"> ajouter Adresse </a>
+    <a href="Serv?op=choix"> associer </a>
+    <a href="Serv?op=liste"> lister </a>
+
+
