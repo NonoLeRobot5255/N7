@@ -1,10 +1,13 @@
 package pack;
 
 import java.util.HashMap;
+import java.util.Collection;
 
-public class Facade {
-    int indexP = 0;
-    public int getIndexP() {
+
+public class Facade{
+	int indexP = 0;
+	int indexA = 0;
+	public int getIndexP() {
         return indexP;
     }
     public void setIndexP(int indexP) {
@@ -28,9 +31,36 @@ public class Facade {
     public void setAdresses(HashMap<Integer, Adresse> adresses) {
         this.adresses = adresses;
     }
-    int indexA = 0;
 
-    HashMap<Integer, Personne> personnes = new HashMap<Integer, Personne>();
-    HashMap<Integer, Adresse> adresses = new HashMap<Integer, Adresse>();
-    
+    HashMap<Integer, Personne> personnes = new HashMap<Integer, Personne> ( );
+	HashMap<Integer, Adresse> adresses = new HashMap<Integer, Adresse> ( );
+
+	public void ajouterPersonne(String nom, String prenom){
+		Personne p=new Personne( );
+		p.setId(indexP);
+		p.setNom(nom);
+		p.setPrenom(prenom);
+		personnes.put(indexP, p);
+		indexP ++;
+	}
+    public void ajouterAdresse(String rue, String ville){
+        Adresse a=new Adresse( );
+        a.setId(indexA);
+        a.setRue(rue);
+        a.setVille(ville);
+        adresses.put(indexA, a);
+        indexA ++;
+    }
+	public Collection<Personne> ListePersonne(){
+		return personnes.values();
+	}
+
+	public Collection<Adresse> ListeAdresse(){
+		return adresses.values();
+	}
+
+	public void associer(int idp, int ida){
+		Personne p = personnes.get(idp);
+		p.adresses.add(adresses.get(ida));
+	}
 }
