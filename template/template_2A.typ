@@ -35,41 +35,48 @@
   ]
 
   // Author(s)
-  pad(
-    top: 0.5em,
-    x: 2em,
-    align(text("Auteur"+ if authors.len()>1 {"s"} + " : ", size: 1.25em),center),
-  )
-  // here I write all the authors
-  pad(
-    bottom: 0.5em,
-    x: 2em,
-    grid(
-      
-      columns: (1fr,) * calc.min(2, authors.len()),
-      gutter: 1em,
-      
-      ..authors.map(author => align(center, strong(author))),
-    ),
-  )
+  if authors.len() > 0 {
+
+    pad(
+      top: 0.5em,
+      x: 2em,
+      align(text("Auteur"+ if authors.len()>1 {"s"} + " : ", size: 1.25em),center),
+    )
+
+    // here I write all the authors
+    pad(
+      bottom: 0.5em,
+      x: 2em,
+      grid(
+        
+        columns: (1fr,) * calc.min(2, authors.len()),
+        gutter: 1em,
+        
+        ..authors.map(author => align(center, strong(author))),
+      ),
+    )
+  }
+  
   // Teacher(s)
-  pad(
-    top: 0.5em,
-    x: 2em,
-    align(text("Professeur"+ if teachers.len()>1 {"s"} + " : ", size: 1.25em),center),
-  )
-  // here I write all the teachers
-  pad(
-    bottom: 0.5em,
-    x: 2em,
-    grid(
-      
-      columns: (1fr,) * calc.min(2, teachers.len()),
-      gutter: 1em,
-      
-      ..teachers.map(teacher => align(center, strong(teacher))),
-    ),
-  )
+  if teachers.len() > 0 {
+    pad(
+      top: 0.5em,
+      x: 2em,
+      align(text("Professeur"+ if teachers.len()>1 {"s"} + " : ", size: 1.25em),center),
+    )
+    // here I write all the teachers
+    pad(
+      bottom: 0.5em,
+      x: 2em,
+      grid(
+        
+        columns: (1fr,) * calc.min(2, teachers.len()),
+        gutter: 1em,
+        
+        ..teachers.map(teacher => align(center, strong(teacher))),
+      ),
+    )
+  }
   // here I write the year and my grade
   pad(
     top: 0.5em,
