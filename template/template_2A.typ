@@ -12,17 +12,18 @@
   set heading(numbering: "1.1.")
   set text(font: "New Computer Modern", lang: "fr")
 
+
   // ENSEEIHT logo.
   grid(
   columns: (2.5fr, auto),
   gutter: 4.5em,
   [
-    #box(figure(image("INP.jpeg", width: 10em))),
+    #box(image("INP.jpeg", width: 10em)),
     
   ],
   [
 
-    #box(figure(image("ENSEEIHT_logo.png", width: 11em)))
+    #box(image("ENSEEIHT_logo.png", width: 11em))
     
   ]
 )
