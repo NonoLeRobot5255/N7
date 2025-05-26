@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ "$#" != 3 ]; then
+  echo "Usage: <Input file> <Node> <Output"
+  exit 1
+fi
+
+grep "^r" $1 | grep "_$2_" | grep "AGT" > temp1
+cut -f 2,9 -d" " temp1 > temp2 
+rm temp1
+
+awk -f awk-time-thrgh.awk temp2 > $3
+rm temp2

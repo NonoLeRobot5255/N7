@@ -1,0 +1,12 @@
+# Simple NAM example
+V -t * -v 1.0a5
+
+# Define nodes
+n -t 0.0 -s 0 -x 50 -y 50 -v circle
+n -t 0.0 -s 1 -x 100 -y 100 -v circle
+
+# Define a link
+l -t 0.0 -s 0 -d 1 -r 100.0 -b 0 -o 0 -c "black"
+
+# Packet event
+h -t 0.1 -s 0 -d 1 -p 1 -c 0 -a 1 -x 0 -y 0

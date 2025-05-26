@@ -1,0 +1,9 @@
+ns sat-aloha.tcl basic_tracing
+echo "c"
+grep -c ^c out.tr
+echo "d"
+grep -c ^d out.tr
+echo "r"
+grep -c ^r out.tr
+echo "+"
+grep -c ^+ out.tr

@@ -1,0 +1,10 @@
+ns mm1.tcl
+perl trace_Response/response.pl out_mm1.tr 1 > trace_Response/response1.out #instantanee
+perl trace_Response/avr_response.pl trace_Response/response1.out > trace_Response/avr_response1.out #moyen
+perl trace_Response/response.pl out_mm1.tr 2 > trace_Response/response2.out
+perl trace_Response/avr_response.pl trace_Response/response2.out > trace_Response/avr_response2.out
+tail -1 trace_Response/avr_response1.out #affiche le temps de reponse moyen : la derniere valeur est la meilleur approximation de l'estimateur (cf le fichier README)
+tail -1 trace_Response/avr_response2.out
+
+# cd trace_Response
+# gnuplot plot.plot

@@ -1,0 +1,8 @@
+ns md1.tcl
+perl trace_Response/response.pl out_md1.tr 1 > trace_Response/response1.out
+perl trace_Response/avr_response.pl trace_Response/response1.out > trace_Response/avr_response1.out
+perl trace_Response/response.pl out_md1.tr 2 > trace_Response/response2.out
+perl trace_Response/avr_response.pl trace_Response/response2.out > trace_Response/avr_response2.out
+tail -1 trace_Response/avr_response1.out
+tail -1 trace_Response/avr_response2.out
+

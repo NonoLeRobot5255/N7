@@ -1,0 +1,205 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[frenchb]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tgtermes}
+\usepackage{stmaryrd}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{textcomp}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{tikz}
+
+\usepackage{geometry}
+\geometry{total={210mm,297mm},
+left=25mm,right=25mm,%
+bindingoffset=0mm, top=20mm,bottom=20mm}
+
+
+\linespread{1.3}
+
+\newcommand{\linia}{\rule{\linewidth}{0.5pt}}
+
+% custom theorems if needed
+\newtheoremstyle{mytheor}
+    {1ex}{1ex}{\normalfont}{0pt}{\scshape}{.}{1ex}
+    {{\thmname{#1 }}{\thmnumber{#2}}{\thmnote{ (#3)}}}
+
+\theoremstyle{mytheor}
+\newtheorem{defi}{Definition}
+
+% my own titles
+\makeatletter
+\renewcommand{\maketitle}{
+\begin{center}
+\vspace{2ex}
+{\huge \textsc{\@title}}
+\vspace{1ex}
+\\
+\linia\\
+\@author \hfill \@date
+\vspace{4ex}
+\end{center}
+}
+\makeatother
+%%%
+
+% custom footers and headers
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{ModApp Simulations de Réseaux}
+\cfoot{}
+\rfoot{Page \thepage\ /\ \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+%
+
+%%%----------%%%----------%%%----------%%%----------%%%
+
+\begin{document}
+
+\title{ModApp Simulations de Réseaux: Etude de la surcharge sur les réseaux d'accès sans fils}
+
+\author{Hugo Chelle, Airbus Defence And Space}
+
+\date{Mai 2017}
+
+\maketitle
+
+\section{Introduction}
+
+Nous allons étudier durant ce ModApp la surcharge sur les réseaux d'accès sans fils. Une surcharge se caractérise par un nombre d'utilisateurs (supérieur à la capacité du système) qui transmettent en même temps. Les objectifs du ModApp sont les suivants:
+\begin{itemize}
+    \item Comprendre le fonctionnement  d'un réseau d'accès et acquérir des connaissances sur les méthodes d'accès.
+    \item Modéliser simplement un réseau d'accès grâce à Matlab. 
+    \item Interpréter des résultats de simulation.
+\end{itemize}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[height=5cm]{WirelessCommunications.pdf}
+    \caption{Schéma réseau d'accès sans fils}
+    \label{fig:ReseauAccess}
+\end{figure}
+
+Lorsqu'un utilisateur veut transmettre des données, il effectue les étapes suivantes: 
+\begin{enumerate}
+    \item L'utilisateur a besoin de ressources pour transmettre, il envoie une requête de ressources à la station de base via un canal d'accès aléatoire partagé par tous les utilisateurs. Pour transmettre sur ce canal, l'utilisateur utilise une méthode d'accès.
+    \item L'utilisateur attend ensuite la réponse de la station de base, si il ne reçoit pas de réponse il retransmet la demande de ressources.
+    \item Transmission de la donnée utile via les ressources attribuées par la station de base.
+\end{enumerate}
+
+\clearpage
+
+\textbf{Questions:}
+\begin{enumerate}
+    \item Quel est le nom de la méthode d'accès la plus basique? 
+    \item Deux versions de cette méthode d'accès sont possibles. Donnez pour les deux versions la formule mathématique qui exprime le débit en fonction de la charge.  
+    \item Tracez le débit en fonction de la charge pour les deux versions, qu'en pensez vous? 
+    \item Citez des méthodes d'accès qui améliorent le débit, dans quel(s) contexte(s) ces nouvelles méthodes sont utilisées et pourquoi? 
+\end{enumerate}
+
+\section{Modélisation simple d'un réseau d'accès 4G}
+
+\subsection{Abstraction couche physique}
+\label{Abs_Phy}
+
+La méthode d'accès utilisée par la 4G est l'Aloha slotté en temps, $t_{slot}$ représente la durée du slot temporel ($t_{slot}=10\text{ms}$). Des codes orthogonaux sont utilisés pour améliorer les performance du canal d'accès aléatoire, le nombre de codes orthogonaux est donné par $N_{codes}$.  
+
+\textbf{Questions:}
+\begin{enumerate}
+    \item Selon vous pourquoi le 3GPP a fait ce choix de méthode d'accès? 
+    \item Donnez le packet loss ratio (PLR) en fonction du nombre de trames transmises. En déduire le débit du canal d'accès aléatoire.  
+    \item Combien de trames la station de base peut recevoir correctement au maximum par time slot? 
+\end{enumerate}
+
+\subsection{Abstraction couche MAC}
+\label{Abs_Mac}
+
+Nous supposons que toutes les requêtes transmises durant un time slot sont traitées par la station de base pendant $d_{traitement}$ time slots. Ensuite, des acquittements sont envoyés aux utilisateurs. Pour des raisons de simplification nous supposons que les ressources attribués à un utilisateur sont envoyés avec l'acquittement.   
+\begin{itemize}
+    \item Lorsqu'un utilisateur reçoit un acquittement, il arrête la procédure de contention pour transmettre sa donnée utile. 
+    \item Si l'utilisateur ne reçoit pas d'acquittement, il continue la procédure de contention. Son time slot de retransmission est déterminé par $d_{rand}$. Nous considérons que le nombre de transmission de requête de ressources est borné par $N_{MaxTransmission}$, lorsque l'utilisateur dépasse cette borne il abandonne la procédure de contention.
+\end{itemize}
+La figure \ref{fig:absMAC} illustre le fonctionnement de l'abstraction de couche MAC utilisée.
+
+\clearpage
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale = 0.5]{SchemeMACabstraction.pdf}
+    \caption{Schéma explicatif de l'abstraction de couche MAC }
+    \label{fig:absMAC}
+\end{figure}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+         $d_{traitement}$ & $5$ $t_{slot}$  \\
+         $d_{rand}$ & $rand\left(\llbracket 1; 3 \rrbracket \right)$ \\ 
+         $N_{MaxTransmission}$ & $10$ \\
+         \hline
+    \end{tabular}
+    \caption{Paramètres couche MAC considérés pour notre étude}
+    \label{tab:4GparamMAC}
+\end{table}
+
+\textbf{Questions:}
+\begin{enumerate}
+    \item Quelles sont les hypothèses importantes faites par cette abstraction ?
+    \item Quel est l'intérêt de $d_{rand}$ ? 
+    \item Quel est l'intérêt de $N_{MaxTransmission}$ ?
+\end{enumerate}
+
+\subsection{Implémentation}
+
+Veuillez remplir le squelette de simulateur fourni ($F\_SimulateurSansCC.m$).
+
+\subsection{Analyse des résultats}
+%Pour cette partie n'hésitez pas à faire varier le nombre de codes ($N_{Codes}$) et le scénario de traffic i.e. la charge constante afin de comprendre ce qui se passe.
+
+\textbf{Questions:}
+\begin{enumerate}
+    \item A partir de combien de nouveaux utilisateurs par time slot le système commence à être instable (Fournissez des courbes)? Est ce que c'était prévisible mathématiquement ?
+    \item L'impatience des utilisateurs n'est pas simulé dans le simulateur, rajoutez la. Quel est l'impact sur les simulations? 
+    \item Une station de base peut couvrir une zone assez vaste, en vous basant sur toutes vos réponses précédentes, expliquez pourquoi dans certaines situations il est compliquer d'accéder "au réseau".
+\end{enumerate}
+
+\clearpage
+
+\section{Introduction au contrôle de charge}
+
+\subsection{Présentation du mécanisme back-off}
+
+Supposons lorsque la station de base est surchargée de requêtes, elle utilise un mécanisme de type back-off afin de limiter le nombre de requête transmises par les utilisateurs. Le mécanisme est composé de deux paramètres:
+\begin{itemize}
+    \item Une probabilité d'accès $p_{acces}$.
+    \item Un nombre de slot maximal de blockage $N_\text{Slot Barring}$.
+\end{itemize}
+Avant de transmettre un utilisateur va tirer un nombre aléatoire et le comparer à $p_{acces}$ pour savoir si il est autorisé à transmettre. Si l'utilisateur échoue ce test, il essayera de transmettre de nouveau $rand \left( \llbracket 1; N_\text{Slot Barring} \rrbracket \right)$ time slots plus tard.
+
+\subsection{Implémentation}
+
+Remplir le squelette de code $F\_SimulateurAvecCC.m$.
+
+\subsection{Analyse des résultats}
+ 
+\textbf{Questions:}
+\begin{enumerate}
+	\item Selon vous quelle(s) métrique(s) peux t-on utiliser pour évaluer les performances du contrôle de charge?
+    \item En faisant varier les paramètres du contrôle de charge ($p_{acces}$ et $N_\text{Slot Barring}$), expliquez l'influence de chacun des paramètres. 
+    \item Selon quel couple de paramètres $\left(p_{acces},N_\text{Slot Barring}\right)$ permet d'obtenir les meilleurs performances pour un scénario de traffic donné? 
+\end{enumerate}
+
+
+\end{document}

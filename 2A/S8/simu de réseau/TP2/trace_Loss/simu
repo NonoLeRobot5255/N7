@@ -1,0 +1,11 @@
+#!/bin/bash
+for i in 1 #0.01 0.05 0.1 0.2 0.5 0.75 1 1.2 1.5 2 
+do
+    ns ../sat-aloha_mean.tcl $i
+    perl loss.pl out.tr > loss.out
+    # tail -1 loss.out
+    perl ../trace_Response/response.pl out.tr > response.out
+    perl ../trace_Response/avr_response.pl response.out > avr_response.out
+    tail -1 avr_response.out | awk '{print $4}'
+done
+

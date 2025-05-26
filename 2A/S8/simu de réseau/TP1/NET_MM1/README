@@ -1,0 +1,10 @@
+sim est le fichier principal
+gnuplot -persist plot.plot
+
+On voit la valeur instantanee (temps de reponse de chaque paquet: temps mis pour traverser le systeme) a chaque instant de reception
+La valeur moyenne est calculee au fur a mesure: elle est MAJ a chaque nv reception de paquet
+Le plus on a de paquet le plus la reponse moyenne converge vers la valeur limite
+
+Les intervalles de confiance sont calculées par la methode par bloc (contrairement a la methode de replication de Kamoun) :
+Pour 0 a l'instant correspondant au nieme paquet on divise la duree en periode egale on calcule la moyenne sur chaque bloc et puis l'intervalle de confiance en combinant l'ensemble des valeurs de blocs
+En fait Riadh utilise la tailel de bloc la plus petite : y a qu'un paquet par bloc (les blocs n'ont donc pas tous le meme taille) 

@@ -1,0 +1,5 @@
+ns md1.tcl
+perl detailresponse.pl out_mm1.tr 1 1 > response.tr
+awk -f Both_avr_confint.awk response.tr
+perl detailresponse.pl out_mm1.tr 2 1 > response.tr
+awk -f Both_avr_confint.awk response.tr
