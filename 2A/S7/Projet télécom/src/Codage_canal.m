@@ -14,7 +14,7 @@ M = 2^n; % Ordre de la modulation
 
 Ts = log2(M)*Tb; % Durée d'un symbole
 Rs = Rb / log2(M); % Débit symbole
-nb_bits = 188 * 8 * 10; % Nombre total de bits à simuler
+nb_bits = 188 * 8 * 500; % Nombre total de bits à simuler
 Ns = Fe * Ts; % Nombre d'échantillons par symbole
 
 EbN0dB = [-4:0.5:4]; % Rapport signal sur bruit en dB
