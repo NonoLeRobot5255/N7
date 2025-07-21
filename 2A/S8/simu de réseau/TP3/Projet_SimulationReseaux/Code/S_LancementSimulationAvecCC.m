@@ -24,7 +24,7 @@ idxSlotStats = 101:(101+dureeOverload); % indice des slots ou on calcule les sta
 NbSlots = length(ProfilTrafic);
 
 % Parametres du controle de charge
-CCParam.paccess = 0.5; % Probabilite d'acces 
+CCParam.paccess = 1; % Probabilite d'acces 
 CCParam.NslotBarringMax = 200; % Nombre de slots max ou l'utilisateur est bloque. 
 
 % MonteCarlo

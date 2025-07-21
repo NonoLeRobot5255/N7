@@ -14,7 +14,7 @@ MACParam.Rand = 3; % Rand maximum - d_rand.
 MACParam.NMaxTransmission = 10; % Nombre max de transmission possible. 
 
 % Scenario de traffic
-NbSlots = 50000; % Nombre de slots simules.
+NbSlots = 1000; % Nombre de slots simules.
 ChargeConstante = 20; % Nombre de nouveaux utilisateurs par time slots. 
 ProfilTrafic = ChargeConstante*ones(1,NbSlots); % Generation du profil de trafic 
 
