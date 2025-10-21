@@ -1,0 +1,16 @@
+services:
+  teamspeak:
+    image: teamspeak
+    container_name: teamspeak_server
+    ports:
+      - "9987:9987/udp"   # Port vocal par défaut
+      - "10011:10011"     # Port de contrôle serveur (telnet)
+      - "30033:30033"     # Port de transfert de fichiers
+    volumes:
+      - teamspeak_data:/var/ts3server
+    environment:
+      TS3SERVER_LICENSE: "accept" # Accepte automatiquement la licence
+    restart: unless-stopped
+
+volumes:
+  teamspeak_data:

@@ -1,0 +1,59 @@
+services:
+
+  box_2:
+    container_name: box_2
+    image: pihole/pihole:latest
+    hostname: box_2
+    cap_add:
+      - NET_ADMIN # Ajout de la capacité d'administrer le réseau (nécessaire pour Pi-hole et la fonction DHCP)
+    networks:
+      # Adresses IPs fixes du routeur dans ses réseaux
+      net_box_2:
+        ipv4_address: 192.0.20.100
+      net_routeur_acces_particuliers_1:
+    volumes:
+      - ./Initialisation/masque_box2.sh:/usr/local/bin/masque.sh # Monte le fichier dans le conteneur
+    entrypoint: ["sh", "/usr/local/bin/masque.sh"] 
+    ports:
+      - 67/udp    # Service DHCP (si activé)
+    environment:
+      ServerIP: 192.0.20.100  # Adresse IP du serveur (doit correspondre à `ipv4_address` du reseau dhcp)
+    restart: unless-stopped  # Redémarre automatiquement sauf si arrêté manuellement
+
+  box2_machine1:
+    image: alpine:latest
+    container_name: box2_machine1
+    tty: true
+    cap_add:
+      - NET_ADMIN
+    networks:
+      net_box_2:
+    command: /bin/sh -c "ip route del default && ip route add default via 192.0.20.100 && tail -f /dev/null"
+
+  box2_machine2:
+    image: alpine:latest
+    container_name: box2_machine2
+    tty: true
+    cap_add:
+      - NET_ADMIN
+    networks:
+      net_box_2:
+    command: /bin/sh -c "ip route del default && ip route add default via 192.0.20.100 && tail -f /dev/null"
+
+  box2_machine3:
+    image: alpine:latest
+    container_name: box2_machine3
+    tty: true
+    cap_add:
+      - NET_ADMIN
+    networks:
+      net_box_2:
+    command: /bin/sh -c "ip route del default && ip route add default via 192.0.20.100 && tail -f /dev/null"
+
+networks:
+
+  net_box_2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.0.20.0/24

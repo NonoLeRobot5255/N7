@@ -1,0 +1,11 @@
+Pour la démo :
+
+Un fichier où copier coller les commandes restantes
+Un fichier de vérification par étape de connections
+
+Pour présenter en même temps que la démo : 
+
+Un diapo 
+Des schémas qui sont liés à l'état du réseau
+
+(Ou alors une vidéo comme ça rien à faire)

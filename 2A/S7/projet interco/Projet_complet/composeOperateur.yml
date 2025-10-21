@@ -1,0 +1,361 @@
+
+################################################################################
+################################################################################
+#                          Mise en place des conteneurs
+################################################################################
+################################################################################
+
+services:
+
+  ##############################################################################
+  #                              Routeurs centraux
+  ##############################################################################
+  routeur_central:
+    build:
+      context: .
+    container_name: routeur_central
+    networks:
+      net_routeur_central:
+        ipv4_address: 120.0.17.10
+    dns:
+      - 120.0.17.12
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_central/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_central/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+
+  data_base_operateur:
+    image: mysql:latest
+    container_name: data_base_operateur
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=db_utilisateurs
+    networks:
+      net_routeur_central:
+        ipv4_address: 120.0.17.13
+    ports: 
+      - "3306:3306"
+    volumes:
+        - ./db/db_operateur:/var/lib/mysql
+
+      
+  routeur_acces_particuliers:
+    build:
+      context: .
+    container_name: routeur_acces_particuliers
+    networks:
+      net_routeur_central:
+        ipv4_address: 120.0.17.20
+      net_routeur_acces_particuliers:
+        ipv4_address: 120.0.18.10
+    dns:
+      - 120.0.17.12
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_acces_particuliers/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_acces_particuliers/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+
+  routeur_acces_entreprises:
+    build:
+      context: .
+    container_name: routeur_acces_entreprises
+    networks:
+      net_routeur_central:
+        ipv4_address: 120.0.17.30
+      net_routeur_acces_entreprises:
+        ipv4_address: 120.0.21.10
+    dns:
+      - 120.0.17.12
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_acces_entreprises/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_acces_entreprises/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+
+  ##############################################################################
+  #                             Routeurs d'extrémités
+  ##############################################################################
+  relais_acces_particuliers_1:
+    container_name: relais_acces_particuliers_1
+    image: pihole/pihole:latest
+    hostname: relais_acces_particuliers_1
+    cap_add:
+      - NET_ADMIN
+    networks:
+      # Adresses IPs fixes du routeur dans ses réseaux
+      net_routeur_acces_particuliers_1:
+        ipv4_address: 120.0.19.11
+    dns:
+      - 120.0.17.12
+    command: /bin/sh -c "ip route del default && ip route add default via 120.0.19.10 && tail -f /dev/null"
+    ports:
+      - 67/udp    # Service DHCP (si activé)
+    environment:
+      ServerIP: 120.0.19.11  # Adresse IP du serveur (doit correspondre à `ipv4_address` du reseau dhcp)
+    restart: unless-stopped  # Redémarre automatiquement sauf si arrêté manuellement
+
+  routeur_acces_particuliers_1:
+    build:
+      context: .
+    container_name: routeur_acces_particuliers_1
+    networks:
+      net_routeur_acces_particuliers:
+        ipv4_address: 120.0.18.30
+      net_routeur_acces_particuliers_1:
+        ipv4_address: 120.0.19.10
+    dns:
+      - 120.0.17.12
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_acces_particuliers_1/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_acces_particuliers_1/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+
+  relais_acces_particuliers_2:
+    container_name: relais_acces_particuliers_2
+    image: pihole/pihole:latest
+    hostname: relais_acces_particuliers_2
+    cap_add:
+      - NET_ADMIN
+    networks:
+      net_routeur_acces_particuliers_2:
+        ipv4_address: 120.0.20.11
+    dns:
+      - 120.0.17.12
+    command: /bin/sh -c "ip route del default && ip route add default via 120.0.20.10 && tail -f /dev/null"
+    ports:
+      - 67/udp    # Service DHCP (si activé)
+    environment:
+      ServerIP: 120.0.20.11  # Adresse IP du serveur (doit correspondre à `ipv4_address` du reseau dhcp)
+    restart: unless-stopped  # Redémarre automatiquement sauf si arrêté manuellement
+
+  routeur_acces_particuliers_2:
+    build:
+      context: .
+    container_name: routeur_acces_particuliers_2
+    networks:
+      net_routeur_acces_particuliers:
+        ipv4_address: 120.0.18.20
+      net_routeur_acces_particuliers_2:
+        ipv4_address: 120.0.20.10
+    dns:
+      - 120.0.17.12
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_acces_particuliers_2/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_acces_particuliers_2/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+
+  relais_acces_entreprises_1:
+    container_name: relais_acces_entreprises_1
+    image: pihole/pihole:latest
+    hostname: relais_acces_entreprises_1
+    cap_add:
+      - NET_ADMIN
+    networks:
+      net_routeur_acces_entreprises_1:
+        ipv4_address: 120.0.22.11
+    dns:
+      - 120.0.17.12
+    command: /bin/sh -c "ip route del default && ip route add default via 120.0.22.10 && tail -f /dev/null"
+    ports:
+      - 67/udp
+    environment:
+      ServerIP: 120.0.22.11
+    restart: unless-stopped
+  
+  routeur_acces_entreprises_1:
+    build:
+      context: .
+    container_name: routeur_acces_entreprises_1
+    networks:
+      net_routeur_acces_entreprises_1:
+        ipv4_address: 120.0.22.10
+      net_routeur_acces_entreprises:
+        ipv4_address: 120.0.21.20
+    dns:
+      - 120.0.17.12
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    command: ["/bin/sh", "-c", "./init.sh && tail -f /dev/null"]
+    volumes:
+      - ./routage/routeur_acces_entreprises_1/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_acces_entreprises_1/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+      - ./Initialisation/init-vpn-es.sh:/init.sh
+    tty: true
+    privileged: true
+
+  relais_acces_entreprises_2:
+    container_name: relais_acces_entreprises_2
+    image: pihole/pihole:latest
+    hostname: relais_acces_entreprises_2
+    cap_add:
+      - NET_ADMIN
+    networks:
+      net_routeur_acces_entreprises_2:
+        ipv4_address: 120.0.23.11
+    dns:
+      - 120.0.17.12
+    command: /bin/sh -c "ip route del default && ip route add default via 120.0.23.10 && tail -f /dev/null"
+    ports:
+      - 67/udp
+    environment:
+      ServerIP: 120.0.23.11
+    restart: unless-stopped
+
+  routeur_acces_entreprises_2:
+    build:
+      context: .
+    container_name: routeur_acces_entreprises_2
+    networks:
+      net_routeur_acces_entreprises_2:
+        ipv4_address: 120.0.23.10
+      net_routeur_acces_entreprises:
+        ipv4_address: 120.0.21.30
+    dns:
+      - 120.0.17.12
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_acces_entreprises_2/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_acces_entreprises_2/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+  
+  webserver_op:
+    image: httpd:latest
+    container_name: webserver_op
+    networks:
+      net_routeur_central:
+        ipv4_address: 120.0.17.11
+    #command: /bin/sh -c "ip route del default && ip route add default via 120.0.17.10 && tail -f /dev/null"
+    ports:
+      - "8080:80" # Expose le port 8080 sur l'hôte pour accéder au serveur web
+    volumes:
+      - ./Initialisation/rip-config_op.sh:/usr/local/bin/rip-config.sh
+
+  dns_server_op:
+    image: ubuntu/bind9:latest
+    container_name: dns_server_op
+    ports:
+      - "53:53/udp" # Port DNS
+      - "53:53/tcp" # Port DNS TCP (pour les requêtes plus larges)
+    networks:
+      net_routeur_central:
+        ipv4_address: 120.0.17.12
+    #command: /bin/sh -c "ip route del default && ip route add default via 120.0.17.10 && tail -f /dev/null"
+    volumes:
+      - ./dns/named_op.conf:/etc/bind/named.conf
+      - ./dns/zones_op:/etc/bind/zones
+      - ./Initialisation/rip-config_op.sh:/usr/local/bin/rip-config.sh
+    restart: always
+
+################################################################################
+################################################################################
+#                            Mise en place des réseaux
+################################################################################
+################################################################################
+
+networks:
+
+  ##############################################################################
+  #                              Routeurs centraux
+  ##############################################################################
+  # Réseau associé au routeur central
+  net_routeur_central:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 120.0.17.0/24 # Plage d'adresses IP disponibles dans ce sous-réseau
+
+  # Réseau associé au routeur d'accès particuliers
+  net_routeur_acces_particuliers:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 120.0.18.0/24
+
+  # Réseau associé au routeur d'accès entreprise
+  net_routeur_acces_entreprises:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 120.0.21.0/24
+
+  ##############################################################################
+  #                             Routeurs d'extrémités
+  ##############################################################################
+  # Réseau associé au routeur d'accès particuliers 1
+  net_routeur_acces_particuliers_1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 120.0.19.0/24 # Plage d'adresses IP disponibles dans ce sous-réseau
+
+  # Réseau associé au routeur d'accès particuliers 2
+  net_routeur_acces_particuliers_2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 120.0.20.0/24
+
+  # Réseau associé au routeur d'accès entreprise 1
+  net_routeur_acces_entreprises_1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 120.0.22.0/24
+
+  # Réseau associé au routeur d'accès entreprise 2
+  net_routeur_acces_entreprises_2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 120.0.23.0/24

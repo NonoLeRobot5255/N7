@@ -1,0 +1,9 @@
+include:
+  - composeOperateur.yml
+  - composeEntreprise.yml
+  - composeEntrepriseSecondaire.yml
+  - composeBox1.yml
+  - composeBox2.yml
+  - composeBox3.yml
+  - composeVOIP.yml
+

@@ -1,0 +1,15 @@
+$TTL    604800
+@       IN      SOA     dns.entreprise.com. admin.entreprise.com. (
+                        1         ; Serial
+                        604800    ; Refresh
+                        86400     ; Retry
+                        2419200   ; Expire
+                        604800 )  ; Minimum -> Durée de vie minimum du cache
+
+; Serveur DNS
+@       IN      NS      dns.entreprise.com.
+dns     IN      A       120.0.30.11   ; Adresse IP du DNS
+
+; Serveur Web
+www     IN      A       120.0.30.10   ; Adresse IP réelle du serveur Web
+;le nom de zone est entreprise.com et pour le site web on rajoute www devant

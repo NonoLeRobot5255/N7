@@ -1,0 +1,184 @@
+services:
+
+  entreprise_machine_direction:
+    image: alpine:latest
+    container_name: entreprise_machine_direction
+    tty: true
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    networks:
+      net_central_entreprise:
+        ipv4_address: 192.0.192.2
+    command: /bin/sh -c "ip route del default && ip route add default via 192.0.192.100 && tail -f /dev/null"
+    dns:
+      - 120.0.30.11
+
+  routeur_central_entreprise:
+    build:
+      context: .
+    container_name: routeur_central_entreprise
+    networks:
+      net_central_entreprise:
+        ipv4_address: 192.0.192.100
+      net_routeur_acces_entreprises_1:
+        ipv4_address: 120.0.22.7
+    dns:
+      - 120.0.30.11
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_central_entreprise/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_central_entreprise/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+
+  data_base_entreprise:
+    image: mysql:latest
+    container_name: data_base_entreprise
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=db_utilisateurs
+    networks:
+      net_central_entreprise:
+        ipv4_address: 192.0.192.103
+    ports: 
+      - "3307:3306"
+    volumes:
+        - ./db/db_entreprise:/var/lib/mysql
+
+  routeur_reseau_prive:
+    container_name: routeur_reseau_prive
+    image: pihole/pihole:latest
+    hostname: routeur_reseau_prive
+    cap_add:
+      - NET_ADMIN # Ajout de la capacité d'administrer le réseau (nécessaire pour Pi-hole et la fonction DHCP)
+    networks:
+      net_central_entreprise:
+        ipv4_address: 192.0.192.101
+      net_salle_machine:
+        ipv4_address: 192.0.193.100
+    dns:
+      - 120.0.30.11
+    command: /bin/sh -c "ip route del default && ip route add default via 192.0.192.100 && tail -f /dev/null"
+    ports:
+      - 67/udp    # Service DHCP (si activé)
+    environment:
+      ServerIP: 192.0.193.100  # Adresse IP du serveur (doit correspondre à `ipv4_address` du reseau dhcp)
+    restart: unless-stopped  # Redémarre automatiquement sauf si arrêté manuellement
+
+  entreprise_machine_1:
+    image: alpine:latest
+    container_name: entreprise_machine_1
+    tty: true
+    networks:
+      net_salle_machine: {}  # DHCP attribuera l'adresse IP
+    command: /bin/sh -c "ip route del default && ip route add default via 192.0.193.100 && tail -f /dev/null"
+
+  entreprise_machine_2:
+    image: alpine:latest
+    container_name: entreprise_machine_2
+    tty: true
+    networks:
+      net_salle_machine: {}  # DHCP attribuera l'adresse IP
+    command: /bin/sh -c "ip route del default && ip route add default via 192.0.193.100 && tail -f /dev/null"
+
+  entreprise_machine_3:
+    image: alpine:latest
+    container_name: entreprise_machine_3
+    tty: true
+    networks:
+      net_salle_machine: {}  # DHCP attribuera l'adresse IP
+    command: /bin/sh -c "ip route del default && ip route add default via 192.0.193.100 && tail -f /dev/null" 
+
+  routeur_dmz:
+    build:
+      context: .
+    container_name: routeur_dmz
+    networks:
+      net_dmz:
+        ipv4_address: 120.0.30.100
+      net_central_entreprise:
+        ipv4_address: 192.0.192.102
+    dns:
+      - 120.0.30.11
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_dmz/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_dmz/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+
+  routeur_services:
+    build:
+      context: .
+    container_name: routeur_services
+    networks:
+      net_dmz:
+        ipv4_address: 120.0.30.101
+    dns:
+      - 120.0.30.11
+    sysctls:
+      net.ipv4.ip_forward: 1
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    volumes:
+      - ./routage/routeur_services/ospfd.conf:/etc/quagga/ospfd.conf
+      - ./routage/routeur_services/zebra.conf:/etc/quagga/zebra.conf
+      - ./routage/vtysh.conf:/etc/quagga/vtysh.conf
+    tty: true
+    privileged: true
+
+  webserver:
+    image: httpd:latest
+    container_name: webserver
+    networks:
+      net_dmz:
+        ipv4_address: 120.0.30.10
+    #command: /bin/sh -c "ip route del default && ip route add default via 120.0.30.101 && tail -f /dev/null"
+    volumes:
+      - ./Initialisation/rip-config.sh:/usr/local/bin/rip-config.sh # Monte le fichier dans le conteneur
+
+  dns_server:
+    image: ubuntu/bind9:latest
+    container_name: dns_server
+    networks:
+      net_dmz:
+        ipv4_address: 120.0.30.11
+    #command: /bin/sh -c "ip route del default && ip route add default via 120.0.30.101 && tail -f /dev/null"
+    volumes:
+      - ./dns/named.conf:/etc/bind/named.conf
+      - ./dns/zones:/etc/bind/zones
+      - ./Initialisation/rip-config.sh:/usr/local/bin/rip-config.sh # Monte le fichier dans le conteneur
+    restart: always
+
+networks:
+  net_central_entreprise:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.0.192.0/24
+  net_salle_machine:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.0.193.0/24
+  net_dmz:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 120.0.30.0/24
