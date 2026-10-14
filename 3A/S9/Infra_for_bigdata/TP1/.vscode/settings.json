@@ -1,0 +1,12 @@
+{
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/home/nolann/tools/hadoop-2.7.1/share/hadoop/common/hadoop-common-2.7.1.jar",
+        "/home/nolann/tools/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-common-2.7.1.jar",
+        "/home/nolann/tools/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.7.1.jar"
+    ]
+}
