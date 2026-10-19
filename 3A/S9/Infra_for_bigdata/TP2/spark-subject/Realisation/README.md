@@ -1,18 +1,5 @@
-## Getting Started
+# Resultat obtenues sur le tp
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
-
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+- Pour le WordCount il suffit d'éxéctuer le code 
+- Pour le deuxième, MaxTemperature, il faut changer le mappage et récupérer les plus grosses tempérarures par années
+- Pour le 3ième on revient comme sur le premier mais avec quelque chose de plus simple une fois le filtre fais sur la première étape
