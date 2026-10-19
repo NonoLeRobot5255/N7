@@ -1,0 +1,12 @@
+{
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/home/nolann/tools/spark-2.4.3-bin-hadoop2.7/jars/spark-core_2.11-2.4.3.jar",
+        "/home/nolann/tools/spark-2.4.3-bin-hadoop2.7/jars/scala-library-2.11.12.jar",
+        "/home/nolann/tools/spark-2.4.3-bin-hadoop2.7/jars/hadoop-common-2.7.3.jar"
+    ]
+}

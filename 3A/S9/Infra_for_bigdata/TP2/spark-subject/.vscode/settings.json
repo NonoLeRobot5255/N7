@@ -1,0 +1,9 @@
+{
+    "java.project.referencedLibraries": [
+        "/home/nolann/tools/hadoop-2.7.1/share/hadoop/common/hadoop-common-2.7.1.jar",
+        "/home/nolann/tools/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-common-2.7.1.jar",
+        "/home/nolann/tools/hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.7.1.jar",
+        "/home/nolann/tools/hadoop-2.7.1/share/hadoop/common/lib/*.jar",
+        "/home/nolann/tools/spark-2.4.3-bin-hadoop2.7/jars/**/*.jar"
+    ]
+}
